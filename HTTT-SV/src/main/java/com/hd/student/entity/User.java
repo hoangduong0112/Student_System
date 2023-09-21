@@ -1,7 +1,10 @@
 package com.hd.student.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,6 +24,18 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false)
     private Integer id;
+
+    public User(String fullName, String email, String password, Role userRole, String avatar) {
+        this.fullName = fullName;
+        this.email = email;
+        this.password = password;
+        this.userRole = userRole;
+        this.avatar = avatar;
+    }
+
+    public User() {
+
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -58,7 +73,7 @@ public class User implements UserDetails {
     @Column(name = "email", nullable = false, length = 45)
     private String email;
 
-    @Column(name = "password", length = 45)
+    @Column(name = "password", length = 200)
     private String password;
 
     @Column(name = "user_role", length = 45)
@@ -68,15 +83,19 @@ public class User implements UserDetails {
     @Column(name = "avatar", length = 200)
     private String avatar;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private Set<OnlineService> onlineServices = new LinkedHashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private Set<RegSubject> regSubjects = new LinkedHashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private Set<SemeterSubject> semeterSubjects = new LinkedHashSet<>();
 
+    @JsonIgnore
     @OneToOne(mappedBy = "user")
     private UserInfo userInfo;
 
