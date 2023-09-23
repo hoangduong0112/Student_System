@@ -1,6 +1,5 @@
-package com.hd.student.utils;
+package com.hd.student.security;
 
-import com.hd.student.entity.User;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import io.jsonwebtoken.*;
@@ -36,8 +35,8 @@ public class JwtUtils {
         }
     }
 
-    public ResponseCookie generateJwtCookie(User userPrincipal) {
-        String jwt = generateTokenFromUsername(userPrincipal.getUsername());
+    public ResponseCookie generateJwtCookie(UserPrincipal userPrincipal) {
+        String jwt = generateTokenFromUsername(userPrincipal.getEmail());
         ResponseCookie cookie = ResponseCookie.from(jwtCookie, jwt).path("/api").maxAge(24 * 60 * 60).httpOnly(true).build();
         return cookie;
     }

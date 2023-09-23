@@ -1,21 +1,16 @@
 package com.hd.student.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.Instant;
+import java.time.LocalDate;
 
 @Getter
 @Setter
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
-@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "online_service")
-public abstract class OnlineService {
+public class OnlineService {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "online_service_id", nullable = false)
@@ -26,7 +21,7 @@ public abstract class OnlineService {
     private User user;
 
     @Column(name = "created_date")
-    private Instant createdDate;
+    private LocalDate createdDate;
 
     @Column(name = "status", length = 45)
     private String status;
@@ -37,5 +32,14 @@ public abstract class OnlineService {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "service_cate_id", nullable = false)
     private ServiceCate serviceCate;
+
+    @OneToOne(mappedBy = "onlineService")
+    private DiplomaCopy diplomaCopy;
+
+    @OneToOne(mappedBy = "onlineService")
+    private StudCertification studCertification;
+
+    @OneToOne(mappedBy = "onlineService")
+    private Transcript transcript;
 
 }

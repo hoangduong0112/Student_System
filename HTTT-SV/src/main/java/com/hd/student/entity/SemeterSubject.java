@@ -1,9 +1,7 @@
 package com.hd.student.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
@@ -13,8 +11,6 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "semeter_subject")
 public class SemeterSubject {
     @Id
@@ -36,12 +32,12 @@ public class SemeterSubject {
     private Integer studentQuantity;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "semeter_id")
     private Semeter semeter;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "study_room_id")
+    private StudyRoom studyRoom;
 
     @OneToMany(mappedBy = "semeterSubject")
     private Set<RegSubject> regSubjects = new LinkedHashSet<>();

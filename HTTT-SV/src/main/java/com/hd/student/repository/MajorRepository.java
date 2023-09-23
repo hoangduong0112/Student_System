@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MajorRepository extends JpaRepository<Major, Integer> {
+    Major findMajorById(Integer id);
 }

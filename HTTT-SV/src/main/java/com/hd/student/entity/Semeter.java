@@ -1,9 +1,7 @@
 package com.hd.student.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.LinkedHashSet;
@@ -12,8 +10,6 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "semeter")
 public class Semeter {
     @Id
@@ -24,10 +20,16 @@ public class Semeter {
     @Column(name = "semeter_name", nullable = false, length = 45)
     private String semeterName;
 
-    @Column(name = "note", nullable = false, length = 45)
+    @Column(name = "note", length = 45)
     private String note;
 
     @OneToMany(mappedBy = "semeter")
     private Set<SemeterSubject> semeterSubjects = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "fromSemeter")
+    private Set<Transcript> transcriptsFrom = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "toSemeter")
+    private Set<Transcript> transcriptsTo = new LinkedHashSet<>();
 
 }

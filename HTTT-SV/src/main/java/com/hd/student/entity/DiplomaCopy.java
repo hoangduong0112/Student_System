@@ -1,21 +1,18 @@
 package com.hd.student.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "diploma_copy")
-public class DiplomaCopy extends OnlineService{
+public class DiplomaCopy {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "diploma_copy_id", nullable = false)
+    private Integer id;
 
     @Column(name = "copy")
     private Integer copy;
@@ -31,5 +28,9 @@ public class DiplomaCopy extends OnlineService{
 
     @Column(name = "diploma_code", length = 45)
     private String diplomaCode;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "online_service_id")
+    private OnlineService onlineService;
 
 }

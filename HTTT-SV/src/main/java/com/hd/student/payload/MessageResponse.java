@@ -1,4 +1,4 @@
-package com.hd.student.auth;
+package com.hd.student.payload;
 
 public class MessageResponse {
     private String message;

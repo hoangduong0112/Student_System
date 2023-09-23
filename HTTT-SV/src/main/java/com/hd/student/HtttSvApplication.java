@@ -1,5 +1,7 @@
 package com.hd.student;
 
+import com.hd.student.entity.DiplomaCopy;
+import com.hd.student.entity.OnlineService;
 import com.hd.student.entity.Role;
 import com.hd.student.entity.User;
 import com.hd.student.service.UserService;
@@ -20,7 +22,6 @@ public class HtttSvApplication {
 //	@Bean
 //	CommandLineRunner run(UserService userService) {
 //		return args -> {
-//			userService.saveUser(new User("Hoang Duong", "1957012049-HoangDuong","sadsa",Role.ADMIN,"12323"));
 //		};
 //	}
 }
