@@ -27,7 +27,7 @@ CREATE TABLE `department` (
   `department_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`department_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='	';
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='	';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -36,6 +36,7 @@ CREATE TABLE `department` (
 
 LOCK TABLES `department` WRITE;
 /*!40000 ALTER TABLE `department` DISABLE KEYS */;
+INSERT INTO `department` VALUES (1,'Công nghệ thông tin',NULL),(2,'Ngôn ngữ anh',NULL),(3,'Kinh tế - Quản lý công',NULL);
 /*!40000 ALTER TABLE `department` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -47,14 +48,17 @@ DROP TABLE IF EXISTS `diploma_copy`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `diploma_copy` (
-  `online_service_id` int NOT NULL,
+  `diploma_copy_id` int NOT NULL AUTO_INCREMENT,
   `copy` int DEFAULT NULL,
   `phone_contact` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `email` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `diploma_year` int DEFAULT NULL,
   `diploma_code` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`online_service_id`),
-  CONSTRAINT `FK_online_service3` FOREIGN KEY (`online_service_id`) REFERENCES `online_service` (`online_service_id`)
+  `online_service_id` int DEFAULT NULL,
+  PRIMARY KEY (`diploma_copy_id`),
+  UNIQUE KEY `online_service_id_UNIQUE` (`online_service_id`),
+  KEY `FK_ServiceOnline1_idx` (`online_service_id`),
+  CONSTRAINT `FK_ServiceOnline1` FOREIGN KEY (`online_service_id`) REFERENCES `online_service` (`online_service_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -75,7 +79,7 @@ DROP TABLE IF EXISTS `major`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `major` (
-  `major_id` int NOT NULL,
+  `major_id` int NOT NULL AUTO_INCREMENT,
   `department_id` int NOT NULL,
   `major_code` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `major_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -91,6 +95,7 @@ CREATE TABLE `major` (
 
 LOCK TABLES `major` WRITE;
 /*!40000 ALTER TABLE `major` DISABLE KEYS */;
+INSERT INTO `major` VALUES (1,1,'645455','Công nghệ thông tin'),(2,1,'645456','Khoa Học máy tính');
 /*!40000 ALTER TABLE `major` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -104,7 +109,7 @@ DROP TABLE IF EXISTS `online_service`;
 CREATE TABLE `online_service` (
   `online_service_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int DEFAULT NULL,
-  `created_date` datetime DEFAULT NULL,
+  `created_date` date DEFAULT NULL,
   `status` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `is_shipped` tinyint(1) DEFAULT NULL,
   `service_cate_id` int NOT NULL,
@@ -163,9 +168,9 @@ DROP TABLE IF EXISTS `semeter`;
 CREATE TABLE `semeter` (
   `semeter_id` int NOT NULL AUTO_INCREMENT,
   `semeter_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `note` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `note` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`semeter_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -174,6 +179,7 @@ CREATE TABLE `semeter` (
 
 LOCK TABLES `semeter` WRITE;
 /*!40000 ALTER TABLE `semeter` DISABLE KEYS */;
+INSERT INTO `semeter` VALUES (2,'HK2-2023','Học Kỳ 2 - 2023'),(3,'HK3-2023','Học Kỳ 3 - 2023'),(4,'HK1-2024','Học Kỳ 1 - 2024');
 /*!40000 ALTER TABLE `semeter` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -187,18 +193,18 @@ DROP TABLE IF EXISTS `semeter_subject`;
 CREATE TABLE `semeter_subject` (
   `semeter_subject_id` int NOT NULL AUTO_INCREMENT,
   `subject_id` int DEFAULT NULL,
-  `start_date` datetime DEFAULT NULL,
-  `end_date` datetime DEFAULT NULL,
+  `start_date` datetime(6) DEFAULT NULL,
+  `end_date` datetime(6) DEFAULT NULL,
   `student_quantity` int DEFAULT NULL,
-  `user_id` int DEFAULT NULL COMMENT 'Giảng viên',
   `semeter_id` int DEFAULT NULL,
+  `study_room_id` int DEFAULT NULL,
   PRIMARY KEY (`semeter_subject_id`),
   KEY `FK_subject_idx` (`subject_id`),
-  KEY `FK_user_idx` (`user_id`),
   KEY `FK_Semeterr_idx` (`semeter_id`),
+  KEY `FK_studyroom_idx` (`study_room_id`),
   CONSTRAINT `FK_Semeterr` FOREIGN KEY (`semeter_id`) REFERENCES `semeter` (`semeter_id`),
-  CONSTRAINT `FK_subject` FOREIGN KEY (`subject_id`) REFERENCES `subject` (`subject_id`),
-  CONSTRAINT `FK_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
+  CONSTRAINT `FK_studyroom` FOREIGN KEY (`study_room_id`) REFERENCES `study_room` (`study_room_id`),
+  CONSTRAINT `FK_subject` FOREIGN KEY (`subject_id`) REFERENCES `subject` (`subject_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -221,7 +227,7 @@ DROP TABLE IF EXISTS `service_cate`;
 CREATE TABLE `service_cate` (
   `service_cate_id` int NOT NULL AUTO_INCREMENT,
   `service_cate_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `price` double(10,2) DEFAULT NULL,
+  `price` double DEFAULT NULL,
   `is_avaible` tinyint(1) DEFAULT NULL,
   `description` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`service_cate_id`)
@@ -234,7 +240,7 @@ CREATE TABLE `service_cate` (
 
 LOCK TABLES `service_cate` WRITE;
 /*!40000 ALTER TABLE `service_cate` DISABLE KEYS */;
-INSERT INTO `service_cate` VALUES (1,'Cấp bảng điểm',20000.00,1,'Đăng ký cấp bảng điểm'),(2,'Cấp CNSV',50000.00,1,'Đăng ký chứng nhận sinh viên'),(3,'Cấp bản sao BTN',10000.00,1,'Đăng ký cấp bản sao Bằng tốt nghiệp'),(4,'Cấp chứng nhận tốt nghiệp tạm thời',100000.00,0,'Đăng ký cấp chứng nhận tốt nghiệp tạm thời');
+INSERT INTO `service_cate` VALUES (1,'Cấp bảng điểm',20000,1,'Đăng ký cấp bảng điểm'),(2,'Cấp CNSV',50000,1,'Đăng ký chứng nhận sinh viên'),(3,'Cấp bản sao BTN',10000,1,'Đăng ký cấp bản sao Bằng tốt nghiệp'),(4,'Cấp chứng nhận tốt nghiệp tạm thời',100000,0,'Đăng ký cấp chứng nhận tốt nghiệp tạm thời');
 /*!40000 ALTER TABLE `service_cate` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -246,14 +252,16 @@ DROP TABLE IF EXISTS `stud_certification`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `stud_certification` (
-  `online_service_id` int NOT NULL,
+  `stud_certification_id` int NOT NULL AUTO_INCREMENT,
   `viet_copy` int DEFAULT NULL,
   `eng_copy` int DEFAULT NULL,
   `phone_contact` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `email` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `content` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`online_service_id`),
-  CONSTRAINT `FK_online_service2` FOREIGN KEY (`online_service_id`) REFERENCES `online_service` (`online_service_id`)
+  `online_service` int DEFAULT NULL,
+  PRIMARY KEY (`stud_certification_id`),
+  UNIQUE KEY `online_service_UNIQUE` (`online_service`),
+  CONSTRAINT `FK_online_service2` FOREIGN KEY (`online_service`) REFERENCES `online_service` (`online_service_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -324,15 +332,17 @@ DROP TABLE IF EXISTS `transcript`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `transcript` (
-  `online_service_id` int NOT NULL,
+  `transcript_id` int NOT NULL AUTO_INCREMENT,
   `language` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `from_semeter` int NOT NULL,
   `to_semeter` int NOT NULL,
   `quantity` int NOT NULL,
   `contact_phone` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `is_sealed` tinyint(1) DEFAULT NULL,
-  PRIMARY KEY (`online_service_id`),
-  CONSTRAINT `FK_online_service_transcript` FOREIGN KEY (`online_service_id`) REFERENCES `online_service` (`online_service_id`)
+  `online_service_id` int DEFAULT NULL,
+  PRIMARY KEY (`transcript_id`),
+  UNIQUE KEY `online_service_id_UNIQUE` (`online_service_id`),
+  CONSTRAINT `FK_online_service3` FOREIGN KEY (`online_service_id`) REFERENCES `online_service` (`online_service_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Bảng điểm';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -356,11 +366,17 @@ CREATE TABLE `user` (
   `user_id` int NOT NULL AUTO_INCREMENT,
   `full_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `email` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `password` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `password` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `user_role` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `avatar` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `day_of_birth` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `gender` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `phone` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `major_id` int DEFAULT NULL,
+  PRIMARY KEY (`user_id`),
+  KEY `FK_major_idx` (`major_id`),
+  CONSTRAINT `FK_major` FOREIGN KEY (`major_id`) REFERENCES `major` (`major_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -369,34 +385,8 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
+INSERT INTO `user` VALUES (1,'Hoang Duong','1957012049-HoangDuong','$2a$10$WqLqrOo/cBVCCyQETVV5Cu/CD0ojo9caYqFchuhvuTPJGffpuQy/m','USER','12323','2001-12-01','Nam','090',1),(2,'tes','abc@gmail','$2a$10$qKveXpAB3RVXDqGIcGY4vOMw8ojqWUO2WBC1v9WHXYCQiETyoFWdK','USER','123','2001-12-21','Nam','090',1);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `user_info`
---
-
-DROP TABLE IF EXISTS `user_info`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `user_info` (
-  `user_id` int NOT NULL,
-  `day_of_birth` datetime DEFAULT NULL,
-  `gender` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `phone` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `major_id` int DEFAULT NULL,
-  PRIMARY KEY (`user_id`),
-  CONSTRAINT `FK_user_info` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `user_info`
---
-
-LOCK TABLES `user_info` WRITE;
-/*!40000 ALTER TABLE `user_info` DISABLE KEYS */;
-/*!40000 ALTER TABLE `user_info` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -408,4 +398,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-09-20 22:49:54
+-- Dump completed on 2023-09-23 21:04:44
