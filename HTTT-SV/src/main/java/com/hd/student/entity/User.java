@@ -1,7 +1,9 @@
 package com.hd.student.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.LinkedHashSet;
@@ -10,6 +12,8 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "user")
 public class User {
     @Id
@@ -50,6 +54,6 @@ public class User {
     private Set<OnlineService> onlineServices = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user")
-    private Set<RegSubject> regSubjects = new LinkedHashSet<>();
+    private Set<SemesterUser> semesterUsers = new LinkedHashSet<>();
 
 }

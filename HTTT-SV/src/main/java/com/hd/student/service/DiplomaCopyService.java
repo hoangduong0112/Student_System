@@ -1,9 +1,13 @@
 package com.hd.student.service;
 
-import com.hd.student.entity.User;
-import com.hd.student.payload.ApiResponse;
-import com.hd.student.payload.DiplomaCopyRequest;
+import com.hd.student.payload.response.ApiResponse;
+import com.hd.student.payload.request.DiplomaCopyRequest;
+import com.hd.student.payload.response.DiplomaCopyResponse;
 
 public interface DiplomaCopyService {
     ApiResponse addNewDiplomaCopy(DiplomaCopyRequest rq,int userId);
+
+    DiplomaCopyResponse findByOnlineServiceId(int id, int userId);
+
+    ApiResponse updateMyDiplomaCopy(DiplomaCopyRequest rq, int userId);
 }

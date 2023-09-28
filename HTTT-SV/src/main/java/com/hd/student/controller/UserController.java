@@ -1,9 +1,9 @@
 package com.hd.student.controller;
 
-import com.hd.student.payload.LoginRequest;
-import com.hd.student.payload.MessageResponse;
+import com.hd.student.payload.request.LoginRequest;
+import com.hd.student.payload.response.MessageResponse;
 import com.hd.student.entity.User;
-import com.hd.student.payload.UserInfoResponse;
+import com.hd.student.payload.response.UserInfoResponse;
 import com.hd.student.security.UserPrincipal;
 import com.hd.student.service.UserService;
 import com.hd.student.security.JwtUtils;
@@ -16,7 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 

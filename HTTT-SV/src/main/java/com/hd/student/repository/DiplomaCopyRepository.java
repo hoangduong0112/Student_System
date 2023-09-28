@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DiplomaCopyRepository extends JpaRepository<DiplomaCopy, Integer> {
+    DiplomaCopy findByOnlineServiceId(int id);
 }

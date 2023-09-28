@@ -4,6 +4,7 @@ import com.hd.student.serviceImpl.UserServiceImpl;
 import com.hd.student.security.AuthEntryPointJwt;
 import com.hd.student.security.AuthTokenFilter;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -83,5 +84,9 @@ public class SecurityConfig {
         authProvider.setPasswordEncoder(passwordEncoder());
 
         return authProvider;
+    }
+    @Bean
+    ModelMapper modelMapper() {
+        return new ModelMapper();
     }
 }

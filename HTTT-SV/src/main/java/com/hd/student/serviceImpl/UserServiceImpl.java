@@ -2,7 +2,7 @@ package com.hd.student.serviceImpl;
 
 import com.hd.student.entity.Role;
 import com.hd.student.entity.User;
-import com.hd.student.payload.UserInfoResponse;
+import com.hd.student.payload.response.UserInfoResponse;
 import com.hd.student.repository.UserRepository;
 import com.hd.student.security.UserPrincipal;
 import com.hd.student.service.MajorService;

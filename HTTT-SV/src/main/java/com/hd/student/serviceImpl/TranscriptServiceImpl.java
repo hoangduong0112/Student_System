@@ -2,20 +2,19 @@ package com.hd.student.serviceImpl;
 
 import com.hd.student.entity.OnlineService;
 import com.hd.student.entity.Transcript;
-import com.hd.student.entity.User;
 import com.hd.student.exception.ResourceNotFoundException;
-import com.hd.student.payload.ApiResponse;
-import com.hd.student.payload.TranscriptRequest;
-import com.hd.student.repository.SemeterRepository;
+import com.hd.student.payload.response.ApiResponse;
+import com.hd.student.payload.request.TranscriptRequest;
+import com.hd.student.payload.response.TranscriptResponse;
+import com.hd.student.repository.SemesterRepository;
 import com.hd.student.repository.TranscriptRepository;
 import com.hd.student.repository.UserRepository;
 import com.hd.student.service.IOnlineService;
 import com.hd.student.service.TranscriptService;
 import jakarta.transaction.Transactional;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
 
 @Service
 public class TranscriptServiceImpl implements TranscriptService {
@@ -26,7 +25,9 @@ public class TranscriptServiceImpl implements TranscriptService {
     @Autowired
     private TranscriptRepository transcriptRepository;
     @Autowired
-    private SemeterRepository semeterRepository;
+    private SemesterRepository semesterRepository;
+    @Autowired
+    private ModelMapper modelMapper;
 
 
     @Override
@@ -37,8 +38,8 @@ public class TranscriptServiceImpl implements TranscriptService {
 
         tr.setContactPhone(rq.getContactPhone());
         tr.setLanguage(rq.getLanguage());
-        tr.setFromSemeter(semeterRepository.findById(rq.getFromSemeter()).orElseThrow(() -> new ResourceNotFoundException("Semeter","Id",rq.getFromSemeter())));
-        tr.setToSemeter(semeterRepository.findById(rq.getToSemeter()).orElseThrow(() -> new ResourceNotFoundException("Semeter","Id",rq.getToSemeter())));
+        tr.setFromSemester(semesterRepository.findById(rq.getFromSemester()).orElseThrow(() -> new ResourceNotFoundException("Semester","Id",rq.getFromSemester())));
+        tr.setToSemester(semesterRepository.findById(rq.getToSemester()).orElseThrow(() -> new ResourceNotFoundException("Semester","Id",rq.getToSemester())));
         tr.setQuantity(rq.getQuantity());
         tr.setIsSealed(rq.getIsSealed());
 
@@ -48,6 +49,15 @@ public class TranscriptServiceImpl implements TranscriptService {
         tr.setOnlineService(onlineService);
         this.transcriptRepository.save(tr);
         return new ApiResponse("Success", true);
+    }
 
+    @Override
+    public TranscriptResponse findByOnlineServiceId(int id, int userId) {
+        OnlineService on = this.onlineService.findById(id, userId);
+
+        Transcript tr = on.getTranscript();
+        if(tr == null)
+            throw new ResourceNotFoundException("Không tìm thấy yêu cầu của bạn", "id", on.getId());
+        return modelMapper.map(tr, TranscriptResponse.class);
     }
 }

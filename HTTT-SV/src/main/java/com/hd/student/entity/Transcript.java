@@ -1,12 +1,16 @@
 package com.hd.student.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "transcript")
 public class Transcript {
     @Id
@@ -18,12 +22,12 @@ public class Transcript {
     private String language;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "from_semeter")
-    private Semeter fromSemeter;
+    @JoinColumn(name = "from_semester")
+    private Semester fromSemester;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "to_semeter")
-    private Semeter toSemeter;
+    @JoinColumn(name = "to_semester")
+    private Semester toSemester;
 
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
