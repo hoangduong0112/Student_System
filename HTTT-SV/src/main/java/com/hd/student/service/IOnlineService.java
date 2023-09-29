@@ -11,4 +11,6 @@ public interface IOnlineService {
     public List<OnlineServiceResponse> findAllByUserId(Integer userId);
 
     public OnlineService findById(int id, int userId);
+
+    boolean checkAccess(int id, int userId);
 }

@@ -46,6 +46,14 @@ public class OnlineServiceImpl implements IOnlineService {
         return onlineService;
     }
 
+    public boolean checkAccess(int id, int userId){
+        OnlineService on = this.onlineServiceRepository.findById(id).orElseThrow(
+                ()-> new ResourceNotFoundException("Online Service", "id", id));
+        if(on.getUser().getId() != userId)
+            throw new AccessDeniedException("Bạn không có quyền làm điều này");
+
+        return true;
+    }
     public OnlineServiceResponse mapToResponse(OnlineService onlineService) {
         OnlineServiceResponse response = new OnlineServiceResponse();
         response.setId(onlineService.getId());

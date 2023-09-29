@@ -19,4 +19,6 @@ public class DiplomaCopyResponse {
     private Integer diplomaYear;
 
     private String diplomaCode;
+
+    private OnlineServiceResponse onlineService;
 }

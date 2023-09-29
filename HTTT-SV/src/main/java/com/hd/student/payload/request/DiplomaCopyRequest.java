@@ -11,7 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DiplomaCopyRequest {
-    private Integer id;
     private Integer copy;
     private String phoneContact;
 

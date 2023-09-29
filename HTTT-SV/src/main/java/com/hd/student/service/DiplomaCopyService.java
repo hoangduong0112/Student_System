@@ -9,5 +9,5 @@ public interface DiplomaCopyService {
 
     DiplomaCopyResponse findByOnlineServiceId(int id, int userId);
 
-    ApiResponse updateMyDiplomaCopy(DiplomaCopyRequest rq, int userId);
+    ApiResponse updateMyDiplomaCopy(DiplomaCopyRequest rq,int id, int userId);
 }

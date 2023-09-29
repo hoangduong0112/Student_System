@@ -10,7 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TranscriptRequest {
-    private Integer id;
     private String language;
     private Integer fromSemester;
     private Integer toSemester;

@@ -47,9 +47,9 @@ public class OnlineServiceController {
         return new ResponseEntity<>(rs,HttpStatus.OK);
     }
     @PutMapping("diploma/update/{id}")
-    public ResponseEntity<?> updateDiplomaCopy(Authentication auth, @RequestBody DiplomaCopyRequest rq){
+    public ResponseEntity<?> updateDiplomaCopy(Authentication auth, @RequestBody DiplomaCopyRequest rq, @PathVariable int id){
         UserPrincipal u = (UserPrincipal) auth.getPrincipal();
-        ApiResponse rs = this.diplomaCopyService.updateMyDiplomaCopy(rq, u.getId());
+        ApiResponse rs = this.diplomaCopyService.updateMyDiplomaCopy(rq, id, u.getId());
         return new ResponseEntity<>(rs,HttpStatus.OK);
     }
     @GetMapping("/user/service/diploma/{serviceId}")
@@ -65,6 +65,12 @@ public class OnlineServiceController {
     public ResponseEntity<ApiResponse> saveTranscript(Authentication auth, @RequestBody TranscriptRequest rq){
         UserPrincipal u = (UserPrincipal) auth.getPrincipal();
         ApiResponse rs = this.transcriptService.addNewTranscript(rq, u.getId());
+        return new ResponseEntity<>(rs,HttpStatus.OK);
+    }
+    @PutMapping("/transcript/update/{id}")
+    public ResponseEntity<?> updateTranscript(Authentication auth, @RequestBody TranscriptRequest rq, @PathVariable int id){
+        UserPrincipal u = (UserPrincipal) auth.getPrincipal();
+        ApiResponse rs = this.transcriptService.updateMyTranscript(rq, id, u.getId());
         return new ResponseEntity<>(rs,HttpStatus.OK);
     }
     @GetMapping("/user/service/transcript/{serviceId}")

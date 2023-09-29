@@ -60,4 +60,28 @@ public class TranscriptServiceImpl implements TranscriptService {
             throw new ResourceNotFoundException("Không tìm thấy yêu cầu của bạn", "id", on.getId());
         return modelMapper.map(tr, TranscriptResponse.class);
     }
+
+    @Override
+    public ApiResponse updateMyTranscript(TranscriptRequest rq, int id, int userId){
+        Transcript tr = this.transcriptRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Không tìm thấy yêu cầu cấp bảng điểm", "id", id));
+        OnlineService on = tr.getOnlineService();
+        if(onlineService.checkAccess(on.getId(), userId)){
+            modelMapper.typeMap(TranscriptRequest.class, Transcript.class).addMapping(TranscriptRequest::getFromSemester, Transcript::setFromSemester);
+            modelMapper.typeMap(TranscriptRequest.class, Transcript.class).addMapping(TranscriptRequest::getToSemester, Transcript::setToSemester);
+            tr = modelMapper.map(rq, Transcript.class);
+            tr.setId(id);
+            tr.setOnlineService(on);
+            tr.setFromSemester(semesterRepository.findById(rq.getFromSemester()).orElseThrow(() -> new ResourceNotFoundException("Semester","Id",rq.getFromSemester())));
+            tr.setToSemester(semesterRepository.findById(rq.getToSemester()).orElseThrow(() -> new ResourceNotFoundException("Semester","Id",rq.getToSemester())));
+
+            this.transcriptRepository.save(tr);
+
+            return new ApiResponse("Success", true);
+        }
+
+        else
+            return new ApiResponse("Fails", false);
+
+    }
+
 }

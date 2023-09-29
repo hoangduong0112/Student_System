@@ -2,6 +2,8 @@ package com.hd.student.serviceImpl;
 
 import com.hd.student.entity.DiplomaCopy;
 import com.hd.student.entity.OnlineService;
+import com.hd.student.exception.AccessDeniedException;
+import com.hd.student.exception.ExceptionDetailResponse;
 import com.hd.student.exception.ResourceNotFoundException;
 import com.hd.student.payload.response.ApiResponse;
 import com.hd.student.payload.request.DiplomaCopyRequest;
@@ -14,6 +16,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 
 
 @Service
@@ -30,20 +33,25 @@ public class DiplomaCopyServiceImpl implements DiplomaCopyService {
 
     @Override
     public ApiResponse addNewDiplomaCopy(DiplomaCopyRequest rq, int userId) {
-        OnlineService onlineService = this.onlineService.addOnlineService(userId,3);
 
-        DiplomaCopy copy = new DiplomaCopy();
+        try {
+            OnlineService onlineService = this.onlineService.addOnlineService(userId, 3);
 
-        copy = modelMapper.map(rq, DiplomaCopy.class);
+            DiplomaCopy copy = new DiplomaCopy();
+
+            copy = modelMapper.map(rq, DiplomaCopy.class);
 //        copy.setCopy(rq.getCopy());
 //        copy.setDiplomaYear(rq.getDiplomaYear());
 //        copy.setDiplomaCode(rq.getDiplomaCode());
 //        copy.setEmail(rq.getEmail());
 //        copy.setPhoneContact(rq.getPhoneContact());
-        copy.setOnlineService(onlineService);
-        this.diplomaCopyRepository.save(copy);
+            copy.setOnlineService(onlineService);
+            this.diplomaCopyRepository.save(copy);
 
-        return new ApiResponse("Success", true);
+            return new ApiResponse("Success", true);
+        }catch (Exception ex){
+            return new ApiResponse("Fail", false);
+        }
     }
 
     @Override
@@ -57,10 +65,18 @@ public class DiplomaCopyServiceImpl implements DiplomaCopyService {
     }
 
     @Override
-    public ApiResponse updateMyDiplomaCopy(DiplomaCopyRequest rq, int userId) {
-        DiplomaCopy copy = modelMapper.map(rq, DiplomaCopy.class);
+    public ApiResponse updateMyDiplomaCopy(DiplomaCopyRequest rq,int id, int userId) {
+        DiplomaCopy copy = this.diplomaCopyRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Không tìm thấy yêu cầu", "id", id));
+        OnlineService on = copy.getOnlineService();
+        if(this.onlineService.checkAccess(on.getId(), userId)) {
+            copy = modelMapper.map(rq, DiplomaCopy.class);
 
-        this.diplomaCopyRepository.save(copy);
-        return new ApiResponse("Success", true);
+            copy.setId(id);
+            copy.setOnlineService(on);
+            this.diplomaCopyRepository.save(copy);
+            return new ApiResponse("Success", true);
+        }
+        else
+            throw new AccessDeniedException("Bạn không có quyền truy cập tài nguyên này");
     }
 }
