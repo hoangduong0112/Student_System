@@ -10,7 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StudCertificationRequest {
-    private Integer id;
     private Integer vietCopy;
     private Integer engCopy;
     private String phoneContact;

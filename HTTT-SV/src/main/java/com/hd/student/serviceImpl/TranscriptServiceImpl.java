@@ -53,7 +53,7 @@ public class TranscriptServiceImpl implements TranscriptService {
 
     @Override
     public TranscriptResponse findByOnlineServiceId(int id, int userId) {
-        OnlineService on = this.onlineService.findById(id, userId);
+        OnlineService on = this.onlineService.findByIdWithAccess(id, userId);
 
         Transcript tr = on.getTranscript();
         if(tr == null)

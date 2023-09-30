@@ -39,10 +39,25 @@ public class StudCertificationServiceImpl implements StudCertificationService {
 
     @Override
     public StudCertificationResponse findByOnlineServiceId(int id, int userId) {
-        OnlineService on = this.onlineService.findById(id, userId);
+        OnlineService on = this.onlineService.findByIdWithAccess(id, userId);
         StudCertification st = on.getStudCertification();
         if(st == null)
             throw new ResourceNotFoundException("Không tìm thấy yêu cầu của bạn", "id", on.getId());
         return modelMapper.map(st, StudCertificationResponse.class);
+    }
+
+    @Override
+    public ApiResponse updateMyCertification(StudCertificationRequest rq, int id, int userId) {
+        StudCertification sc = this.studCertificationRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Không tìm thấy yêu cầu cấp", "id", id));
+        OnlineService on = sc.getOnlineService();
+
+        if (this.onlineService.checkAccess(on.getId(), userId)) {
+            sc = modelMapper.map(rq, StudCertification.class);
+            sc.setId(id);
+            sc.setOnlineService(on);
+            this.studCertificationRepository.save(sc);
+            return new ApiResponse("Success", true);
+        }
+        return new ApiResponse("Fails", false);
     }
 }

@@ -3,7 +3,6 @@ package com.hd.student.serviceImpl;
 import com.hd.student.entity.DiplomaCopy;
 import com.hd.student.entity.OnlineService;
 import com.hd.student.exception.AccessDeniedException;
-import com.hd.student.exception.ExceptionDetailResponse;
 import com.hd.student.exception.ResourceNotFoundException;
 import com.hd.student.payload.response.ApiResponse;
 import com.hd.student.payload.request.DiplomaCopyRequest;
@@ -15,8 +14,6 @@ import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Date;
 
 
 @Service
@@ -56,7 +53,7 @@ public class DiplomaCopyServiceImpl implements DiplomaCopyService {
 
     @Override
     public DiplomaCopyResponse findByOnlineServiceId(int id, int userId) {
-        OnlineService on = this.onlineService.findById(id, userId);
+        OnlineService on = this.onlineService.findByIdWithAccess(id, userId);
 
         DiplomaCopy dp = on.getDiplomaCopy();
         if(dp == null)

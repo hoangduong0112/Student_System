@@ -10,7 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UnlockStudentRequest {
-    private Integer id;
     private String content;
     private String image;
 }

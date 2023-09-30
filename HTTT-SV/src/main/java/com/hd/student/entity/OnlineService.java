@@ -28,7 +28,8 @@ public class OnlineService {
     private LocalDate createdDate;
 
     @Column(name = "status", length = 45)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private ServiceStatus status;
 
     @Column(name = "is_shipped")
     private Boolean isShipped;
