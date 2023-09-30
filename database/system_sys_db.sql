@@ -15,6 +15,10 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
+DROP DATABASE IF EXISTS `student_sys_db`;
+CREATE DATABASE `student_sys_db`;
+USE `student_sys_db`;
+
 --
 -- Table structure for table `course`
 --
@@ -95,7 +99,7 @@ CREATE TABLE `department` (
 
 LOCK TABLES `department` WRITE;
 /*!40000 ALTER TABLE `department` DISABLE KEYS */;
-INSERT INTO `department` VALUES (1,'Công nghệ thông tin',NULL),(2,'Ngôn ngữ anh',NULL),(3,'Kinh tế - Quản lý công',NULL);
+INSERT INTO `department` VALUES (1,'Công nghệ thông tin',NULL), (2,'Ngoại ngữ',NULL), (3,'Kinh tế - Quản lý công',NULL), (4,'Đào tạo sau đại học',NULL), (5,'Tài chính - ngân hàng',NULL), (6,'Khoa học cơ bản',NULL),(7,'Đào tạo đặc biệt',NULL), (8,'Kế toán kiểm toán',NULL), (9,'Ngoại ngữ',NULL), (13,'Quản trị kinh doanh',NULL), (14,'Xã - Công - Đông - Tâm',NULL);
 /*!40000 ALTER TABLE `department` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -180,7 +184,7 @@ CREATE TABLE `major` (
 
 LOCK TABLES `major` WRITE;
 /*!40000 ALTER TABLE `major` DISABLE KEYS */;
-INSERT INTO `major` VALUES (1,1,'645455','Công nghệ thông tin'),(2,1,'645456','Khoa Học máy tính');
+INSERT INTO `major` VALUES (1,1,'645455','Công nghệ thông tin'),(2,1,'645456','Khoa học máy tính'),(3,1,'645457','Hệ thống thông tin quản lý'), (4,4,'645458','Quản trị kinh doanh'),(5,4,'645459','Kinh tế học'), (6,4,'645460','Tài chính - ngân hàng'), (7,4,'645461','Kỹ thuật xây dựng'), (8,4,'645462','Lý luận và phương pháp dạy học bộ môn tiếng Anh'),(9,4,'645463','Kế toán'), (10,4,'645464','Luật kinh tế'),(11,4,'645465','Quản lý xây dựng'), (12,4,'645466','Xã hội học'),(13,4,'645467','Công nghệ sinh học'), (14,4,'645468','Khoa học máy tính'),(15,4,'645469','Ngôn ngữ Trung Quốc'),(16,2,'645470','Ngôn ngữ Anh'),(17,2,'645471','Ngôn ngữ Trung Quốc'), (18,2,'645472','Ngôn ngữ Hàn Quốc'),(19,2,'645473','Ngôn ngữ Nhật'),(20,3,'645474','Kinh tế'),(21,3,'645475','Quản lý công'), (22,5,'645476','Tài chính - ngân hàng'),(23,6,'645477','Khoa học dữ liệu');
 /*!40000 ALTER TABLE `major` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -512,7 +516,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'Hoang Duong','1957012049-HoangDuong','$2a$10$qKveXpAB3RVXDqGIcGY4vOMw8ojqWUO2WBC1v9WHXYCQiETyoFWdK','USER','12323','2001-12-01','Nam','090',1),(2,'tes','abc@gmail','$2a$10$qKveXpAB3RVXDqGIcGY4vOMw8ojqWUO2WBC1v9WHXYCQiETyoFWdK','USER','123','2001-12-21','Nam','090',1);
+INSERT INTO `user` VALUES (1,'Hoang Duong','1957012049-HoangDuong','$2a$10$WqLqrOo/cBVCCyQETVV5Cu/CD0ojo9caYqFchuhvuTPJGffpuQy/m','USER','12323','2001-12-01','Nam','090',1),(2,'tes','abc@gmail','$2a$10$qKveXpAB3RVXDqGIcGY4vOMw8ojqWUO2WBC1v9WHXYCQiETyoFWdK','USER','123','2001-12-21','Nam','090',5),(3,'Lê Đông Anh Kiệt','2051052068kiet','$2a$10$WqLqrOo/cBVCCyQETVV5Cu/CD0ojo9caYqFchuhvuTPJGffpuQy/m','USER','12323','2002-19-09','Nam','093',1);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
