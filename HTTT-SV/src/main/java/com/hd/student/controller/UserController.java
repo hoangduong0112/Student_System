@@ -47,7 +47,7 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    private final Logger log = (Logger) LoggerFactory.getLogger(UserController.class);
+    private final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
@@ -94,7 +94,7 @@ public class UserController {
     @GetMapping("/all_users")
     List<User> getAllUsers() { return userRepository.findAll(); }
 
-    @GetMapping("/{id}")
+    @GetMapping("/get/{id}")
     ResponseEntity<?> getUser(@PathVariable int id) {
         Optional<User> user = userRepository.findById(id);
         return user.map(response -> ResponseEntity.ok().body(response))
@@ -108,14 +108,14 @@ public class UserController {
         return ResponseEntity.created(new URI("api/v1/user" + u.getId())).body((u));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     ResponseEntity<User> updateUser(@Valid @RequestBody User user) {
         log.info("Request to update user: {}", user);
         User u = userRepository.save(user);
         return ResponseEntity.ok().body(u);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     ResponseEntity<User> deleteUser(@PathVariable int id) {
         log.info("Request to delete user: {}", id);
         userRepository.deleteById(id);

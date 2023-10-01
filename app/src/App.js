@@ -1,34 +1,18 @@
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
-import React, { useEffect,useState } from 'react';
+import Home from './Home';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import UserEdit from './UserEdit';
+import UserList from "./UserList";
 
 const App = () => {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    setLoading(true);
-    fetch('api/users').then(res => res.json())
-        .then(data => {
-          setUsers(data);
-          setLoading(false);
-        })
-  }, []);
-
-  if (loading) { return <p>Loading...</p>; }
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <div className="App-intro">
-          <h2 className="text-center">Thông tin sinh viên</h2>
-            { users.map(user => <div key={user.id}>
-                {user.fullName}
-            </div>) }
-        </div>
-      </header>
-    </div>
-  );
+    return (
+        <Router><Routes>
+            <Route exact path="/" element={<Home/>}/>
+            <Route path="/users" exact={true} element={<UserList/>}/>
+            <Route path="/users/:id" exact={true} element={<UserEdit/>}/>
+        </Routes></Router>
+    )
 }
 
 export default App;
