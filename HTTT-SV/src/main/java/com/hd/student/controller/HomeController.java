@@ -1,15 +1,10 @@
 package com.hd.student.controller;
 
-import com.hd.student.entity.ServiceCate;
-import com.hd.student.serviceImpl.ServiceCateServiceImpl;
+import com.hd.student.service.ServiceCateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/v1")
 @RestController
@@ -18,10 +13,17 @@ public class HomeController {
 
 
     @Autowired
-    private ServiceCateServiceImpl serviceCateServiceImpl;
+    private ServiceCateService serviceCateService;
 
-    @GetMapping("/dichvu")
-    public List<ServiceCate> getAllMovies() {
-        return this.serviceCateServiceImpl.getAllDV();
+    @GetMapping("/service-cate")
+    public ResponseEntity<?> getAllServiceCate() {
+        return new ResponseEntity<>(this.serviceCateService.getAllDV(), HttpStatus.OK);
     }
+
+    @GetMapping("/service-cate/{id}")
+    public ResponseEntity<?> getServiceCateById(@PathVariable int id) {
+        return new ResponseEntity<>(this.serviceCateService.getServiceById(id), HttpStatus.OK);
+    }
+
+
 }

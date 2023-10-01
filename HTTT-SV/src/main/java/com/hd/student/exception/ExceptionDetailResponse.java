@@ -9,6 +9,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ExceptionDetailResponse {
+    private int statusCode;
     private Date timestamp;
     private String message;
     private String details;

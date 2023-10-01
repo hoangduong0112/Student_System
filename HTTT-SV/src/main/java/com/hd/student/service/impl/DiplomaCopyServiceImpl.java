@@ -1,4 +1,4 @@
-package com.hd.student.serviceImpl;
+package com.hd.student.service.impl;
 
 import com.hd.student.entity.DiplomaCopy;
 import com.hd.student.entity.OnlineService;

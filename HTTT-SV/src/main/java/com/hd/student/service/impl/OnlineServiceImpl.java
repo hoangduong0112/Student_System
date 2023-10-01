@@ -1,4 +1,4 @@
-package com.hd.student.serviceImpl;
+package com.hd.student.service.impl;
 
 
 import com.hd.student.entity.*;
@@ -55,6 +55,7 @@ public class OnlineServiceImpl implements IOnlineService {
         return onlineService;
     }
 
+    @Override
     public boolean checkAccess(int id, int userId){
         OnlineService on = this.onlineServiceRepository.findById(id).orElseThrow(
                 ()-> new ResourceNotFoundException("Online Service", "id", id));
@@ -76,7 +77,8 @@ public class OnlineServiceImpl implements IOnlineService {
     @Override
     public List<OnlineServiceResponse> findAllByUserId(Integer userId) {
         List<OnlineService> services = onlineServiceRepository.findAllByUserId(userId);
-        modelMapper.typeMap(OnlineService.class, OnlineServiceResponse.class).addMapping(OnlineService -> OnlineService.getServiceCate().getId(), OnlineServiceResponse::setServiceCateId);
+        modelMapper.typeMap(OnlineService.class, OnlineServiceResponse.class).addMapping(OnlineService
+                -> OnlineService.getServiceCate().getServiceCateName(), OnlineServiceResponse::setServiceCateName);
         Converter<ServiceStatus, String> enumConverter =
                 ctx -> ctx.getSource() == null ? null : ctx.getSource().name();
         modelMapper.addConverter(enumConverter);
@@ -93,9 +95,12 @@ public class OnlineServiceImpl implements IOnlineService {
 
     @Override
     public OnlineService findByIdWithAccess(int id, int userId) {
+        User user = this.userRepository.findById(userId).orElseThrow(
+                ()-> new ResourceNotFoundException("Vui lòng đăng nhập lại", "id", userId));
+
         OnlineService on = this.onlineServiceRepository.findById(id).orElseThrow(
                 ()-> new ResourceNotFoundException("Online Service", "id", id));
-        if(on.getUser().getId() != userId)
+        if(on.getUser().getId() != userId || user.getUserRole() != Role.ADMIN)
             throw new AccessDeniedException("Bạn không có quyền làm điều này");
 
         return on;
@@ -104,7 +109,8 @@ public class OnlineServiceImpl implements IOnlineService {
     @Override
     public List<OnlineServiceResponse> findAll(){
         List<OnlineService> services = this.onlineServiceRepository.findAll();
-        modelMapper.typeMap(OnlineService.class, OnlineServiceResponse.class).addMapping(OnlineService -> OnlineService.getServiceCate().getId(), OnlineServiceResponse::setServiceCateId);
+        modelMapper.typeMap(OnlineService.class, OnlineServiceResponse.class).addMapping(OnlineService
+                -> OnlineService.getServiceCate().getServiceCateName(), OnlineServiceResponse::setServiceCateName);
         Converter<ServiceStatus, String> enumConverter =
                 ctx -> ctx.getSource() == null ? null : ctx.getSource().name();
         modelMapper.addConverter(enumConverter);
@@ -124,7 +130,8 @@ public class OnlineServiceImpl implements IOnlineService {
         );
         on.setStatus(ServiceStatus.ACCEPT);
         this.onlineServiceRepository.save(on);
-        modelMapper.typeMap(OnlineService.class, OnlineServiceResponse.class).addMapping(OnlineService -> OnlineService.getServiceCate().getId(), OnlineServiceResponse::setServiceCateId);
+        modelMapper.typeMap(OnlineService.class, OnlineServiceResponse.class).addMapping(OnlineService
+                -> OnlineService.getServiceCate().getServiceCateName(), OnlineServiceResponse::setServiceCateName);
         Converter<ServiceStatus, String> enumConverter =
                 ctx -> ctx.getSource() == null ? null : ctx.getSource().name();
         modelMapper.addConverter(enumConverter);
@@ -139,7 +146,8 @@ public class OnlineServiceImpl implements IOnlineService {
         );
         on.setStatus(ServiceStatus.DENY);
         this.onlineServiceRepository.save(on);
-        modelMapper.typeMap(OnlineService.class, OnlineServiceResponse.class).addMapping(OnlineService -> OnlineService.getServiceCate().getId(), OnlineServiceResponse::setServiceCateId);
+        modelMapper.typeMap(OnlineService.class, OnlineServiceResponse.class).addMapping(OnlineService
+                -> OnlineService.getServiceCate().getServiceCateName(), OnlineServiceResponse::setServiceCateName);
         Converter<ServiceStatus, String> enumConverter =
                 ctx -> ctx.getSource() == null ? null : ctx.getSource().name();
         modelMapper.addConverter(enumConverter);
@@ -152,9 +160,8 @@ public class OnlineServiceImpl implements IOnlineService {
         OnlineService on = this.findByIdWithAccess(serviceId, userId);
         on.setStatus(ServiceStatus.CANCEL);
         this.onlineServiceRepository.save(on);
-        modelMapper.typeMap(OnlineService.class, OnlineServiceResponse.class)
-                .addMapping(OnlineService -> OnlineService.getServiceCate().getId(),
-                        OnlineServiceResponse::setServiceCateId);
+        modelMapper.typeMap(OnlineService.class, OnlineServiceResponse.class).addMapping(OnlineService
+                -> OnlineService.getServiceCate().getServiceCateName(), OnlineServiceResponse::setServiceCateName);
         Converter<ServiceStatus, String> enumConverter =
                 ctx -> ctx.getSource() == null ? null : ctx.getSource().name();
         modelMapper.addConverter(enumConverter);
@@ -195,5 +202,31 @@ public class OnlineServiceImpl implements IOnlineService {
         catch (Exception ex) {
             return new ApiResponse(ex.getMessage(), false);
         }
+    }
+
+    @Override
+    public List<OnlineServiceResponse> searchRequest(LocalDate fromDate, LocalDate toDate){
+        List<OnlineService> ons = new ArrayList<>();
+        if(toDate != null && fromDate != null){
+            ons = this.onlineServiceRepository.findByCreatedDateBetween(fromDate, toDate);
+        } else if(fromDate != null)
+            ons = this.onlineServiceRepository.findByCreatedDateAfter(fromDate);
+        else if (toDate != null) {
+            ons = this.onlineServiceRepository.findByCreatedDateBefore(toDate);
+        } else
+            ons = this.onlineServiceRepository.findAll();
+
+        modelMapper.typeMap(OnlineService.class, OnlineServiceResponse.class).addMapping(OnlineService
+                -> OnlineService.getServiceCate().getServiceCateName(), OnlineServiceResponse::setServiceCateName);
+        Converter<ServiceStatus, String> enumConverter =
+                ctx -> ctx.getSource() == null ? null : ctx.getSource().name();
+        modelMapper.addConverter(enumConverter);
+
+        List<OnlineServiceResponse> rp = new ArrayList<>();
+        for (OnlineService on : ons) {
+            OnlineServiceResponse map = modelMapper.map(on, OnlineServiceResponse.class);
+            rp.add(map);
+        }
+        return rp;
     }
 }

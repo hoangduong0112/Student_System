@@ -1,16 +1,12 @@
 package com.hd.student.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "schedule_info")
 public class ScheduleInfo {
     @Id
@@ -33,7 +29,7 @@ public class ScheduleInfo {
     private StudyRoom studyRoom;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id")
-    private CourseDatum course;
+    @JoinColumn(name = "course_data_id")
+    private CourseDatum courseData;
 
 }

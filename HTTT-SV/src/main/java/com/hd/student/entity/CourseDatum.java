@@ -1,9 +1,7 @@
 package com.hd.student.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
@@ -13,8 +11,6 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "course_data")
 public class CourseDatum {
     @Id
@@ -23,8 +19,8 @@ public class CourseDatum {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sourset_id")
-    private Course sourset;
+    @JoinColumn(name = "course_id")
+    private Course course;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_id")
@@ -42,7 +38,7 @@ public class CourseDatum {
     @Column(name = "quantity")
     private Integer quantity;
 
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "courseData")
     private Set<ScheduleInfo> scheduleInfos = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "courseData")

@@ -15,5 +15,5 @@ public class OnlineServiceResponse {
     private LocalDate createdDate;
     private String status;
     private Boolean isShipped;
-    private Integer serviceCateId;
+    private String serviceCateName;
 }

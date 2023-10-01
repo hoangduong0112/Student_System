@@ -1,4 +1,4 @@
-package com.hd.student.serviceImpl;
+package com.hd.student.service.impl;
 
 import com.hd.student.entity.StudyRoom;
 import com.hd.student.exception.ResourceExistException;
@@ -25,13 +25,13 @@ public class StudyRoomServiceImpl implements StudyRoomService {
 
 
     @Override
-    public ApiResponse addStudyRoom(StudyRoomRequest rq) {
+    public StudyRoomResponse addStudyRoom(StudyRoomRequest rq) {
         StudyRoom studyRoom = modelMapper.map(rq, StudyRoom.class);
         if(studyRoomRepository.findByStudyRoomName(studyRoom.getStudyRoomName()).isPresent())
             throw new ResourceExistException("StudyRoomName", studyRoom.getStudyRoomName());
         studyRoomRepository.save(studyRoom);
 
-        return new ApiResponse("Thêm 1 phòng học thành công", true);
+        return modelMapper.map(studyRoom, StudyRoomResponse.class);
     }
 
     @Override
@@ -60,6 +60,14 @@ public class StudyRoomServiceImpl implements StudyRoomService {
     @Override
     public List<StudyRoomResponse> getAllRoom() {
         List<StudyRoom> studyRooms = this.studyRoomRepository.findAll();
+        return studyRooms.stream()
+                .map(studyRoom -> modelMapper.map(studyRoom, StudyRoomResponse.class))
+                .collect(Collectors.toList());
+
+    }
+    @Override
+    public List<StudyRoomResponse> getAllRoomAvailable() {
+        List<StudyRoom> studyRooms = this.studyRoomRepository.findAllByIsAvailableIsTrue();
         return studyRooms.stream()
                 .map(studyRoom -> modelMapper.map(studyRoom, StudyRoomResponse.class))
                 .collect(Collectors.toList());
