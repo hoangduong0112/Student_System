@@ -28,7 +28,7 @@ CREATE TABLE `course` (
   `credits_num` int DEFAULT NULL,
   `note` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`course_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -37,7 +37,7 @@ CREATE TABLE `course` (
 
 LOCK TABLES `course` WRITE;
 /*!40000 ALTER TABLE `course` DISABLE KEYS */;
-INSERT INTO `course` VALUES (1,'Lập trình Java',4,NULL),(2,'Kiểm thử phần mềm',3,NULL),(3,'Khai phá dữ liệu',3,NULL),(4,'Cơ sở dữ liệu phân tán',3,NULL),(5,'Luyện phát âm',3,NULL),(6,'Nghe - Nói 1',3,NULL),(7,'	Triết học Mác - Lênin',3,NULL);
+INSERT INTO `course` VALUES (1,'Lập trình Java',4,NULL),(2,'Kiểm thử phần mềm',3,NULL),(3,'Khai phá dữ liệu',3,NULL),(4,'Cơ sở dữ liệu phân tán',3,NULL),(5,'Luyện phát âm',3,NULL),(6,'Nghe - Nói 1',3,NULL),(7,'Triết học Mác - Lênin',3,NULL),(22,'Tiếng việt thực hành',12,'user');
 /*!40000 ALTER TABLE `course` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -50,16 +50,16 @@ DROP TABLE IF EXISTS `course_data`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `course_data` (
   `course_data_id` int NOT NULL AUTO_INCREMENT,
-  `sourset_id` int DEFAULT NULL,
+  `course_id` int DEFAULT NULL,
   `lecture_id` int DEFAULT NULL,
   `start_date` date DEFAULT NULL,
   `end_date` date DEFAULT NULL,
   `is_ended` tinyint(1) DEFAULT NULL,
   `quantity` int DEFAULT NULL,
   PRIMARY KEY (`course_data_id`),
-  KEY `FK_major_date_idx` (`sourset_id`),
+  KEY `FK_major_date_idx` (`course_id`),
   KEY `FK_major_data_idx` (`lecture_id`),
-  CONSTRAINT `FK_major_daa` FOREIGN KEY (`sourset_id`) REFERENCES `course` (`course_id`),
+  CONSTRAINT `FK_major_daa` FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`),
   CONSTRAINT `FK_major_data` FOREIGN KEY (`lecture_id`) REFERENCES `lecture` (`lecture_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -118,7 +118,7 @@ CREATE TABLE `diploma_copy` (
   UNIQUE KEY `online_service_id_UNIQUE` (`online_service_id`),
   KEY `FK_ServiceOnline1_idx` (`online_service_id`),
   CONSTRAINT `FK_ServiceOnline1` FOREIGN KEY (`online_service_id`) REFERENCES `online_service` (`online_service_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -127,7 +127,7 @@ CREATE TABLE `diploma_copy` (
 
 LOCK TABLES `diploma_copy` WRITE;
 /*!40000 ALTER TABLE `diploma_copy` DISABLE KEYS */;
-INSERT INTO `diploma_copy` VALUES (1,3,'0903182308','195712049@gmail.com',2023,'abc',1),(2,3,'0903182308','195712049@gmail.com',2023,'abc',2),(3,3,'0903182308','195712049@gmail.com',2023,'abc',3),(4,3,'0903182308','195712049@gmail.com',2023,'abc',8),(5,3,'0903182308','195712049@gmail.com',2021,'abc',9),(6,3,'0903182308','195712049@gmail.com',2021,'abc',11),(7,3,'0903182308','195712049@gmail.com',2021,'abc',18),(8,5,'0903201183',NULL,2023,'203',NULL);
+INSERT INTO `diploma_copy` VALUES (1,3,'0903182308','195712049@gmail.com',2023,'abc',1),(3,3,'0903182308','195712049@gmail.com',2023,'abc',3),(4,3,'0903182308','195712049@gmail.com',2023,'abc',8),(5,3,'0903182308','195712049@gmail.com',2021,'abc',9),(6,3,'0903182308','195712049@gmail.com',2021,'abc',11),(7,3,'0903182308','195712049@gmail.com',2021,'abc',18),(8,5,'0903201183',NULL,2023,'203',19),(9,3,'0903182308','195712049@gmail.com',2021,'333',20),(12,10,'0903182308','195712049@gmail.com',2021,'abc',21);
 /*!40000 ALTER TABLE `diploma_copy` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -203,7 +203,7 @@ CREATE TABLE `online_service` (
   KEY `FK_type_idx` (`service_cate_id`),
   CONSTRAINT `FK_type` FOREIGN KEY (`service_cate_id`) REFERENCES `service_cate` (`service_cate_id`),
   CONSTRAINT `FK_user_service` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -212,7 +212,7 @@ CREATE TABLE `online_service` (
 
 LOCK TABLES `online_service` WRITE;
 /*!40000 ALTER TABLE `online_service` DISABLE KEYS */;
-INSERT INTO `online_service` VALUES (1,2,'2023-09-24','None',0,3),(2,2,'2023-09-24','None',0,3),(3,2,'2023-09-24','None',0,3),(6,2,'2023-09-24','None',0,1),(7,2,'2023-09-24','None',0,1),(8,2,'2023-09-26','None',0,3),(9,2,'2023-09-28','None',0,3),(10,2,'2023-09-28','None',0,2),(11,1,'2023-09-29','None',0,3),(12,1,'2023-09-29','None',0,2),(13,1,'2023-09-29','None',0,2),(14,1,'2023-09-29','None',0,2),(15,1,'2023-09-29','None',0,1),(17,1,'2023-09-29','None',0,5),(18,1,'2023-09-29','None',0,3),(19,1,'2023-09-29','None',0,3);
+INSERT INTO `online_service` VALUES (1,2,'2023-09-24','ACCEPT',0,3),(3,2,'2023-09-24','ONPROGRESS',0,3),(7,2,'2023-09-24','ONPROGRESS',0,1),(8,2,'2023-09-26','ONPROGRESS',0,3),(9,2,'2023-09-28','ONPROGRESS',0,3),(11,1,'2023-09-29','ONPROGRESS',0,3),(12,1,'2023-09-29','ONPROGRESS',0,2),(13,1,'2023-09-29','ONPROGRESS',0,2),(14,1,'2023-09-29','ONPROGRESS',0,2),(15,1,'2023-09-29','ONPROGRESS',0,1),(17,1,'2023-09-29','ONPROGRESS',0,5),(18,1,'2023-09-29','ONPROGRESS',0,3),(19,1,'2023-09-29','ONPROGRESS',0,3),(20,1,'2023-09-29','ONPROGRESS',0,3),(21,1,'2023-09-29','ONPROGRESS',0,3),(22,1,'2023-09-29','ONPROGRESS',0,1),(23,1,'2023-09-29','ONPROGRESS',0,2),(24,1,'2023-09-29','ONPROGRESS',0,5),(25,1,'2023-09-29','ONPROGRESS',0,2);
 /*!40000 ALTER TABLE `online_service` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -229,12 +229,12 @@ CREATE TABLE `schedule_info` (
   `start_at` int DEFAULT NULL,
   `end_at` int DEFAULT NULL,
   `study_room` int DEFAULT NULL,
-  `course_id` int DEFAULT NULL,
+  `course_data_id` int DEFAULT NULL,
   PRIMARY KEY (`schedule_info_id`),
   KEY `FK_study_room_id_idx` (`study_room`),
-  KEY `FK_subject_data_idx` (`course_id`),
+  KEY `FK_subject_data_idx` (`course_data_id`),
   CONSTRAINT `FK_study_room_id` FOREIGN KEY (`study_room`) REFERENCES `study_room` (`study_room_id`),
-  CONSTRAINT `FK_subject_data` FOREIGN KEY (`course_id`) REFERENCES `course_data` (`course_data_id`)
+  CONSTRAINT `FK_subject_data` FOREIGN KEY (`course_data_id`) REFERENCES `course_data` (`course_data_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -348,7 +348,7 @@ CREATE TABLE `service_cate` (
   `is_available` tinyint(1) DEFAULT NULL,
   `description` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`service_cate_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -357,7 +357,7 @@ CREATE TABLE `service_cate` (
 
 LOCK TABLES `service_cate` WRITE;
 /*!40000 ALTER TABLE `service_cate` DISABLE KEYS */;
-INSERT INTO `service_cate` VALUES (1,'Cấp bảng điểm',20000,1,'Đăng ký cấp bảng điểm'),(2,'Cấp CNSV',50000,1,'Đăng ký chứng nhận sinh viên'),(3,'Cấp bản sao BTN',10000,1,'Đăng ký cấp bản sao Bằng tốt nghiệp'),(4,'Cấp chứng nhận tốt nghiệp tạm thời',100000,0,'Đăng ký cấp chứng nhận tốt nghiệp tạm thời'),(5,'Mở khóa mã số sinh viên',50000,1,'Mở khóa mã số sinh viên');
+INSERT INTO `service_cate` VALUES (1,'Cấp bảng điểm',20000,1,'Đăng ký cấp bảng điểm'),(2,'Cấp CNSV',50000,1,'Đăng ký chứng nhận sinh viên'),(3,'Cấp bản sao BTN',10000,1,'Đăng ký cấp bản sao Bằng tốt nghiệp'),(4,'Cấp chứng nhận tốt nghiệp tạm thời',100000,0,'Đăng ký cấp chứng nhận tốt nghiệp tạm thời'),(5,'Mở khóa mã số sinh viên',50000,1,'Mở khóa mã số sinh viên'),(9,'test add',100000,0,'test addd');
 /*!40000 ALTER TABLE `service_cate` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -379,7 +379,7 @@ CREATE TABLE `stud_certification` (
   PRIMARY KEY (`stud_certification_id`),
   UNIQUE KEY `online_service_UNIQUE` (`online_service`),
   CONSTRAINT `FK_online_service2` FOREIGN KEY (`online_service`) REFERENCES `online_service` (`online_service_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -388,7 +388,7 @@ CREATE TABLE `stud_certification` (
 
 LOCK TABLES `stud_certification` WRITE;
 /*!40000 ALTER TABLE `stud_certification` DISABLE KEYS */;
-INSERT INTO `stud_certification` VALUES (1,1,2,'0931867427','test','add',10),(2,1,2,'0931867427','test','add',12),(3,1,2,'0931867427','test','add23',13),(4,1,2,'0931867427','test','add14',14);
+INSERT INTO `stud_certification` VALUES (2,1,2,'0931867427','test','add',12),(3,1,2,'0931867427','test','add test update',13),(4,1,2,'0931867427','test','add test update',14),(5,1,2,'0931867427','test','add test update',23),(6,1,2,'0931867427','test','add test update',25);
 /*!40000 ALTER TABLE `stud_certification` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -404,7 +404,7 @@ CREATE TABLE `study_room` (
   `study_room_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `is_available` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`study_room_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='	';
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='	';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -413,7 +413,7 @@ CREATE TABLE `study_room` (
 
 LOCK TABLES `study_room` WRITE;
 /*!40000 ALTER TABLE `study_room` DISABLE KEYS */;
-INSERT INTO `study_room` VALUES (1,'NK.001',1),(2,'NK.002',1),(3,'NK.003',1),(4,'NK.004',1),(5,'NK.005',1),(6,'NK.006',1),(9,'NK.113',1);
+INSERT INTO `study_room` VALUES (1,'NK.001',1),(2,'NK.002',1),(3,'NK.003',1),(4,'NK.004',1),(5,'NK.005',1),(6,'NK.006',1),(9,'NK.113',0),(10,'NK.999',1);
 /*!40000 ALTER TABLE `study_room` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -440,7 +440,7 @@ CREATE TABLE `transcript` (
   CONSTRAINT `FK_fromSemeter` FOREIGN KEY (`from_semester`) REFERENCES `semester` (`semester_id`),
   CONSTRAINT `FK_online_service3` FOREIGN KEY (`online_service_id`) REFERENCES `online_service` (`online_service_id`),
   CONSTRAINT `FK_toSemeter` FOREIGN KEY (`to_semester`) REFERENCES `semester` (`semester_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Bảng điểm';
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Bảng điểm';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -449,7 +449,7 @@ CREATE TABLE `transcript` (
 
 LOCK TABLES `transcript` WRITE;
 /*!40000 ALTER TABLE `transcript` DISABLE KEYS */;
-INSERT INTO `transcript` VALUES (2,'Vietnamese',3,4,3,'090',1,6),(3,'Vietnamese',3,5,3,'090',1,7),(4,'Vietnamese',3,6,3,'090',1,15);
+INSERT INTO `transcript` VALUES (3,'Vietnamese',3,5,3,'090',1,7),(4,'Vietnamese',3,6,3,'090',1,15),(5,'Vietnamese',3,5,3,'333',1,22);
 /*!40000 ALTER TABLE `transcript` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -469,7 +469,7 @@ CREATE TABLE `unlock_student` (
   UNIQUE KEY `online_service_id_UNIQUE` (`online_service_id`),
   KEY `FK_online_service_4_idx` (`online_service_id`),
   CONSTRAINT `FK_online_service_4` FOREIGN KEY (`online_service_id`) REFERENCES `online_service` (`online_service_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='mở khóa mã số sv';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='mở khóa mã số sv';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -478,7 +478,7 @@ CREATE TABLE `unlock_student` (
 
 LOCK TABLES `unlock_student` WRITE;
 /*!40000 ALTER TABLE `unlock_student` DISABLE KEYS */;
-INSERT INTO `unlock_student` VALUES (1,'Đóng tiền học trễ hạn','test',17);
+INSERT INTO `unlock_student` VALUES (1,'Đóng tiền học trễ hạn','test',17),(2,'Đóng tiền học trễ hạn','test',24);
 /*!40000 ALTER TABLE `unlock_student` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -525,4 +525,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-09-29  5:36:53
+-- Dump completed on 2023-10-02 15:03:06
