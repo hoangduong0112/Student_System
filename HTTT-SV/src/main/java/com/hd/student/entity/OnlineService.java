@@ -1,9 +1,7 @@
 package com.hd.student.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
@@ -11,8 +9,6 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "online_service")
 public class OnlineService {
     @Id

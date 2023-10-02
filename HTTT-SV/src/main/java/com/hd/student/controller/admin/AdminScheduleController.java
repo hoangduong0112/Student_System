@@ -1,43 +1,41 @@
-package com.hd.student.controller;
+package com.hd.student.controller.admin;
 
-import com.hd.student.payload.response.ApiResponse;
 import com.hd.student.payload.request.StudyRoomRequest;
-import com.hd.student.payload.response.StudyRoomResponse;
+import com.hd.student.payload.response.ApiResponse;
 import com.hd.student.service.StudyRoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-@RequestMapping("/api/v1/admin/room")
-@RestController
 @CrossOrigin
-public class StudyRoomController {
-
+@RestController
+@RequestMapping("/api/admin/")
+public class AdminScheduleController {
     @Autowired
     private StudyRoomService studyRoomService;
-
-    @PostMapping("/add")
-    public ResponseEntity<ApiResponse> addNewStudyRoom(@RequestBody StudyRoomRequest rq){
-        ApiResponse rp = this.studyRoomService.addStudyRoom(rq);
-        return new ResponseEntity<ApiResponse>(rp, HttpStatus.OK);
+    @PostMapping("/room/add")
+    public ResponseEntity<?> addNewStudyRoom(@RequestBody StudyRoomRequest rq){
+        return new ResponseEntity<>(this.studyRoomService.addStudyRoom(rq), HttpStatus.OK);
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/room/update/{id}")
     public ResponseEntity<?> updateStudyRoom(@RequestBody StudyRoomRequest rq, @PathVariable int id){
         return new ResponseEntity<>(this.studyRoomService.updateStudyRoom(rq, id), HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/room/delete/{id}")
     public ResponseEntity<?> deleteStudyRoom(@PathVariable Integer id) {
         ApiResponse rp = studyRoomService.deleteStudyRoom(id);
-        return new ResponseEntity<ApiResponse>(rp, HttpStatus.OK);
+        return new ResponseEntity<>(rp, HttpStatus.OK);
     }
 
-    @GetMapping("/getall")
-    public ResponseEntity<List<StudyRoomResponse>> getAllRoom(){
+    @GetMapping("/room/getAll")
+    public ResponseEntity<?> getAllRoom(){
         return new ResponseEntity<>(this.studyRoomService.getAllRoom(), HttpStatus.OK);
+    }
+
+    @GetMapping("/room/getAvailableRoom")
+    public ResponseEntity<?> getAvailableRoom(){
+        return new ResponseEntity<>(this.studyRoomService.getAllRoomAvailable(), HttpStatus.OK);
     }
 }

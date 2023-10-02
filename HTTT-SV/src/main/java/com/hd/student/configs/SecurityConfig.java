@@ -1,6 +1,6 @@
 package com.hd.student.configs;
 
-import com.hd.student.serviceImpl.UserServiceImpl;
+import com.hd.student.service.impl.UserServiceImpl;
 import com.hd.student.security.AuthEntryPointJwt;
 import com.hd.student.security.AuthTokenFilter;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package com.hd.student.security;
 
-import com.hd.student.serviceImpl.UserServiceImpl;
+import com.hd.student.service.impl.UserServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

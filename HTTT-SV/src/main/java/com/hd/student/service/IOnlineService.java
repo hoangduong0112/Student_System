@@ -4,6 +4,7 @@ import com.hd.student.entity.OnlineService;
 import com.hd.student.payload.response.ApiResponse;
 import com.hd.student.payload.response.OnlineServiceResponse;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface IOnlineService {
@@ -24,4 +25,6 @@ public interface IOnlineService {
     OnlineServiceResponse cancelRequest(int id, int userId);
 
     ApiResponse deleteRequest(int id);
+
+    List<OnlineServiceResponse> searchRequest(LocalDate fromDate, LocalDate toDate);
 }

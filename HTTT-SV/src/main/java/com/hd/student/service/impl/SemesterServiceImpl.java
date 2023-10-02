@@ -1,4 +1,4 @@
-package com.hd.student.serviceImpl;
+package com.hd.student.service.impl;
 
 import com.hd.student.service.SemesterService;
 import org.springframework.stereotype.Service;
