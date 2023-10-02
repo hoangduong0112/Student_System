@@ -24,6 +24,6 @@ public class Lecture {
     private String lecturePhone;
 
     @OneToMany(mappedBy = "lecture")
-    private Set<CourseDatum> courseData = new LinkedHashSet<>();
+    private Set<CourseData> courseData = new LinkedHashSet<>();
 
 }

@@ -41,7 +41,7 @@ CREATE TABLE `course` (
 
 LOCK TABLES `course` WRITE;
 /*!40000 ALTER TABLE `course` DISABLE KEYS */;
-INSERT INTO `course` VALUES (1,'Lập trình Java',4,NULL),(2,'Kiểm thử phần mềm',3,NULL),(3,'Khai phá dữ liệu',3,NULL),(4,'Cơ sở dữ liệu phân tán',3,NULL),(5,'Luyện phát âm',3,NULL),(6,'Nghe - Nói 1',3,NULL),(7,'	Triết học Mác - Lênin',3,NULL);
+INSERT INTO `course` VALUES (1,'Lập trình Java',4,NULL),(2,'Kiểm thử phần mềm',3,NULL),(3,'Khai phá dữ liệu',3,NULL),(4,'Cơ sở dữ liệu phân tán',3,NULL),(5,'Luyện phát âm',3,NULL),(6,'Nghe - Nói 1',3,NULL),(7,'	Triết học Mác - Lênin',3,NULL),(8,'	Nguyên lý kế toán',3,NULL),(9,'	Marketing căn bản',3,NULL),(10,'Kinh tế vi mô',3,NULL),(11,'Kinh tế vĩ mô',3,NULL),(12,'Kinh tế phát triển',3,NULL),(13,'Thanh toán quôc tế',3,NULL),(14,'Xác suất thống kê',3,NULL),(15,'Đại số tuyến tính',3,NULL),(16,'Giải tích',3,NULL),(17,'Kinh tế chính trị Mác - Lênin',2,NULL),(18,'Chủ nghĩa xã hội khoa học',2,NULL),(19,'Lịch sử Đảng Cộng sản Việt Nam',2,NULL),(20,'Tư tưởng Hồ Chí Minh',2,NULL),(21,'Hệ thống hoạch định nguồn lực doanh nghiệp',3,NULL),(22,'Logic học',3,NULL),(23,'Quản trị học',3,NULL),(24,'Quản trị dự án',3,NULL),(25,'Khởi nghiệp',3,NULL),(26,'Pháp luật đại cương',3,NULL),(27,'Ứng dụng web',3,NULL),(28,'Cấu trúc dữ liệu và thuật giải',4,NULL),(29,'Hệ điều hành',3,NULL),(30,'Lập trình giao diện',3,NULL),(31,'Phân tích thiết kế hệ thống',4,NULL),(32,'Lập trình cơ sở dữ liệu',3,NULL),(33,'Đồ án ngành',4,NULL),(34,'Quản trị hệ cơ sở dữ liệu',3,NULL),(35,'Quản trị mạng',3,NULL),(36,'Lập trình trên thiết bị di động',3,NULL),(37,'Tiếng Nhật 1',3,NULL),(38,'Phát triển hệ thống thông tin quản lý',3,NULL),(39,'Con người và môi trường',3,NULL),(40,'Cơ sở ngôn ngữ học',3,NULL),(41,'Nghe - Nói 2',3,NULL),(42,'Nghe - Nói 3',3,NULL),(43,'Nghe - Nói 4',3,NULL),(44,'Nghe - Nói 5',3,NULL),(45,'Nghe - Nói 6',3,NULL),(46,'Đọc - Viết 1',3,NULL),(47,'Đọc - Viết 2',3,NULL),(48,'Đọc - Viết 3',3,NULL),(49,'Đọc - Viết 4',3,NULL),(50,'Tiếng Nhật 2',3,NULL),(51,'Tiếng Nhật 3',3,NULL),(52,'Tiếng Nhật 4',3,NULL),(53,'Tiếng Nhật 5',3,NULL),(54,'Phương pháp nghiên cứu khoa học',3,NULL),(55,'Tin học đại cương',3,NULL),(56,'Phân tích dữ liệu',3,NULL),(57,'Luật kinh doanh',3,NULL),(58,'Lập kế hoạch kinh doanh',3,NULL),(59,'Giao tiếp trong kinh doanh',3,NULL),(60,'Tâm lý học đại cương',3,NULL);
 /*!40000 ALTER TABLE `course` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -54,16 +54,16 @@ DROP TABLE IF EXISTS `course_data`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `course_data` (
   `course_data_id` int NOT NULL AUTO_INCREMENT,
-  `sourset_id` int DEFAULT NULL,
+  `course_id` int DEFAULT NULL,
   `lecture_id` int DEFAULT NULL,
   `start_date` date DEFAULT NULL,
   `end_date` date DEFAULT NULL,
   `is_ended` tinyint(1) DEFAULT NULL,
   `quantity` int DEFAULT NULL,
   PRIMARY KEY (`course_data_id`),
-  KEY `FK_major_date_idx` (`sourset_id`),
+  KEY `FK_major_date_idx` (`course_id`),
   KEY `FK_major_data_idx` (`lecture_id`),
-  CONSTRAINT `FK_major_daa` FOREIGN KEY (`sourset_id`) REFERENCES `course` (`course_id`),
+  CONSTRAINT `FK_major_daa` FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`),
   CONSTRAINT `FK_major_data` FOREIGN KEY (`lecture_id`) REFERENCES `lecture` (`lecture_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -156,7 +156,7 @@ CREATE TABLE `lecture` (
 
 LOCK TABLES `lecture` WRITE;
 /*!40000 ALTER TABLE `lecture` DISABLE KEYS */;
-INSERT INTO `lecture` VALUES (1,'Nguyễn Văn Bảy','11'),(2,'Phạm Chí Công','12'),(3,'Nguyễn Tiến Đạt','13'),(4,'Dương Hữu Thành','14'),(5,'Minh Khuê','15');
+INSERT INTO `lecture` VALUES (1,'Nguyễn Văn Bảy','11'),(2,'Phạm Chí Công','12'),(3,'Nguyễn Tiến Đạt','13'),(4,'Dương Hữu Thành','14'),(5,'Phan Trần Minh Khuê','15');
 /*!40000 ALTER TABLE `lecture` ENABLE KEYS */;
 UNLOCK TABLES;
 
