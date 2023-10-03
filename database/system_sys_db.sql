@@ -233,12 +233,12 @@ CREATE TABLE `schedule_info` (
   `start_at` int DEFAULT NULL,
   `end_at` int DEFAULT NULL,
   `study_room` int DEFAULT NULL,
-  `course_id` int DEFAULT NULL,
+  `course_data_id` int DEFAULT NULL,
   PRIMARY KEY (`schedule_info_id`),
   KEY `FK_study_room_id_idx` (`study_room`),
-  KEY `FK_subject_data_idx` (`course_id`),
+  KEY `FK_subject_data_idx` (`course_data_id`),
   CONSTRAINT `FK_study_room_id` FOREIGN KEY (`study_room`) REFERENCES `study_room` (`study_room_id`),
-  CONSTRAINT `FK_subject_data` FOREIGN KEY (`course_id`) REFERENCES `course_data` (`course_data_id`)
+  CONSTRAINT `FK_subject_data` FOREIGN KEY (`course_data_id`) REFERENCES `course_data` (`course_data_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
