@@ -1,22 +1,20 @@
 package com.hd.student.payload.response;
 
+import com.hd.student.entity.Weekdays;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SemesterDetailsResponse {
+public class ScheduleInfoResponse {
     private Integer id;
-    private Double score;
+    private String weekdays;
+    private Integer startAt;
+    private Integer endAt;
+    private String studyRoom;
 
-    private Boolean isPassed;
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private CourseDataResponse courseData;
 }

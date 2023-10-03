@@ -4,6 +4,9 @@ import com.hd.student.entity.CourseData;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
-public interface CourseDatumRepository extends JpaRepository<CourseData, Integer> {
+public interface CourseDataRepository extends JpaRepository<CourseData, Integer> {
+    List<CourseData> findByCourse_CourseNameContainsIgnoreCase(String courseName);
 }

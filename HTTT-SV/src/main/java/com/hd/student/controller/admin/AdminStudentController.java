@@ -16,7 +16,7 @@ import java.util.List;
 @CrossOrigin
 @RestController
 @RequestMapping("/api/admin/")
-public class AdminSemesterController {
+public class AdminStudentController {
 
     @Autowired
     private ModelMapper modelMapper;
@@ -28,8 +28,8 @@ public class AdminSemesterController {
     private DepartmentService departmentService;
 
     @GetMapping("/student")
-    public ResponseEntity<?> getAllUser(@PathVariable(required = false) int majorId){
-        List<UserInfoResponse> rp = this.userService.findAll(majorId);
+    public ResponseEntity<?> getAllUser(){
+        List<UserInfoResponse> rp = this.userService.findAll(0);
         return new ResponseEntity<>(rp, HttpStatus.OK);
     }
 
