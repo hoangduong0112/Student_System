@@ -27,6 +27,9 @@ public class Semester {
     @Column(name = "note", length = 45)
     private String note;
 
+    @Column(name = "is_finish")
+    private Boolean isFinish;
+
     @OneToMany(mappedBy = "semester")
     private Set<SemesterUser> semesterUsers = new LinkedHashSet<>();
 

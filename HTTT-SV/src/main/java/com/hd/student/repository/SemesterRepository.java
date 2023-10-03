@@ -8,4 +8,5 @@ import java.util.List;
 
 @Repository
 public interface SemesterRepository extends JpaRepository<Semester, Integer> {
+    boolean existsBySemesterNameIgnoreCase(String semesterName);
 }

@@ -1,5 +1,4 @@
-package com.hd.student.payload.request;
-
+package com.hd.student.payload.response;
 
 import com.hd.student.entity.Weekdays;
 import lombok.AllArgsConstructor;
@@ -11,10 +10,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ScheduleInfoRequest {
+public class ScheduleInfoResponse {
     private Integer id;
     private String weekdays;
     private Integer startAt;
     private Integer endAt;
-    private Integer studyRoom;
+    private String studyRoom;
+
 }

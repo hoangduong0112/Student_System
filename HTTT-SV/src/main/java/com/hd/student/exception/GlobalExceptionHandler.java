@@ -63,4 +63,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         return new ResponseEntity<>(details,HttpStatus.CONFLICT);
     }
+    @ExceptionHandler(EnumNotFoundException.class)
+    public ResponseEntity<ExceptionDetailResponse> enumNotFoundException(EnumNotFoundException ex,
+            WebRequest request){
+        ExceptionDetailResponse details = new ExceptionDetailResponse(
+                HttpStatus.BAD_REQUEST.value(), new Date(),
+                ex.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(details,HttpStatus.BAD_REQUEST);
+    }
 }

@@ -30,7 +30,8 @@ public class SemesterUser {
     private Semester semester;
 
     @Column(name = "status", length = 45)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private SemesterStatusEnum status;
 
     @OneToMany(mappedBy = "semesterUser")
     private Set<SemesterDetail> semesterDetails = new LinkedHashSet<>();
