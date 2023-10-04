@@ -26,7 +26,7 @@ public class SemesterController {
     private SemesterDetailService semesterDetailService;
 
 
-    @GetMapping("/user/semester")
+    @GetMapping("/semester")
     public ResponseEntity<?> getSemester(Authentication auth){
         UserPrincipal u = (UserPrincipal) auth.getPrincipal();
         List<SemesterUserResponse> smt = this.semesterUserService.getSemestersByUserId(u.getId());

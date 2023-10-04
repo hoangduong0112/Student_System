@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/api/v1/")
+@RequestMapping("/api/v1/course-data")
 @RestController
 @CrossOrigin
 public class ScheduleInfoController {
@@ -15,17 +15,17 @@ public class ScheduleInfoController {
     @Autowired
     private CourseDataService courseDataService;
 
-    @GetMapping("/course-data/getAll")
+    @GetMapping("/getAll")
     public ResponseEntity<?> getAllCourse(@RequestParam(required = false) String search){
         return new ResponseEntity<>(this.courseDataService.getAll(search), HttpStatus.OK);
     }
 
-    @PostMapping("/course-data/add")
+    @PostMapping("/add")
     public ResponseEntity<?> addCourseData(@RequestBody CourseDataRequest rq){
         return new ResponseEntity<>(this.courseDataService.addNewCourseData(rq), HttpStatus.OK);
     }
 
-    @PostMapping("/course-data/update/{id}")
+    @PostMapping("/update/{id}")
     public ResponseEntity<?> updateCourseData(@RequestBody CourseDataRequest rq, @PathVariable int id){
         return new ResponseEntity<>(this.courseDataService.updateCourseData(rq, id), HttpStatus.OK);
     }

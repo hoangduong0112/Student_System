@@ -34,7 +34,7 @@ const UserEdit = () => {
     const handleSubmit = async () => {
         this.preventDefault();
 
-        await fetch(`/api/v1/user/${user.id ? `/${user.id}` : ''}`, {
+        await fetch(`/api/v1/user${user.id ? `/${user.id}` : ''}`, {
             method: (user.id) ? 'PUT' : 'POST',
             headers: {
                 'X-XSRF-TOKEN': cookies['XSRF-TOKEN'],
@@ -86,7 +86,7 @@ const UserEdit = () => {
                     </FormGroup>
                     <FormGroup>
                         <Button color="primary" type="submit">Lưu</Button>{' '}
-                        <Button color="secondary" tag={Link} to="/api/v1/user">Hủy</Button>
+                        <Button color="secondary" tag={Link} to="/api/v1/user/info">Hủy</Button>
                     </FormGroup>
                 </Form>
             </Container>

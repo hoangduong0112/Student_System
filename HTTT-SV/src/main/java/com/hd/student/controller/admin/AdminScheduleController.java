@@ -9,32 +9,32 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 @RestController
-@RequestMapping("/api/admin/")
+@RequestMapping("/api/admin/room")
 public class AdminScheduleController {
     @Autowired
     private StudyRoomService studyRoomService;
-    @PostMapping("/room/add")
+    @PostMapping("/add")
     public ResponseEntity<?> addNewStudyRoom(@RequestBody StudyRoomRequest rq){
         return new ResponseEntity<>(this.studyRoomService.addStudyRoom(rq), HttpStatus.OK);
     }
 
-    @PutMapping("/room/update/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<?> updateStudyRoom(@RequestBody StudyRoomRequest rq, @PathVariable int id){
         return new ResponseEntity<>(this.studyRoomService.updateStudyRoom(rq, id), HttpStatus.OK);
     }
 
-    @DeleteMapping("/room/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteStudyRoom(@PathVariable Integer id) {
         ApiResponse rp = studyRoomService.deleteStudyRoom(id);
         return new ResponseEntity<>(rp, HttpStatus.OK);
     }
 
-    @GetMapping("/room/getAll")
+    @GetMapping("/getAll")
     public ResponseEntity<?> getAllRoom(){
         return new ResponseEntity<>(this.studyRoomService.getAllRoom(), HttpStatus.OK);
     }
 
-    @GetMapping("/room/getAvailableRoom")
+    @GetMapping("/getAvailableRoom")
     public ResponseEntity<?> getAvailableRoom(){
         return new ResponseEntity<>(this.studyRoomService.getAllRoomAvailable(), HttpStatus.OK);
     }
