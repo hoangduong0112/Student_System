@@ -32,6 +32,12 @@ public class LectureServiceImpl implements LectureService {
                 -> modelMapper.map(element, LectureResponse.class))
                 .collect(Collectors.toList());
     }
+    @Override
+    public LectureResponse getById(int id){
+        Lecture lecture = this.lectureRepository.findById(id).orElseThrow(
+                ()-> new ResourceNotFoundException("Không tìm thấy giảng viên","id", id));
+        return modelMapper.map(lecture, LectureResponse.class);
+    }
 
     @Override
     public LectureResponse addNewLecture(LectureRequest rq){

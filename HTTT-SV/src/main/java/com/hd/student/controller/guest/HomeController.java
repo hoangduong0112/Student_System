@@ -1,4 +1,4 @@
-package com.hd.student.controller;
+package com.hd.student.controller.guest;
 
 import com.hd.student.service.ServiceCateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,9 +6,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/api/v1")
+@RequestMapping("/api/guest")
 @RestController
 @CrossOrigin
+@RestControllerAdvice
 public class HomeController {
 
 
@@ -24,6 +25,5 @@ public class HomeController {
     public ResponseEntity<?> getServiceCateById(@PathVariable int id) {
         return new ResponseEntity<>(this.serviceCateService.getServiceById(id), HttpStatus.OK);
     }
-
 
 }

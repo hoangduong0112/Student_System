@@ -1,14 +1,15 @@
-package com.hd.student.controller;
+package com.hd.student.controller.guest;
 
+import com.hd.student.entity.User;
 import com.hd.student.payload.request.LoginRequest;
 import com.hd.student.payload.response.MessageResponse;
-import com.hd.student.entity.User;
-import com.hd.student.payload.response.UserInfoResponse;
+import com.hd.student.security.JwtUtils;
 import com.hd.student.security.UserPrincipal;
 import com.hd.student.service.UserService;
-import com.hd.student.security.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,9 +22,8 @@ import java.util.Map;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/api/v1/user")
-public class UserController {
-
+@RequestMapping("/api/auth/")
+public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
@@ -70,12 +70,4 @@ public class UserController {
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                 .body(responseBody);
     }
-    @GetMapping("/info")
-    public ResponseEntity<?> getInfo(Authentication authentication){
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        UserPrincipal u = (UserPrincipal) authentication.getPrincipal();
-        UserInfoResponse response = userDetailsService.getCurrentUserInfo(u.getUsername());
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
 }

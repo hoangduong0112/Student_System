@@ -27,7 +27,7 @@ public class StudyRoomServiceImpl implements StudyRoomService {
     @Override
     public StudyRoomResponse addStudyRoom(StudyRoomRequest rq) {
         StudyRoom studyRoom = modelMapper.map(rq, StudyRoom.class);
-        if(studyRoomRepository.findByStudyRoomName(studyRoom.getStudyRoomName()).isPresent())
+        if(studyRoomRepository.existsByStudyRoomNameIgnoreCase(rq.getStudyRoomName()))
             throw new ResourceExistException("StudyRoomName", studyRoom.getStudyRoomName());
         studyRoomRepository.save(studyRoom);
 
@@ -37,7 +37,7 @@ public class StudyRoomServiceImpl implements StudyRoomService {
     @Override
     public StudyRoomResponse updateStudyRoom(StudyRoomRequest rq, int id) {
         StudyRoom studyRoom = modelMapper.map(rq, StudyRoom.class);
-        if(studyRoomRepository.findByStudyRoomName(studyRoom.getStudyRoomName()).isPresent())
+        if(studyRoomRepository.existsByStudyRoomNameIgnoreCase(rq.getStudyRoomName()))
             throw new ResourceExistException("StudyRoomName", studyRoom.getStudyRoomName());
         else if(studyRoomRepository.findById(id).isEmpty())
             throw new ResourceNotFoundException("StudyRoom","id", id);

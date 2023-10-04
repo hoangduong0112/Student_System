@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -16,7 +17,6 @@ public class SemesterDetailsResponse {
     private Double score;
 
     private Boolean isPassed;
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private CourseDatumResponse courseData;
+
+    private Set<CourseDatumResponse> courseData;
 }

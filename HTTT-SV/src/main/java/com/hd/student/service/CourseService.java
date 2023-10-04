@@ -10,6 +10,7 @@ import java.util.Map;
 
 public interface CourseService {
     List<CourseResponse> getAllCourse(String search);
+    CourseResponse getCourseById(int id);
 
     CourseResponse addNewCourse(CourseRequest rq);
 

@@ -2,6 +2,7 @@ package com.hd.student.service.impl;
 
 import com.hd.student.entity.DiplomaCopy;
 import com.hd.student.entity.OnlineService;
+import com.hd.student.entity.ServiceStatus;
 import com.hd.student.exception.AccessDeniedException;
 import com.hd.student.exception.ResourceNotFoundException;
 import com.hd.student.payload.response.ApiResponse;
@@ -65,15 +66,19 @@ public class DiplomaCopyServiceImpl implements DiplomaCopyService {
     public ApiResponse updateMyDiplomaCopy(DiplomaCopyRequest rq,int id, int userId) {
         DiplomaCopy copy = this.diplomaCopyRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Không tìm thấy yêu cầu", "id", id));
         OnlineService on = copy.getOnlineService();
-        if(this.onlineService.checkAccess(on.getId(), userId)) {
-            copy = modelMapper.map(rq, DiplomaCopy.class);
+        if(on.getStatus() == ServiceStatus.ONPROGRESS) {
+            if (this.onlineService.checkAccess(on.getId(), userId)) {
+                copy = modelMapper.map(rq, DiplomaCopy.class);
 
-            copy.setId(id);
-            copy.setOnlineService(on);
-            this.diplomaCopyRepository.save(copy);
-            return new ApiResponse("Success", true);
+                copy.setId(id);
+                copy.setOnlineService(on);
+                this.diplomaCopyRepository.save(copy);
+                return new ApiResponse("Success", true);
+            }
+            else
+                throw new AccessDeniedException("Bạn không có quyền truy cập tài nguyên này");
         }
         else
-            throw new AccessDeniedException("Bạn không có quyền truy cập tài nguyên này");
+            return new ApiResponse("Không thể sửa yêu cầu", true);
     }
 }

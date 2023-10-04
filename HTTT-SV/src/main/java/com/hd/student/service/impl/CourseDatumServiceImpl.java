@@ -35,11 +35,11 @@ public class CourseDatumServiceImpl implements CourseDatumService {
     @Override
     public List<CourseDatumResponse> getAll(String name) {
         modelMapper.typeMap(CourseDatum.class, CourseDatumResponse.class).addMapping(
-                CourseDatum -> CourseDatum.getCourse().getId(), CourseDatumResponse::setCourseId
+                CourseDatum -> CourseDatum.getCourse(), CourseDatumResponse::setCourse
         );
 
         modelMapper.typeMap(CourseDatum.class, CourseDatumResponse.class).addMapping(
-                CourseDatum -> CourseDatum.getLecture().getId(), CourseDatumResponse::setLectureId
+                CourseDatum -> CourseDatum.getLecture(), CourseDatumResponse::setLecture
         );
 
         List<CourseDatum> datas;

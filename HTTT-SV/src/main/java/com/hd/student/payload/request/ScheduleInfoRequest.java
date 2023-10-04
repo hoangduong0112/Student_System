@@ -12,7 +12,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ScheduleInfoRequest {
-    private Integer id;
     private String weekdays;
     private Integer startAt;
     private Integer endAt;
