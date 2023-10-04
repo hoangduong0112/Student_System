@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './App.css';
+import '../styles/App.css';
 import AppNavbar from './AppNavbar';
 import { Link } from 'react-router-dom';
 import { Button, Container } from 'reactstrap';
@@ -29,7 +29,7 @@ const Home = () => {
     const signin = () => {
         let port = (window.location.port ? ':' + window.location.port : '');
         if (port === ':3000') port = ':8080';
-        window.location.href = `//${window.location.hostname}${port}/api/private`;
+        window.location.href = `//${window.location.hostname}${port}/api/v1/private`;
     }
 
     const signout = () => {
@@ -39,7 +39,7 @@ const Home = () => {
         })
             .then(res => res.json())
             .then(response => {
-                window.location.href = `${response.signoutUrl}?id_token_hint=${response.idToken}`
+                window.location.href = `${response.text()}?id_token_hint=${response.text()}`
                     + `&post_logout_redirect_uri=${window.location.origin}`;
             });
     }
@@ -50,7 +50,7 @@ const Home = () => {
 
     const button = authenticated ?
         <div>
-            <Button color="link"><Link to="/users">Admin</Link></Button>
+            <Button color="link"><Link to="/api/v1/admin">Admin</Link></Button>
             <br/>
             <Button color="link" onClick={signout}>Đăng xuất</Button>
         </div> :

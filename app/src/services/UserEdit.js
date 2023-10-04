@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Button, Container, Form, FormGroup, Input, Label } from 'reactstrap';
-import AppNavbar from './AppNavbar';
+import AppNavbar from '../components/AppNavbar';
 import { useCookies } from 'react-cookie';
 
 const UserEdit = () => {
@@ -34,7 +34,7 @@ const UserEdit = () => {
     const handleSubmit = async () => {
         this.preventDefault();
 
-        await fetch(`/api/user${user.id ? `/${user.id}` : ''}`, {
+        await fetch(`/api/v1/user/${user.id ? `/${user.id}` : ''}`, {
             method: (user.id) ? 'PUT' : 'POST',
             headers: {
                 'X-XSRF-TOKEN': cookies['XSRF-TOKEN'],
@@ -45,7 +45,7 @@ const UserEdit = () => {
             credentials: 'include'
         });
         setUser(initState);
-        nav('/users');
+        nav('/api/v1/home');
     }
 
     const title = <h2>{user.id ? 'Edit user' : 'Add user'}</h2>;
@@ -55,38 +55,38 @@ const UserEdit = () => {
                 {title}
                 <Form onSubmit={handleSubmit}>
                     <FormGroup>
-                        <Label for="fullName">Name</Label>
+                        <Label for="fullName">Họ và Tên</Label>
                         <Input type="text" name="fullName" id="fullName" value={user.fullName || ''}
                                onChange={handleChange} autoComplete="fullName"/>
                     </FormGroup>
                     <FormGroup>
-                        <Label for="email">Address</Label>
+                        <Label for="email">Email</Label>
                         <Input type="text" name="email" id="email" value={user.email || ''}
                                onChange={handleChange} autoComplete="email"/>
                     </FormGroup>
                     <FormGroup>
-                        <Label for="phone">City</Label>
+                        <Label for="phone">Số điện thoại</Label>
                         <Input type="text" name="phone" id="phone" value={user.phone || ''}
                                onChange={handleChange} autoComplete="phone"/>
                     </FormGroup>
                     <FormGroup>
-                        <Label for="gender">City</Label>
+                        <Label for="gender">Giới tính</Label>
                         <Input type="text" name="gender" id="gender" value={user.gender || ''}
                                onChange={handleChange} autoComplete="gender"/>
                     </FormGroup>
                     <FormGroup>
-                        <Label for="dayOfBirth">City</Label>
+                        <Label for="dayOfBirth">Ngày tháng năm sinh</Label>
                         <Input type="text" name="dayOfBirth" id="dayOfBirth" value={user.dayOfBirth || ''}
                                onChange={handleChange} autoComplete="dayOfBirth"/>
                     </FormGroup>
                     <FormGroup>
-                        <Label for="major">City</Label>
+                        <Label for="major">Ngành</Label>
                         <Input type="text" name="major" id="major" value={user.major || ''}
                                onChange={handleChange} autoComplete="major"/>
                     </FormGroup>
                     <FormGroup>
                         <Button color="primary" type="submit">Lưu</Button>{' '}
-                        <Button color="secondary" tag={Link} to="/users">Hủy</Button>
+                        <Button color="secondary" tag={Link} to="/api/v1/user">Hủy</Button>
                     </FormGroup>
                 </Form>
             </Container>

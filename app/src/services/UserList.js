@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Button, ButtonGroup, Container, Table } from 'reactstrap';
-import AppNavbar from './AppNavbar';
+import AppNavbar from '../components/AppNavbar';
 import { Link } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
 
 const UserList = () => {
-    const [users, setUsers] = useState([]);
+    const [users, setUsers] = useState(initState);
     const [loading, setLoading] = useState(false);
+    const [cookies] = useCookies(['XSRF-TOKEN']);
 
     useEffect(() => {
         setLoading(true);
@@ -21,8 +23,10 @@ const UserList = () => {
             method: 'DELETE',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
+                'Content-Type': 'application/json',
+                'X-XSRF-TOKEN':'cookies[XSRF-TOKEN]'
+            },
+            credentials:'include'
         }).then(() => {
             let updatedUsers = [...users].filter(i => i.id !== id);
             setUsers(updatedUsers);
@@ -40,7 +44,7 @@ const UserList = () => {
             <td style={{ whiteSpace: 'nowrap' }}>{user.major}</td>
             <td><ButtonGroup>
                 <Button size="sn" color="primary" tag={Link}
-                    to={"/users/" + user.id}>Edit</Button>
+                    to={"/api/v1/user/" + user.id}>Edit</Button>
                 <Button size="sn" color="danger" onClick={
                     () => remove(user.id)}>Delete</Button>
             </ButtonGroup></td>
@@ -51,7 +55,7 @@ const UserList = () => {
             <AppNavbar />
             <Container fluid>
                 <div className="float-end">
-                    <Button color="success" tag={Link} to="/new">Add user</Button>
+                    <Button color="success" tag={Link} to="/api/v1/user/new">Add user</Button>
                 </div>
                 <h3>Thông tin sinh viên</h3>
                 <Table className="mt-6">
