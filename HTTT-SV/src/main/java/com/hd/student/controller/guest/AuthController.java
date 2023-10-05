@@ -1,18 +1,19 @@
-package com.hd.student.controller;
+package com.hd.student.controller.guest;
 
+import com.hd.student.controller.user.UserController;
+import com.hd.student.entity.User;
 import com.hd.student.payload.request.LoginRequest;
 import com.hd.student.payload.response.MessageResponse;
-import com.hd.student.entity.User;
 import com.hd.student.repository.UserRepository;
-import com.hd.student.payload.response.UserInfoResponse;
+import com.hd.student.security.JwtUtils;
 import com.hd.student.security.UserPrincipal;
 import com.hd.student.service.UserService;
-import com.hd.student.security.JwtUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,18 +21,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/api/v1/user")
-public class UserController {
-
+@RequestMapping("/api/auth")
+public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
@@ -44,10 +40,6 @@ public class UserController {
     @Autowired
     private UserService userDetailsService;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    private final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
@@ -81,44 +73,5 @@ public class UserController {
 
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                 .body(responseBody);
-    }
-
-    @GetMapping("/info")
-    public ResponseEntity<?> getInfo(Authentication authentication){
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        UserPrincipal u = (UserPrincipal) authentication.getPrincipal();
-        UserInfoResponse response = userDetailsService.getCurrentUserInfo(u.getUsername());
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @GetMapping("/all_users")
-    List<User> getAllUsers() { return userRepository.findAll(); }
-
-    @GetMapping("/get/{id}")
-    ResponseEntity<?> getUser(@PathVariable int id) {
-        Optional<User> user = userRepository.findById(id);
-        return user.map(response -> ResponseEntity.ok().body(response))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-
-    @PostMapping("/new")
-    ResponseEntity<User> createUser(@Valid @RequestBody User user) throws URISyntaxException {
-        log.info("Request to create user: {}", user);
-        User u = userRepository.save(user);
-        return ResponseEntity.created(new URI("api/v1/user" + u.getId())).body((u));
-    }
-
-    @PutMapping("/update/{id}")
-    ResponseEntity<User> updateUser(@Valid @RequestBody User user) {
-        log.info("Request to update user: {}", user);
-        User u = userRepository.save(user);
-        return ResponseEntity.ok().body(u);
-    }
-
-    @DeleteMapping("/delete/{id}")
-    ResponseEntity<User> deleteUser(@PathVariable int id) {
-        log.info("Request to delete user: {}", id);
-        userRepository.deleteById(id);
-        return ResponseEntity.ok().build();
     }
 }

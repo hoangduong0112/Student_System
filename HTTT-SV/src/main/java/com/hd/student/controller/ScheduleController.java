@@ -23,10 +23,10 @@ public class ScheduleController {
     @Autowired
     private SemesterDetailService semesterDetailService;
 
-    @GetMapping("/user/semester")
-    public ResponseEntity<?> getSemester(Authentication auth){
-        UserPrincipal u = (UserPrincipal) auth.getPrincipal();
-        List<SemesterUserResponse> smt = this.semesterUserService.getSemestersByUserId(u.getId());
-        return new ResponseEntity<>(smt, HttpStatus.OK);
-    }
+//    @GetMapping("/user/semester")
+//    public ResponseEntity<?> getSemester(Authentication auth){
+//        UserPrincipal u = (UserPrincipal) auth.getPrincipal();
+//        List<SemesterUserResponse> smt = this.semesterUserService.getSemestersByUserId(u.getId());
+//        return new ResponseEntity<>(smt, HttpStatus.OK);
+//    }
 }

@@ -14,7 +14,7 @@ const Home = () => {
 
     useEffect(() => {
         setLoading(true);
-        fetch('api/v1/user', { credentials: 'include' }) // <.>
+        fetch('api/user', { credentials: 'include' }) // <.>
             .then(response => response.text())
             .then(body => {
                 if (body === '') setAuthenticated(false);
@@ -29,11 +29,11 @@ const Home = () => {
     const signin = () => {
         let port = (window.location.port ? ':' + window.location.port : '');
         if (port === ':3000') port = ':8080';
-        window.location.href = `//${window.location.hostname}${port}/api/v1/private`;
+        window.location.href = `//${window.location.hostname}${port}/api/private`;
     }
 
     const signout = () => {
-        fetch('/api/v1/user/signout', {
+        fetch('/api/user/signout', {
             method: 'POST', credentials: 'include',
             headers: { 'X-XSRF-TOKEN': cookies['XSRF-TOKEN'] } // <.>
         })
@@ -50,7 +50,7 @@ const Home = () => {
 
     const button = authenticated ?
         <div>
-            <Button color="link"><Link to="/api/v1/admin">Admin</Link></Button>
+            <Button color="link"><Link to="/api/admin">Admin</Link></Button>
             <br/>
             <Button color="link" onClick={signout}>Đăng xuất</Button>
         </div> :

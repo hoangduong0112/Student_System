@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { Button, ButtonGroup, Container, Table } from 'reactstrap';
-import AppNavbar from '../components/AppNavbar';
-import { Link } from 'react-router-dom';
-import { useCookies } from 'react-cookie';
+import React, {useEffect, useRef, useState} from 'react';
+import { Container, Table } from 'reactstrap';
+import AppNavbar from '../app/AppNavbar';
 
 const CourseList = () => {
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    let courseList;
+    const courseList =useRef([]);
     useEffect(() => {
         setLoading(true);
         fetch('api/v1/course')
@@ -17,7 +15,7 @@ const CourseList = () => {
                 setCourses(data);
                 setLoading(false);
             })
-        courseList = courses.map(course => {
+        courseList.current = courses.map(course => {
             return <tr key={course.id}>
                 <td style={{ whiteSpace: 'nowrap' }}>{course.courseName}</td>
                 <td style={{ whiteSpace: 'nowrap' }}>{course.creditsNum}</td>
@@ -38,7 +36,7 @@ const CourseList = () => {
                         <th width="30%">Số tín chỉ</th>
                         <th width="40%">Ghi chú</th>
                     </tr></thead>
-                    <tbody>{courseList}</tbody>
+                    <tbody>{courseList.current}</tbody>
                 </Table>
             </Container>
         </div>

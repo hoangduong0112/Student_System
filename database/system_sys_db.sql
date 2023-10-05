@@ -262,6 +262,7 @@ DROP TABLE IF EXISTS `semester`;
 CREATE TABLE `semester` (
   `semester_id` int NOT NULL AUTO_INCREMENT,
   `semester_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `is_finish` tinyint(1) DEFAULT NULL,
   `note` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`semester_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -273,7 +274,7 @@ CREATE TABLE `semester` (
 
 LOCK TABLES `semester` WRITE;
 /*!40000 ALTER TABLE `semester` DISABLE KEYS */;
-INSERT INTO `semester` VALUES (2,'HK1-2021','Học Kỳ 1 - 2021'),(3,'HK2-2021','Học Kỳ 2 - 2021'),(4,'HK3-2021','Học Kỳ 3 - 2023'),(5,'HK1-2022','Học Kỳ 1 - 2022'),(6,'HK2-2022','Học Kỳ 2 - 2022'),(7,'HK3-2022','Học Kỳ 3 - 2022'),(8,'HK1-2023','Học Kỳ 1 - 2023'),(9,'HK2-2023','Học Kỳ 2 - 2023'),(10,'HK3-2023','Học Kỳ 3 - 2023'),(11,'HK1-2024','Học Kỳ 1 - 2024');
+INSERT INTO `semester` VALUES (2,'HK1-2021',NULL,'Học Kỳ 1 - 2021'),(3,'HK2-2021',NULL,'Học Kỳ 2 - 2021'),(4,'HK3-2021',NULL,'Học Kỳ 3 - 2023'),(5,'HK1-2022',NULL,'Học Kỳ 1 - 2022'),(6,'HK2-2022',NULL,'Học Kỳ 2 - 2022'),(7,'HK3-2022',NULL,'Học Kỳ 3 - 2022'),(8,'HK1-2023',NULL,'Học Kỳ 1 - 2023'),(9,'HK2-2023',NULL,'Học Kỳ 2 - 2023'),(10,'HK3-2023',NULL,'Học Kỳ 3 - 2023'),(11,'HK1-2024',NULL,'Học Kỳ 1 - 2024');
 /*!40000 ALTER TABLE `semester` ENABLE KEYS */;
 UNLOCK TABLES;
 

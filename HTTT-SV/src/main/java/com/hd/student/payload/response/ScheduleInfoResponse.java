@@ -15,6 +15,6 @@ public class ScheduleInfoResponse {
     private String weekdays;
     private Integer startAt;
     private Integer endAt;
-    private String studyRoom;
+    private StudyRoomResponse studyRoom;
 
 }

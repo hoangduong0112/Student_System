@@ -5,17 +5,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Set;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SemesterDetailsResponse {
-    private Integer id;
-    private Double score;
-
-    private Boolean isPassed;
-
-    private Set<CourseDataResponse> courseData;
+public class PaymentResponse {
+    private String email;
+    private double price;
+    private String createOn;
+    private String status;
+    private String message;
+    private String url;
 }

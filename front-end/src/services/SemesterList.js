@@ -1,24 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import { Button, ButtonGroup, Container, Table } from 'reactstrap';
-import AppNavbar from '../components/AppNavbar';
-import { Link } from 'react-router-dom';
-import { useCookies } from 'react-cookie';
+import React, {useEffect, useRef, useState} from 'react';
+import { Container, Table } from 'reactstrap';
+import AppNavbar from '../app/AppNavbar';
 
 const SemesterList = () => {
     const [semesters, setSemesters] = useState([]);
     const [loading, setLoading] = useState(false);
-    let semesterList;
+    const semesterList = useRef([]);
 
     useEffect(() => {
         setLoading(true);
-        fetch('api/v1/user/semester')
+        fetch('api/user/semester')
             .then(res => res.json())
             .then(data => {
                 setSemesters(data);
                 setLoading(false);
             })
 
-        semesterList = semesters.map(semester => {
+        semesterList.current = semesters.map(semester => {
             return <tr key={semester.id}>
                 <td style={{ whiteSpace: 'nowrap' }}>{semester.semesterName}</td>
                 <td style={{ whiteSpace: 'nowrap' }}>{semester.note}</td>
@@ -40,7 +38,7 @@ const SemesterList = () => {
                         <th width="30%">Ghi chú</th>
                         <th width="30%">Trạng thái</th>
                     </tr></thead>
-                    <tbody>{semesterList}</tbody>
+                    <tbody>{semesterList.current}</tbody>
                 </Table>
             </Container>
         </div>

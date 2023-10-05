@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface LectureService {
     List<LectureResponse> getAll();
+    LectureResponse getById(int id);
     LectureResponse addNewLecture(LectureRequest rq);
     LectureResponse updateLecture(LectureRequest rq, int id);
 

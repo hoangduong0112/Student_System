@@ -24,9 +24,15 @@ public class AdminCourseController {
     @Autowired
     private LectureService lectureService;
 
+    //Quan ly môn học
     @GetMapping("/course/getAll")
     public ResponseEntity<?> getAllCourse(@RequestParam(required = false) String search){
         return new ResponseEntity<>(this.courseService.getAllCourse(search), HttpStatus.OK);
+    }
+
+    @GetMapping("/course/{id}")
+    public ResponseEntity<?> getCourseById(@PathVariable int id){
+        return new ResponseEntity<>(this.courseService.getCourseById(id), HttpStatus.OK);
     }
 
     @PostMapping("/course/add")
@@ -43,6 +49,7 @@ public class AdminCourseController {
         return new ResponseEntity<>(this.courseService.deleteCourse(id), HttpStatus.OK);
     }
 
+    //Quản lý thông tin giảng viên
     @GetMapping("/lecture/getAll")
     public ResponseEntity<?> getAll(){
         return new ResponseEntity<>(this.lectureService.getAll(), HttpStatus.OK);
@@ -61,6 +68,5 @@ public class AdminCourseController {
     public ResponseEntity<?>  deleteLecture(@PathVariable int id){
         return new ResponseEntity<>(this.lectureService.deleteLecture(id), HttpStatus.OK);
     }
-
 
 }

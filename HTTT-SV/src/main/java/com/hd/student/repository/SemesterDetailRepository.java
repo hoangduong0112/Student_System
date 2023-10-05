@@ -8,4 +8,5 @@ import java.util.List;
 
 @Repository
 public interface SemesterDetailRepository extends JpaRepository<SemesterDetail, Integer> {
+    List<SemesterDetail> findBySemesterUser_Id(Integer id);
 }

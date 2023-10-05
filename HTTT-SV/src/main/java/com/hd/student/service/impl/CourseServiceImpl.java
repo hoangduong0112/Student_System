@@ -43,6 +43,12 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    public CourseResponse getCourseById(int id) {
+        return this.courseRepository.findById(id).map((element) -> modelMapper.map(element, CourseResponse.class))
+                .orElseThrow(()-> new ResourceNotFoundException("Không tìm thấy môn học", "id", id));
+    }
+
+    @Override
     public CourseResponse addNewCourse(CourseRequest rq) {
         if (!this.checkExistName(rq.getCourseName())) {
             Course course = modelMapper.map(rq, Course.class);

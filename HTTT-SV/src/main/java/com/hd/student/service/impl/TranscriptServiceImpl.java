@@ -1,6 +1,7 @@
 package com.hd.student.service.impl;
 
 import com.hd.student.entity.OnlineService;
+import com.hd.student.entity.ServiceStatus;
 import com.hd.student.entity.Transcript;
 import com.hd.student.exception.ResourceNotFoundException;
 import com.hd.student.payload.response.ApiResponse;
@@ -65,22 +66,23 @@ public class TranscriptServiceImpl implements TranscriptService {
     public ApiResponse updateMyTranscript(TranscriptRequest rq, int id, int userId){
         Transcript tr = this.transcriptRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Không tìm thấy yêu cầu cấp bảng điểm", "id", id));
         OnlineService on = tr.getOnlineService();
-        if(onlineService.checkAccess(on.getId(), userId)){
-            modelMapper.typeMap(TranscriptRequest.class, Transcript.class).addMapping(TranscriptRequest::getFromSemester, Transcript::setFromSemester);
-            modelMapper.typeMap(TranscriptRequest.class, Transcript.class).addMapping(TranscriptRequest::getToSemester, Transcript::setToSemester);
-            tr = modelMapper.map(rq, Transcript.class);
-            tr.setId(id);
-            tr.setOnlineService(on);
-            tr.setFromSemester(semesterRepository.findById(rq.getFromSemester()).orElseThrow(() -> new ResourceNotFoundException("Semester","Id",rq.getFromSemester())));
-            tr.setToSemester(semesterRepository.findById(rq.getToSemester()).orElseThrow(() -> new ResourceNotFoundException("Semester","Id",rq.getToSemester())));
+        if (on.getStatus() == ServiceStatus.ONPROGRESS) {
+            if (onlineService.checkAccess(on.getId(), userId)) {
+                modelMapper.typeMap(TranscriptRequest.class, Transcript.class).addMapping(TranscriptRequest::getFromSemester, Transcript::setFromSemester);
+                modelMapper.typeMap(TranscriptRequest.class, Transcript.class).addMapping(TranscriptRequest::getToSemester, Transcript::setToSemester);
+                tr = modelMapper.map(rq, Transcript.class);
+                tr.setId(id);
+                tr.setOnlineService(on);
+                tr.setFromSemester(semesterRepository.findById(rq.getFromSemester()).orElseThrow(() -> new ResourceNotFoundException("Semester", "Id", rq.getFromSemester())));
+                tr.setToSemester(semesterRepository.findById(rq.getToSemester()).orElseThrow(() -> new ResourceNotFoundException("Semester", "Id", rq.getToSemester())));
 
-            this.transcriptRepository.save(tr);
+                this.transcriptRepository.save(tr);
 
-            return new ApiResponse("Success", true);
+                return new ApiResponse("Thành công", true);
+            }
+            else return new ApiResponse("Bạn không có quyền làm điều này", false);
         }
-
-        else
-            return new ApiResponse("Fails", false);
+        return new ApiResponse("Yêu cầu đã kết thúc", false);
 
     }
 

@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Button, Container, Form, FormGroup, Input, Label } from 'reactstrap';
-import AppNavbar from '../components/AppNavbar';
+import AppNavbar from '../app/AppNavbar';
 import { useCookies } from 'react-cookie';
 
 const UserEdit = () => {
     const initState = {
         fullName: '',
         email: '',
-        phone: '',
-        gender: '',
-        dayOfBirth: '',
-        major: ''
+        department_name: '',
+        major_name: ''
     };
     const [user, setUser] = useState(initState);
     const nav = useNavigate();
@@ -20,21 +18,21 @@ const UserEdit = () => {
 
     useEffect(() => {
         if (id !== 'new') {
-            fetch(`/api/v1/user/${id}`)
+            fetch(`/api/user/info/${id}`)
                 .then(res => res.json())
                 .then(data => setUser(data));
         }
     }, [id, setUser]);
 
-    const handleChange = () => {
+    const handleChange = (event) => {
         const { name, value } = this.target
         setUser({ ...user, [name]: value })
     }
 
-    const handleSubmit = async () => {
-        this.preventDefault();
+    const handleSubmit = async (event) => {
+        event.preventDefault();
 
-        await fetch(`/api/v1/user${user.id ? `/${user.id}` : ''}`, {
+        await fetch(`/api/user/info${user.id ? `/${user.id}` : ''}`, {
             method: (user.id) ? 'PUT' : 'POST',
             headers: {
                 'X-XSRF-TOKEN': cookies['XSRF-TOKEN'],
@@ -45,7 +43,7 @@ const UserEdit = () => {
             credentials: 'include'
         });
         setUser(initState);
-        nav('/api/v1/home');
+        nav('/');
     }
 
     const title = <h2>{user.id ? 'Edit user' : 'Add user'}</h2>;
@@ -65,28 +63,18 @@ const UserEdit = () => {
                                onChange={handleChange} autoComplete="email"/>
                     </FormGroup>
                     <FormGroup>
-                        <Label for="phone">Số điện thoại</Label>
-                        <Input type="text" name="phone" id="phone" value={user.phone || ''}
-                               onChange={handleChange} autoComplete="phone"/>
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="gender">Giới tính</Label>
-                        <Input type="text" name="gender" id="gender" value={user.gender || ''}
-                               onChange={handleChange} autoComplete="gender"/>
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="dayOfBirth">Ngày tháng năm sinh</Label>
-                        <Input type="text" name="dayOfBirth" id="dayOfBirth" value={user.dayOfBirth || ''}
-                               onChange={handleChange} autoComplete="dayOfBirth"/>
+                        <Label for="dayOfBirth">Khoa</Label>
+                        <Input type="text" name="department_name" id="department_name" value={user.department_name || ''}
+                               onChange={handleChange} autoComplete="department_name"/>
                     </FormGroup>
                     <FormGroup>
                         <Label for="major">Ngành</Label>
-                        <Input type="text" name="major" id="major" value={user.major || ''}
-                               onChange={handleChange} autoComplete="major"/>
+                        <Input type="text" name="major_name" id="major_name" value={user.major_name || ''}
+                               onChange={handleChange} autoComplete="major_name"/>
                     </FormGroup>
                     <FormGroup>
                         <Button color="primary" type="submit">Lưu</Button>{' '}
-                        <Button color="secondary" tag={Link} to="/api/v1/user/info">Hủy</Button>
+                        <Button color="secondary" tag={Link} to="/api/user/info">Hủy</Button>
                     </FormGroup>
                 </Form>
             </Container>

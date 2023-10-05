@@ -1,5 +1,6 @@
 package com.hd.student.payload.response;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,8 +20,8 @@ public class CourseDataResponse {
     private Boolean isEnded;
     private Integer quantity;
 
-    private Integer courseId;
-    private Integer lectureId;
+    private CourseResponse course;
+    private LectureResponse lecture;
     private Set<ScheduleInfoResponse> scheduleInfos;
 
 }

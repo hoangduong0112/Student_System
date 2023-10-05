@@ -71,4 +71,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 ex.getMessage(), request.getDescription(false));
         return new ResponseEntity<>(details,HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ExceptionDetailResponse> conflictException(ConflictException ex,
+                                                                         WebRequest request){
+        ExceptionDetailResponse details = new ExceptionDetailResponse(
+                HttpStatus.CONFLICT.value(), new Date(),
+                ex.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(details,HttpStatus.CONFLICT);
+    }
 }

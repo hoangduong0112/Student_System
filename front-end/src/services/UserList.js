@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import { Button, ButtonGroup, Container, Table } from 'reactstrap';
-import AppNavbar from '../components/AppNavbar';
+import AppNavbar from '../app/AppNavbar';
 import { Link } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 const UserList = () => {
@@ -9,7 +9,7 @@ const UserList = () => {
     const [cookies] = useCookies(['XSRF-TOKEN']);
 
     const remove = async (id) => {
-        await fetch(`/api/v1/user/delete/${id}`, {
+        await fetch(`/api/user/delete/${id}`, {
             method: 'DELETE',
             headers: {
                 'Accept': 'application/json',
@@ -23,26 +23,24 @@ const UserList = () => {
         });
     }
 
-    let userList;
+    const userList = useRef([]);
     useEffect(() => {
-        fetch("/api/v1/user/all_users")
+        fetch("/api/user/info")
             .then(res => res.json())
             .then(data => {
                 setUsers(data);
                 setLoading(false);
             })
 
-        userList = users.map(user => (
+        userList.current = users.map(user => (
             <tr key={user.id}>
-                <td style={{ whiteSpace: 'nowrap' }}>{user.name}</td>
+                <td style={{ whiteSpace: 'nowrap' }}>{user.fullName}</td>
                 <td style={{ whiteSpace: 'nowrap' }}>{user.email}</td>
-                <td style={{ whiteSpace: 'nowrap' }}>{user.phone}</td>
-                <td style={{ whiteSpace: 'nowrap' }}>{user.gender}</td>
-                <td style={{ whiteSpace: 'nowrap' }}>{user.dayOfBirth}</td>
-                <td style={{ whiteSpace: 'nowrap' }}>{user.major}</td>
+                <td style={{ whiteSpace: 'nowrap' }}>{user.department_name}</td>
+                <td style={{ whiteSpace: 'nowrap' }}>{user.major_name}</td>
                 <td><ButtonGroup>
                     <Button size="sn" color="primary" tag={Link}
-                            to={"/api/v1/user/update/" + user.id}>Edit</Button>
+                            to={"/api/user/update/" + user.id}>Edit</Button>
                     <Button size="sn" color="danger" onClick={
                         () => remove(user.id)}>Delete</Button>
                 </ButtonGroup></td>
@@ -56,23 +54,21 @@ const UserList = () => {
             <AppNavbar />
             <Container fluid>
                 <div className="float-end">
-                    <Button color="success" tag={Link} to="/api/v1/user/new">
+                    <Button color="success" tag={Link} to="/api/user/new">
                         Add user
                     </Button>
                 </div>
                 <h3>Thông tin sinh viên</h3>
-                <Table className="mt-6">
+                <Table className="mt-4">
                     <thead>
                     <tr>
-                        <th width="20%">Họ và Tên</th>
-                        <th width="20%">Email</th>
-                        <th>Số điện thoại</th>
-                        <th>Giới tính</th>
-                        <th>Ngày sinh</th>
-                        <th width="20%">Ngành</th>
+                        <th width="25%">Họ và Tên</th>
+                        <th width="25%">Email</th>
+                        <th width="25%">Khoa</th>
+                        <th width="25%">Ngành</th>
                     </tr>
                     </thead>
-                    <tbody>{userList}</tbody>
+                    <tbody>{userList.current}</tbody>
                 </Table>
             </Container>
         </div>
