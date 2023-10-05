@@ -11,10 +11,9 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PaymentResponse {
-    private String id;
-    private double price;
-    private Date createdDate;
+public class TransactionPaymentResponse {
     private String status;
-    private String url;
+    private String title;
+    private Date date;
+    private double amount;
 }

@@ -18,12 +18,9 @@ public interface IOnlineService {
 
     List<OnlineServiceResponse> findAll();
 
-    OnlineServiceResponse acceptRequest(int id);
+    OnlineServiceResponse finishService(int id);
 
-    OnlineServiceResponse denyRequest(int id);
-
-    OnlineServiceResponse cancelRequest(int id, int userId);
-
+    OnlineServiceResponse cancelService(int serviceId, int userId);
     ApiResponse deleteRequest(int id);
 
     List<OnlineServiceResponse> searchRequest(LocalDate fromDate, LocalDate toDate);

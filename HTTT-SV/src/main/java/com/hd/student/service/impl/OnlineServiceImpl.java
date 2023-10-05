@@ -46,7 +46,7 @@ public class OnlineServiceImpl implements IOnlineService {
         OnlineService onlineService = new OnlineService();
 
         onlineService.setUser(user);
-        onlineService.setStatus(ServiceStatus.ONPROGRESS);
+        onlineService.setStatus(ServiceStatus.PENDING);
         onlineService.setCreatedDate(LocalDate.now());
         onlineService.setIsShipped(false);
         onlineService.setServiceCate(sc);
@@ -123,12 +123,13 @@ public class OnlineServiceImpl implements IOnlineService {
         return rp;
     }
 
+
     @Override
-    public OnlineServiceResponse acceptRequest(int id){
+    public OnlineServiceResponse finishService(int id){
         OnlineService on = this.onlineServiceRepository.findById(id).orElseThrow(
                 ()-> new ResourceNotFoundException("Không tìm thấy yêu cầu", "id", id)
         );
-        on.setStatus(ServiceStatus.ACCEPT);
+        on.setStatus(ServiceStatus.FINISH);
         this.onlineServiceRepository.save(on);
         modelMapper.typeMap(OnlineService.class, OnlineServiceResponse.class).addMapping(OnlineService
                 -> OnlineService.getServiceCate().getServiceCateName(), OnlineServiceResponse::setServiceCateName);
@@ -140,23 +141,7 @@ public class OnlineServiceImpl implements IOnlineService {
     }
 
     @Override
-    public OnlineServiceResponse denyRequest(int id){
-        OnlineService on = this.onlineServiceRepository.findById(id).orElseThrow(
-                ()-> new ResourceNotFoundException("Không tìm thấy yêu cầu", "id", id)
-        );
-        on.setStatus(ServiceStatus.DENY);
-        this.onlineServiceRepository.save(on);
-        modelMapper.typeMap(OnlineService.class, OnlineServiceResponse.class).addMapping(OnlineService
-                -> OnlineService.getServiceCate().getServiceCateName(), OnlineServiceResponse::setServiceCateName);
-        Converter<ServiceStatus, String> enumConverter =
-                ctx -> ctx.getSource() == null ? null : ctx.getSource().name();
-        modelMapper.addConverter(enumConverter);
-        return modelMapper.map(on, OnlineServiceResponse.class);
-
-    }
-
-    @Override
-    public OnlineServiceResponse cancelRequest(int serviceId, int userId){
+    public OnlineServiceResponse cancelService(int serviceId, int userId){
         OnlineService on = this.findByIdWithAccess(serviceId, userId);
         on.setStatus(ServiceStatus.CANCEL);
         this.onlineServiceRepository.save(on);

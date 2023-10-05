@@ -66,7 +66,7 @@ public class TranscriptServiceImpl implements TranscriptService {
     public ApiResponse updateMyTranscript(TranscriptRequest rq, int id, int userId){
         Transcript tr = this.transcriptRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Không tìm thấy yêu cầu cấp bảng điểm", "id", id));
         OnlineService on = tr.getOnlineService();
-        if (on.getStatus() == ServiceStatus.ONPROGRESS) {
+        if (on.getStatus() == ServiceStatus.PENDING) {
             if (onlineService.checkAccess(on.getId(), userId)) {
                 modelMapper.typeMap(TranscriptRequest.class, Transcript.class).addMapping(TranscriptRequest::getFromSemester, Transcript::setFromSemester);
                 modelMapper.typeMap(TranscriptRequest.class, Transcript.class).addMapping(TranscriptRequest::getToSemester, Transcript::setToSemester);
