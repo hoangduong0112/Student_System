@@ -50,4 +50,7 @@ public class OnlineService {
     @OneToOne(mappedBy = "onlineService")
     private UnlockStudent unlockStudent;
 
+    @OneToOne(mappedBy = "serviceOnline")
+    private Payment payment;
+
 }

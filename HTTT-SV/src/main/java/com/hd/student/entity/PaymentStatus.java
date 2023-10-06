@@ -1,7 +1,9 @@
 package com.hd.student.entity;
 
-public enum ServiceStatus {
+public enum PaymentStatus {
     PENDING,
-    FINISH,
+    COMPLETED,
+
     CANCEL
+
 }

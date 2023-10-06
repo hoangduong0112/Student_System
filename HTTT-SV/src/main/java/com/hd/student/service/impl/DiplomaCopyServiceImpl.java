@@ -66,7 +66,7 @@ public class DiplomaCopyServiceImpl implements DiplomaCopyService {
     public ApiResponse updateMyDiplomaCopy(DiplomaCopyRequest rq,int id, int userId) {
         DiplomaCopy copy = this.diplomaCopyRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Không tìm thấy yêu cầu", "id", id));
         OnlineService on = copy.getOnlineService();
-        if(on.getStatus() == ServiceStatus.ONPROGRESS) {
+        if(on.getStatus() == ServiceStatus.PENDING) {
             if (this.onlineService.checkAccess(on.getId(), userId)) {
                 copy = modelMapper.map(rq, DiplomaCopy.class);
 

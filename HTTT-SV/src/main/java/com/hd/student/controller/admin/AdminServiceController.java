@@ -36,15 +36,11 @@ public class AdminServiceController {
         return new ResponseEntity<>(rp, HttpStatus.OK);
     }
 
-    @PutMapping("/service/{id}/accepted")
+    @PutMapping("/service/{id}/finish")
     public ResponseEntity<?> acceptTheRequest(@PathVariable int id){
-        return new ResponseEntity<>(this.onlineService.acceptRequest(id), HttpStatus.OK);
+        return new ResponseEntity<>(this.onlineService.finishService(id), HttpStatus.OK);
     }
 
-    @PutMapping("/service/{id}/deny")
-    public ResponseEntity<?> denyTheRequest(@PathVariable int id){
-        return new ResponseEntity<>(this.onlineService.denyRequest(id), HttpStatus.OK);
-    }
 
     @DeleteMapping("/service/delete/{id}")
     public ResponseEntity<?> deleteRequest(@PathVariable int id){
