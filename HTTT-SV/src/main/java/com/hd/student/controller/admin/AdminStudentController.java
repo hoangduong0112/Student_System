@@ -27,6 +27,7 @@ public class AdminStudentController {
     @Autowired
     private DepartmentService departmentService;
 
+    //QL sinh vien co ban
     @GetMapping("/student")
     public ResponseEntity<?> getAllUser(){
         List<UserInfoResponse> rp = this.userService.findAll(0);

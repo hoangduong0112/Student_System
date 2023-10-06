@@ -9,6 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface StudyRoomRepository extends JpaRepository<StudyRoom, Integer> {
+    List<StudyRoom> findByIsAvailable(Boolean isAvailable);
     boolean existsByStudyRoomNameIgnoreCase(String studyRoomName);
-    List<StudyRoom> findAllByIsAvailableIsTrue();
 }

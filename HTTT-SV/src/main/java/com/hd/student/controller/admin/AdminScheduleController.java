@@ -33,14 +33,9 @@ public class AdminScheduleController {
         return new ResponseEntity<>(rp, HttpStatus.OK);
     }
 
-    @GetMapping("/room/getAll")
-    public ResponseEntity<?> getAllRoom(){
-        return new ResponseEntity<>(this.studyRoomService.getAllRoom(), HttpStatus.OK);
-    }
-
-    @GetMapping("/room/getAvailableRoom")
-    public ResponseEntity<?> getAvailableRoom(){
-        return new ResponseEntity<>(this.studyRoomService.getAllRoomAvailable(), HttpStatus.OK);
+    @GetMapping("/room/get")
+    public ResponseEntity<?> getAllRoom(@RequestParam(name = "isAvailable", required = false) Boolean isAvailable){
+        return new ResponseEntity<>(this.studyRoomService.getAllRoom(isAvailable), HttpStatus.OK);
     }
 
     @GetMapping("/schedule-info/getall")

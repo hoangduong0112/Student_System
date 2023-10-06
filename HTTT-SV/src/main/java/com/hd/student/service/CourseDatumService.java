@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface CourseDatumService {
     List<CourseDatumResponse> getAll(String name);
-    ApiResponse addNewCourseData(CourseDatumRequest rq);
+    CourseDatumResponse addNewCourseData(CourseDatumRequest rq);
 
-    ApiResponse updateCourseData(CourseDatumRequest rq, int id);
+    CourseDatumResponse updateCourseData(CourseDatumRequest rq, int id);
 }
