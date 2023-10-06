@@ -1,32 +1,58 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../styles/App.css';
 import Home from './Home';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import UserEdit from '../services/UserEdit';
-import UserList from "../services/UserList";
-import SemesterList from "../services/SemesterList";
-import CateList from "../services/CateList";
-import CourseList from "../services/CourseList";
-import TranscriptList from "../services/TranscriptList";
-import Diploma from "../services/DiplomaList";
-import StudCertificate from "../services/StudCertificateList";
-import UnlockStud from "../services/UnlockStudList";
+import {BrowserRouter as Router, Navigate, Route, Routes} from 'react-router-dom';
+import UserEdit from '../components/UserEdit';
+import UserList from "../components/UserList";
+import SemesterList from "../components/SemesterList";
+import CateList from "../components/CateList";
+import CourseList from "../components/CourseList";
+import TranscriptList from "../components/TranscriptList";
+import StudCertificate from "../components/StudCertificateList";
+import UnlockStud from "../components/UnlockStudList";
+import DiplomaList from "../components/DiplomaList";
+import Login from "./Login";
 
 const App = () => {
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    const handleLogin = () => {
+        // Dang nhap thanh cong thi isAuthenticated la true
+        setIsAuthenticated(true);
+    };
+
+    const handleLogout = () => {
+        // Dang xuat thanh cong thi isAuthenticated la false
+        setIsAuthenticated(false);
+    };
+
     return (
-        <Router><Routes>
-            <Route exact path="/" element={<Home/>}/>
-            <Route path="/api/user/info" exact={true} element={<UserList/>}/>
-            <Route path="/api/user/:id" exact={true} element={<UserEdit/>}/>
-            <Route path="/api/guest/service-cate" exact={true} element={<CateList/>}/>
-            <Route path="/api/user/service/transcript" exact={true} element={<TranscriptList/>}/>
-            <Route path="/api/user/service/diploma" exact={true} element={<Diploma/>}/>
-            <Route path="/api/user/service/stud-certificate" exact={true} element={<StudCertificate/>}/>
-            <Route path="/api/user/service/unlock-stud" exact={true} element={<UnlockStud/>}/>
-            <Route path="/api/user/semester" exact={true} element={<SemesterList/>}/>
-            <Route path="/api/v1/course" exact={true} element={<CourseList/>}/>
-        </Routes></Router>
-    )
+        <div>
+            <Router>
+                <div className="container">
+                    <Routes>
+                        <Route path="/" element={isAuthenticated ?
+                            <Navigate to="/api/home" /> : <Navigate to="/api/auth/signin" />} />
+
+                        <Route path="/api/auth/signin" element={<Login onLogin={handleLogin} />} />
+
+                        {setIsAuthenticated ? ( <>
+                                <Route path="/api/home" element={<Home onLogout={handleLogout} />} />
+                                <Route path="/api/user/info" element={<UserList />} />
+                                <Route path="/api/user/:id" element={<UserEdit />} />
+                                <Route path="/api/guest/service-cate" element={<CateList />} />
+                                <Route path="/api/user/service/transcript/:id" element={<TranscriptList />} />
+                                <Route path="/api/user/service/diploma/:id" element={<DiplomaList />} />
+                                <Route path="/api/user/service/stud-certificate/:id" element={<StudCertificate />} />
+                                <Route path="/api/user/service/unlock-stud/:id" element={<UnlockStud />} />
+                                <Route path="/api/user/semester" element={<SemesterList />} />
+                                <Route path="/api/v1/course" element={<CourseList />} />
+                            </> ) : null}
+                    </Routes>
+                </div>
+            </Router>
+        </div>
+    );
 }
 
 export default App;

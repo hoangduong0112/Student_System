@@ -49,7 +49,7 @@ const Home = () => {
         <p>Vui lòng đăng nhập!</p>;
 
     const button = authenticated ?
-        <div>
+        <div className='App'>
             <Button color="link"><Link to="/api/admin">Admin</Link></Button>
             <br/>
             <Button color="link" onClick={signout}>Đăng xuất</Button>
