@@ -1,5 +1,6 @@
 package com.hd.student.payload.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hd.student.entity.Course;
 import com.hd.student.entity.Lecture;
 import com.hd.student.entity.ScheduleInfo;
@@ -19,9 +20,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CourseDatumRequest {
-    @DateTimeFormat(pattern = "dd-MM-yyyy")
     private LocalDate startDate;
-    @DateTimeFormat(pattern = "dd-MM-yyyy")
     private LocalDate endDate;
 
     private Integer courseId;

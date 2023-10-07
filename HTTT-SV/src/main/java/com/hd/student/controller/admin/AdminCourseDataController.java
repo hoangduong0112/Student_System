@@ -1,6 +1,7 @@
 package com.hd.student.controller.admin;
 
 import com.hd.student.payload.request.CourseDatumRequest;
+import com.hd.student.payload.response.ApiResponse;
 import com.hd.student.service.CourseDatumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,5 +29,15 @@ public class AdminCourseDataController {
     @PutMapping ("/course-data/update/{id}")
     public ResponseEntity<?> updateCourseData(@RequestBody CourseDatumRequest rq,@PathVariable int id){
         return new ResponseEntity<>(this.courseDatumService.updateCourseData(rq, id), HttpStatus.OK);
+    }
+
+    @GetMapping("/course-date/remove-schedule/{id}")
+    public ResponseEntity<?> removeSchedule(@PathVariable int id){
+        return new ResponseEntity<>(this.courseDatumService.removeScheduleInfoByCourseDataId(id), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/course-date/delete/{id}")
+    public ResponseEntity<?> deleteCourseData(@PathVariable int id){
+        return new ResponseEntity<>(this.courseDatumService.deleteCourseData(id), HttpStatus.OK);
     }
 }
