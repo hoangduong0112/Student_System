@@ -1,4 +1,4 @@
-package com.hd.student.controller;
+package com.hd.student.controller.admin;
 
 import com.hd.student.payload.request.CourseDataRequest;
 import com.hd.student.service.CourseDataService;
@@ -7,10 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/api/v1/course-data")
-@RestController
 @CrossOrigin(origins = "http://localhost:3000")
-public class ScheduleInfoController {
+@RestController
+@RequestMapping("/api/admin/course-data")
+public class AdminCourseDataController {
 
     @Autowired
     private CourseDataService courseDataService;
@@ -25,7 +25,7 @@ public class ScheduleInfoController {
         return new ResponseEntity<>(this.courseDataService.addNewCourseData(rq), HttpStatus.OK);
     }
 
-    @PostMapping("/update/{id}")
+    @PutMapping ("/update/{id}")
     public ResponseEntity<?> updateCourseData(@RequestBody CourseDataRequest rq, @PathVariable int id){
         return new ResponseEntity<>(this.courseDataService.updateCourseData(rq, id), HttpStatus.OK);
     }

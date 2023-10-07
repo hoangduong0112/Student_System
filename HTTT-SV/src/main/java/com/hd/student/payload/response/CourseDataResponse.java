@@ -18,7 +18,6 @@ public class CourseDataResponse {
     private LocalDate startDate;
     private LocalDate endDate;
     private Boolean isEnded;
-    private Integer quantity;
 
     private CourseResponse course;
     private LectureResponse lecture;

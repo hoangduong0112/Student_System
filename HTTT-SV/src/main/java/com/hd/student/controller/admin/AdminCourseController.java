@@ -25,7 +25,7 @@ public class AdminCourseController {
     private LectureService lectureService;
 
     //Quan ly môn học
-    @GetMapping("/course/getAll")
+    @GetMapping("/course/getall")
     public ResponseEntity<?> getAllCourse(@RequestParam(required = false) String search){
         return new ResponseEntity<>(this.courseService.getAllCourse(search), HttpStatus.OK);
     }

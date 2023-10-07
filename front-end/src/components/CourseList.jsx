@@ -30,7 +30,6 @@ class CourseList extends Component {
                                 <th>Số tín chỉ</th>
                                 <th>Ngày bắt đầu</th>
                                 <th>Ngày kết thúc</th>
-                                <th>Số lượng sinh viên</th>
                                 <th>Giảng viên</th>
                             </tr></thead>
                             <tbody>
@@ -40,7 +39,6 @@ class CourseList extends Component {
                                     <td>{course.course.creditsNum}</td>
                                     <td>{course.startDate}</td>
                                     <td>{course.endDate}</td>
-                                    <td>{course.quantity}</td>
                                     <td>{course.lecture.lectureName}</td>
                                 </tr>
                             ))}

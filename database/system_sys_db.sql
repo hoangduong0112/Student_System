@@ -59,7 +59,6 @@ CREATE TABLE `course_data` (
   `start_date` date DEFAULT NULL,
   `end_date` date DEFAULT NULL,
   `is_ended` tinyint(1) DEFAULT NULL,
-  `quantity` int DEFAULT NULL,
   PRIMARY KEY (`course_data_id`),
   KEY `FK_major_date_idx` (`course_id`),
   KEY `FK_major_data_idx` (`lecture_id`),
@@ -74,7 +73,7 @@ CREATE TABLE `course_data` (
 
 LOCK TABLES `course_data` WRITE;
 /*!40000 ALTER TABLE `course_data` DISABLE KEYS */;
-INSERT INTO `course_data` VALUES (1,1,4,'2023-02-13','2023-04-23',NULL,75),(2,2,5,'2023-02-13','2023-04-23',NULL,75),(3,3,1,'2023-06-15','2023-08-23',NULL,75),(4,4,3,'2023-06-13','2023-08-29',NULL,75),(5,3,4,NULL,NULL,0,64),(7,4,1,NULL,NULL,0,64);
+INSERT INTO `course_data` VALUES (1,1,4,'2023-02-13','2023-04-23',NULL),(2,2,5,'2023-02-13','2023-04-23',NULL),(3,3,1,'2023-06-15','2023-08-23',NULL),(4,4,3,'2023-06-13','2023-08-29',NULL),(5,3,4,NULL,NULL,0),(7,4,1,NULL,NULL,0);
 /*!40000 ALTER TABLE `course_data` ENABLE KEYS */;
 UNLOCK TABLES;
 
