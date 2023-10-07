@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { Container, Table } from 'reactstrap';
-import AppNavbar from '../app/AppNavbar';
+import Header from '../app/Header';
 import CateService from "../services/CateService";
 
 class CateList extends Component {
@@ -21,7 +21,7 @@ class CateList extends Component {
     render() {
         return (
             <div>
-                <AppNavbar />
+                <Header />
                 <Container fluid>
                     <h3 className ="App">Đăng ký dịch vụ</h3>
                     <div className="row">

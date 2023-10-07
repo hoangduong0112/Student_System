@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/App.css';
-import AppNavbar from './AppNavbar';
+import Header from './Header';
 import { Link } from 'react-router-dom';
 import { Button, Container } from 'reactstrap';
 import { useCookies } from 'react-cookie';
@@ -59,7 +59,7 @@ const Home = () => {
     if (loading) return <p>Loading...</p>;
     return (
         <div>
-            <AppNavbar/>
+            <Header/>
             <Container fluid>
                 {message}
                 {button}

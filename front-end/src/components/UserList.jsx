@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { Container, Table } from 'reactstrap';
-import AppNavbar from '../app/AppNavbar';
+import Header from '../app/Header';
 import UserService from "../services/UserService";
 
 class UserList extends Component {
@@ -21,7 +21,7 @@ class UserList extends Component {
     render() {
         return (
             <div>
-                <AppNavbar />
+                <Header />
                 <Container fluid>
                     <h3 className ="App">Thông tin sinh viên</h3>
                     <div className="row">

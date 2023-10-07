@@ -2,17 +2,16 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './styles/index.css';
 import App from './app/App';
-import reportWebVitals from './reportWebVitals';
+import reportWebVitals from './tests/reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { CookiesProvider } from 'react-cookie';
+import {BrowserRouter} from "react-router-dom";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-      <CookiesProvider>
+      <BrowserRouter>
           <App />
-
-      </CookiesProvider>
+      </BrowserRouter>
   </React.StrictMode>
 );
 

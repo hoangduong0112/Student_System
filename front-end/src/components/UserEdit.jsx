@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Button, Container, Form, FormGroup, Input, Label } from 'reactstrap';
-import AppNavbar from '../app/AppNavbar';
+import Header from '../app/Header';
 import { useCookies } from 'react-cookie';
 
 const UserEdit = () => {
@@ -48,7 +48,7 @@ const UserEdit = () => {
 
     const title = <h2>{user.id ? 'Edit user' : 'Add user'}</h2>;
     return (<div>
-            <AppNavbar/>
+            <Header/>
             <Container>
                 {title}
                 <Form onSubmit={handleSubmit}>

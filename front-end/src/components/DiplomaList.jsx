@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { Container, Table } from 'reactstrap';
-import AppNavbar from '../app/AppNavbar';
+import Header from '../app/Header';
 import DiplomaService from "../services/DiplomaService";
 
 class DiplomaList extends Component {
@@ -20,7 +20,7 @@ class DiplomaList extends Component {
     render() {
         return (
             <div>
-                <AppNavbar />
+                <Header />
                 <Container fluid>
                     <h3 className ="App">Cấp bằng tốt nghiệp</h3>
                     <div className="row">

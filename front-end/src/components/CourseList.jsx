@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { Container, Table } from 'reactstrap';
-import AppNavbar from '../app/AppNavbar';
+import Header from '../app/Header';
 import CourseService from "../services/CourseService";
 
 class CourseList extends Component {
@@ -20,7 +20,7 @@ class CourseList extends Component {
     render() {
         return (
             <div>
-                <AppNavbar />
+                <Header />
                 <Container fluid>
                     <h3 className ="App">Môn học đã đăng ký</h3>
                     <div className="row">

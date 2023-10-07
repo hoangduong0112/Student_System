@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { Container, Table } from 'reactstrap';
-import AppNavbar from '../app/AppNavbar';
+import Header from '../app/Header';
 import StudCertificateService from "../services/StudCertificateService";
 
 class StudCertificateList extends Component {
@@ -20,7 +20,7 @@ class StudCertificateList extends Component {
     render() {
         return (
             <div>
-                <AppNavbar />
+                <Header />
                 <Container fluid>
                     <h3 className ="App">Chứng nhận sinh viên</h3>
                     <div className="row">
