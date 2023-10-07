@@ -32,6 +32,6 @@ public class ScheduleInfo {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_data_id")
-    private CourseDatum courseData;
+    private CourseData courseData;
 
 }

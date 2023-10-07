@@ -14,7 +14,7 @@ import java.text.ParseException;
 
 @RestController
 @RequestMapping("/api/payment")
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:3000")
 public class PaymentController {
 
 

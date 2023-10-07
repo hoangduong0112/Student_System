@@ -1,11 +1,15 @@
 package com.hd.student.controller.guest;
 
+import com.hd.student.controller.user.UserController;
 import com.hd.student.entity.User;
 import com.hd.student.payload.request.LoginRequest;
 import com.hd.student.payload.response.MessageResponse;
+import com.hd.student.repository.UserRepository;
 import com.hd.student.security.JwtUtils;
 import com.hd.student.security.UserPrincipal;
 import com.hd.student.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -21,8 +25,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@CrossOrigin
-@RequestMapping("/api/auth/")
+@CrossOrigin(origins = "http://localhost:3000")
+@RequestMapping("/api/auth")
 public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -43,13 +47,13 @@ public class AuthController {
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
+
     @PostMapping(value = "/signout")
     public ResponseEntity<?> logoutUser() {
         ResponseCookie cookie = jwtUtils.getCleanJwtCookie();
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .body(new MessageResponse("You've been signed out!"));
     }
-
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest rq) {

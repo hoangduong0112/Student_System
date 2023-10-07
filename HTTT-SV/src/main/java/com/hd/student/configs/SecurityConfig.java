@@ -3,6 +3,8 @@ package com.hd.student.configs;
 import com.hd.student.service.impl.UserServiceImpl;
 import com.hd.student.security.AuthEntryPointJwt;
 import com.hd.student.security.AuthTokenFilter;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.savedrequest.SimpleSavedRequest;
 
 @Configuration
 @EnableWebSecurity
@@ -46,15 +52,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable)
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                )
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/**").permitAll()
-                        .anyRequest().permitAll()
-                );
+            .csrf(AbstractHttpConfigurer::disable)
+            .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+            .sessionManagement(session -> session
+                    .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+            )
+            .authorizeHttpRequests(authorize -> authorize
+                    .requestMatchers("/api/**").permitAll()
+                    .anyRequest().permitAll()
+            );
 
         http.authenticationProvider(authenticationProvider());
 
@@ -88,5 +94,21 @@ public class SecurityConfig {
     @Bean
     ModelMapper modelMapper() {
         return new ModelMapper();
+    }
+
+    @Bean
+    public RequestCache refererRequestCache() {
+        return new HttpSessionRequestCache() {
+            @Override
+            public void saveRequest(HttpServletRequest request, HttpServletResponse response) {
+                String referrer = request.getHeader("referer");
+                if (referrer == null) {
+                    referrer = request.getRequestURL().toString();
+                }
+                request.getSession().setAttribute("SPRING_SECURITY_SAVED_REQUEST",
+                        new SimpleSavedRequest(referrer));
+
+            }
+        };
     }
 }
