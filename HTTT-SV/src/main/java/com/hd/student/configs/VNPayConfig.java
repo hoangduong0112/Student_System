@@ -13,7 +13,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 public class VNPayConfig {
     public static String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    public static String vnp_ReturnUrl = "http://localhost:8080/api/payment/payment-status";
+    public static String vnp_ReturnUrl = "http://localhost:8080/payment-status";
     public static String vnp_TmnCode = "R198E2XX";
     public static String vnp_HashSecret = "NKHUXWHRQCBZIXJMNEAMJJHHLBNXZQMK";
     public static String vnp_apiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";

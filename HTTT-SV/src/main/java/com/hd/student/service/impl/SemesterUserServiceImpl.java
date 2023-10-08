@@ -4,10 +4,11 @@ import com.hd.student.entity.Semester;
 import com.hd.student.entity.SemesterStatusEnum;
 import com.hd.student.entity.SemesterUser;
 import com.hd.student.entity.User;
+import com.hd.student.exception.DataIntegrityViolationException;
 import com.hd.student.exception.ResourceExistException;
 import com.hd.student.exception.ResourceNotFoundException;
-import com.hd.student.payload.request.SemesterUserRequest;
 import com.hd.student.payload.response.ApiResponse;
+import com.hd.student.payload.response.SemesterResponse;
 import com.hd.student.payload.response.SemesterUserResponse;
 import com.hd.student.repository.SemesterRepository;
 import com.hd.student.repository.SemesterUserRepository;
@@ -39,7 +40,7 @@ public class SemesterUserServiceImpl implements SemesterUserService {
     public List<SemesterUserResponse> getSemestersByUserId(Integer userId) {
         List<SemesterUser> semesterUsers = semesterUserRepository.findAllByUserId(userId);
         modelMapper.typeMap(SemesterUser.class, SemesterUserResponse.class).addMapping(
-                SemesterUser -> SemesterUser.getSemester().getSemesterName(), SemesterUserResponse::setSemesterName
+                SemesterUser ->SemesterUser.getSemester().getSemesterName(),SemesterUserResponse::setSemesterName
         );
         Converter<SemesterStatusEnum, String> statusConverter = ctx ->
                 ctx.getSource() == null ? null : ctx.getSource().name();
@@ -55,31 +56,44 @@ public class SemesterUserServiceImpl implements SemesterUserService {
     }
 
     @Override
-    public ApiResponse addSemesterForUser(SemesterUserRequest rq) {
-        Semester semester = this.semesterRepository.findById(rq.getSemesterId()).orElseThrow(
-                () -> new ResourceNotFoundException("Không tìm thấy học kỳ", "học kỳ", rq.getSemesterId())
+    public ApiResponse addSemesterForUser(int userId, int semesterId){
+        User user = this.userRepository.findById(userId).orElseThrow(
+                ()->new ResourceNotFoundException("Không tìm thấy user", null,null)
+        );
+        Semester semester = this.semesterRepository.findById(semesterId).orElseThrow(
+                ()->new ResourceNotFoundException("Không tìm thấy học kỳ", null,null)
+        );
+        if(semester.getIsFinish()){
+            if(semesterUserRepository.existsBySemester_IdAndUser_Id(semesterId, userId)){
+                SemesterUser su = new SemesterUser();
+                su.setUser(user);
+                su.setSemester(semester);
+                su.setStatus(SemesterStatusEnum.WAITING);
+                this.semesterUserRepository.save(su);
+                return new ApiResponse("Thêm thành công", true);
+            }else throw new ResourceExistException("Đã có sẵn dữ liệu", semester.getSemesterName());
+        }
+        else return new ApiResponse("Học kỳ đã kết thúc", false);
+    }
+    @Override
+    public ApiResponse deleteSemesterUser(int userId, int semesterId){
+        User user = this.userRepository.findById(userId).orElseThrow(
+                ()->new ResourceNotFoundException("Không tìm thấy user", null,null)
+        );
+        Semester semester = this.semesterRepository.findById(semesterId).orElseThrow(
+                ()->new ResourceNotFoundException("Không tìm thấy học kỳ", null,null)
         );
         try {
-            for (int id : rq.getUserId()) {
-                if (!semester.getIsFinish()) {
-                    if (semesterUserRepository.existsBySemester_IdAndUser_Id(semester.getId(), id)) {
-                        User user = userRepository.findById(id).orElse(null);
-                        SemesterUser su = new SemesterUser();
-
-                        su.setUser(user);
-                        su.setSemester(semester);
-                        su.setStatus(SemesterStatusEnum.WAITING);
-                        this.semesterUserRepository.save(su);
-                    }
-                }
-                else throw new ResourceExistException("Hoc kỳ đã kết thúc", semester.getSemesterName());
+            SemesterUser su = semesterUserRepository.findByUser_IdAndSemester_Id(userId, semesterId);
+            if(su.getSemesterDetails() != null){
+                throw new DataIntegrityViolationException("Tồn tại môn học, không thể xóa");
+            } else {
+                this.semesterUserRepository.deleteById(su.getId());
+                return new ApiResponse("Xóa thành công", true);
             }
-        }catch (ResourceExistException e) {
-            throw e;
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Lỗi không xác định");
+        }catch (RuntimeException ex){
+            throw new RuntimeException("Có lỗi xảy ra");
         }
-        return new ApiResponse("Thêm thành công ", true);
     }
 }
 

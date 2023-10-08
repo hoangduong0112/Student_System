@@ -13,7 +13,6 @@ public interface SemesterService {
     SemesterResponse addSemester(SemesterRequest rq);
     SemesterResponse updateSemester(SemesterRequest rq, int id);
 
-    List<SemesterResponse> getAvailable();
     public ApiResponse deleteSemesterById(int id);
     SemesterResponse setFinish(int id);
 }

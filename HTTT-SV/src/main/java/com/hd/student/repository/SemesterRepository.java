@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface SemesterRepository extends JpaRepository<Semester, Integer> {
-    List<Semester> findByIsFinish(Boolean isFinish);
+    boolean existsBySemesterNameIgnoreCase(String semesterName);
 }

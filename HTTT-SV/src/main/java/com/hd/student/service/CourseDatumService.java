@@ -11,8 +11,4 @@ public interface CourseDatumService {
     CourseDatumResponse addNewCourseData(CourseDatumRequest rq);
 
     CourseDatumResponse updateCourseData(CourseDatumRequest rq, int id);
-
-    ApiResponse removeScheduleInfoByCourseDataId(int id);
-
-    ApiResponse deleteCourseData(int id);
 }

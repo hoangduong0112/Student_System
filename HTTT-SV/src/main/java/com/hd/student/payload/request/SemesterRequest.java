@@ -11,5 +11,4 @@ import lombok.Setter;
 @NoArgsConstructor
 public class SemesterRequest {
     private String semesterName;
-    private String note;
 }

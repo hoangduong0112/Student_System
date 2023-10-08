@@ -1,8 +1,9 @@
 package com.hd.student.service.impl;
 
 import com.hd.student.entity.Semester;
+import com.hd.student.exception.DataIntegrityViolationException;
+import com.hd.student.exception.ResourceExistException;
 import com.hd.student.exception.ResourceNotFoundException;
-import com.hd.student.exception.ForeignKeyViolationException;
 import com.hd.student.payload.request.SemesterRequest;
 import com.hd.student.payload.response.ApiResponse;
 import com.hd.student.payload.response.SemesterResponse;
@@ -10,7 +11,6 @@ import com.hd.student.repository.SemesterRepository;
 import com.hd.student.service.SemesterService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,13 +27,6 @@ public class SemesterServiceImpl implements SemesterService {
     @Override
     public List<SemesterResponse> getAll() {
         return this.semesterRepository.findAll().stream().map((element)
-                        -> modelMapper.map(element, SemesterResponse.class))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<SemesterResponse> getAvailable() {
-        return semesterRepository.findByIsFinish(false).stream().map((element)
                         -> modelMapper.map(element, SemesterResponse.class))
                 .collect(Collectors.toList());
     }
@@ -56,13 +49,13 @@ public class SemesterServiceImpl implements SemesterService {
     }
     @Override
     public SemesterResponse updateSemester(SemesterRequest rq, int id){
-        Semester semester = semesterRepository.findById(id).orElseThrow(()->
-             new ResourceNotFoundException("Không tìm thấy học kỳ", "id", id));
-        boolean isFinish = semester.getIsFinish();
-        semester = modelMapper.map(rq, Semester.class);
+        if(semesterRepository.existsBySemesterNameIgnoreCase(rq.getSemesterName()))
+            throw new ResourceExistException("Đã tồn tại học kỳ này", rq.getSemesterName());
+        if(!semesterRepository.existsById(id))
+            throw new ResourceNotFoundException("Không tìm thấy học kỳ", "id", id);
 
+        Semester semester = modelMapper.map(rq, Semester.class);
         semester.setId(id);
-        semester.setIsFinish(isFinish);
         semester = this.semesterRepository.save(semester);
         return modelMapper.map(semester, SemesterResponse.class);
     }
@@ -71,14 +64,11 @@ public class SemesterServiceImpl implements SemesterService {
         Semester semester = this.semesterRepository.findById(id).orElseThrow(
                 ()-> new ResourceNotFoundException("Không tìm thấy học kỳ", "id", id)
         );
-//        if(semester.getIsFinish()){
-//            return new ApiResponse("Xóa thất bại vì học kì đã kết thúc", false);
-//        }
         try {
             this.semesterRepository.delete(semester);
             return new ApiResponse("Xóa thành công", true);
         }catch (DataIntegrityViolationException ex){
-            throw new ForeignKeyViolationException("Học kỳ đã có dữ liệu");
+            throw new DataIntegrityViolationException("Học kỳ đã có dữ liệu");
         }catch(Exception ex){
             throw new RuntimeException("Xóa thất bại vì lỗi server");
         }
