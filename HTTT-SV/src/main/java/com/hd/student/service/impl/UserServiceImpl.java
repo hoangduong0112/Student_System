@@ -2,6 +2,7 @@ package com.hd.student.service.impl;
 
 import com.hd.student.entity.Role;
 import com.hd.student.entity.User;
+import com.hd.student.exception.UnauthorizedException;
 import com.hd.student.payload.request.PasswordRequest;
 import com.hd.student.payload.request.UserRequest;
 import com.hd.student.payload.response.ApiResponse;
@@ -39,13 +40,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = this.userRepository.findByEmail(email);
+        User user = this.userRepository.findByEmail(email).orElseThrow(
+                ()->new UsernameNotFoundException("User not found")
+        );
         return UserPrincipal.create(user);
     }
 
     @Override
     public UserInfoResponse getCurrentUserInfo(String email) {
-        User user = userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email).orElseThrow(
+                ()->new UsernameNotFoundException("User not found"));
 
         modelMapper.typeMap(User.class, UserInfoResponse.class).addMapping(
                 User-> User.getMajor().getMajorName(), UserInfoResponse::setMajor_name

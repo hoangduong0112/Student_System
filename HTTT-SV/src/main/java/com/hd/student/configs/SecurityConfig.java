@@ -1,8 +1,12 @@
 package com.hd.student.configs;
 
+import com.hd.student.exception.AccessDeniedException;
+import com.hd.student.exception.CustomAccessDeniedHandler;
 import com.hd.student.service.impl.UserServiceImpl;
 import com.hd.student.security.AuthEntryPointJwt;
 import com.hd.student.security.AuthTokenFilter;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +22,12 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.savedrequest.SimpleSavedRequest;
 
 @Configuration
 @EnableWebSecurity
@@ -88,5 +96,10 @@ public class SecurityConfig {
     @Bean
     ModelMapper modelMapper() {
         return new ModelMapper();
+    }
+
+    @Bean
+    public AuthenticationEntryPoint customAccessDeniedHandler() {
+        return new CustomAccessDeniedHandler();
     }
 }
