@@ -1,7 +1,7 @@
 package com.hd.student.service.impl;
 
 import com.hd.student.entity.Course;
-import com.hd.student.exception.DataIntegrityViolationException;
+import com.hd.student.exception.ForeignKeyViolationException;
 import com.hd.student.exception.ResourceExistException;
 import com.hd.student.exception.ResourceNotFoundException;
 import com.hd.student.payload.request.CourseRequest;
@@ -11,6 +11,7 @@ import com.hd.student.repository.CourseRepository;
 import com.hd.student.service.CourseService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -81,7 +82,7 @@ public class CourseServiceImpl implements CourseService {
             this.courseRepository.delete(course);
             return new ApiResponse("Success", true);
         }catch (DataIntegrityViolationException ex){
-            throw new DataIntegrityViolationException("Môn học đã được xếp giảng viên");
+            throw new ForeignKeyViolationException("Môn học đã được xếp giảng viên");
         }catch (Exception ex){
             return new ApiResponse("Success", true);
         }

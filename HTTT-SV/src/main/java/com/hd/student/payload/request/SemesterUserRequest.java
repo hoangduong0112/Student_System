@@ -5,11 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
+import java.util.List;
+
 @Setter
-@AllArgsConstructor
+@Getter
 @NoArgsConstructor
-public class SemesterRequest {
-    private String semesterName;
-    private String note;
+@AllArgsConstructor
+public class SemesterUserRequest {
+    private int semesterId;
+    private List<Integer> userId;
 }

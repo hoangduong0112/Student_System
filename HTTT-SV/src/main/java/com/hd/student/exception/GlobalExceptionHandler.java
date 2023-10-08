@@ -3,9 +3,7 @@ package com.hd.student.exception;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -37,7 +35,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         String message = ex.getMessage();
         ExceptionDetailResponse details = new ExceptionDetailResponse(HttpStatus.UNAUTHORIZED.value(),
                 new Date(),
-                message,
+                "",
                 request.getDescription(false));
         return new ResponseEntity<>(details,HttpStatus.UNAUTHORIZED);
     }
@@ -67,14 +65,32 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ExceptionDetailResponse> enumNotFoundException(EnumNotFoundException ex,
             WebRequest request){
         ExceptionDetailResponse details = new ExceptionDetailResponse(
-                HttpStatus.BAD_REQUEST.value(), new Date(),
+                HttpStatus.NOT_ACCEPTABLE.value(), new Date(),
                 ex.getMessage(), request.getDescription(false));
-        return new ResponseEntity<>(details,HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(details,HttpStatus.NOT_ACCEPTABLE);
     }
 
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<ExceptionDetailResponse> conflictException(ConflictException ex,
                                                                          WebRequest request){
+        ExceptionDetailResponse details = new ExceptionDetailResponse(
+                HttpStatus.CONFLICT.value(), new Date(),
+                ex.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(details,HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ExceptionDetailResponse> badRequestException(BadRequestException ex,
+                                                                       WebRequest request){
+        ExceptionDetailResponse details = new ExceptionDetailResponse(
+                HttpStatus.BAD_REQUEST.value(), new Date(),
+                ex.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(details,HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ForeignKeyViolationException.class)
+    public ResponseEntity<ExceptionDetailResponse> ForeignKeyViolationException
+            (ForeignKeyViolationException ex, WebRequest request){
         ExceptionDetailResponse details = new ExceptionDetailResponse(
                 HttpStatus.CONFLICT.value(), new Date(),
                 ex.getMessage(), request.getDescription(false));

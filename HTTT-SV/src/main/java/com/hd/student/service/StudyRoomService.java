@@ -12,7 +12,5 @@ public interface StudyRoomService {
 
     public ApiResponse deleteStudyRoom(int id);
 
-    public List<StudyRoomResponse> getAllRoom();
-
-    List<StudyRoomResponse> getAllRoomAvailable();
+    List<StudyRoomResponse> getAllRoom(Boolean isAvailable);
 }

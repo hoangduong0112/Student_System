@@ -1,4 +1,4 @@
-package com.hd.student.payload.request;
+package com.hd.student.payload.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SemesterRequest {
+public class ScoreHistoryResponse {
+    private int id; //id semesteruser
     private String semesterName;
-    private String note;
+    private Double score;
+
 }

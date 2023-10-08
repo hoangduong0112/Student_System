@@ -13,7 +13,7 @@ import java.util.*;
 
 
 @Service
-public class VNPayUtil extends HttpServlet {
+public class VNPayUtil {
     public String CreatePayment(Payment payment) throws UnsupportedEncodingException {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
