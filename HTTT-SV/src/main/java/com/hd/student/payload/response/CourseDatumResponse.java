@@ -1,5 +1,6 @@
 package com.hd.student.payload.response;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,11 +13,14 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SemesterDetailsResponse {
+public class CourseDatumResponse {
     private Integer id;
-    private Double score;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private Boolean isEnded;
 
-    private Boolean isPassed;
+    private CourseResponse course;
+    private LectureResponse lecture;
+    private Set<ScheduleInfoResponse> scheduleInfos;
 
-    private Set<CourseDatumResponse> courseData;
 }

@@ -9,16 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api/admin/")
 public class AdminScheduleController {
     @Autowired
     private StudyRoomService studyRoomService;
-
     @Autowired
     private ScheduleInfoService scheduleInfoService;
-
     @PostMapping("/room/add")
     public ResponseEntity<?> addNewStudyRoom(@RequestBody StudyRoomRequest rq){
         return new ResponseEntity<>(this.studyRoomService.addStudyRoom(rq), HttpStatus.OK);

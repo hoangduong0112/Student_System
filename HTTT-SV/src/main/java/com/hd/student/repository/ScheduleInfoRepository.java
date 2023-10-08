@@ -1,6 +1,6 @@
 package com.hd.student.repository;
 
-import com.hd.student.entity.CourseData;
+import com.hd.student.entity.CourseDatum;
 import com.hd.student.entity.ScheduleInfo;
 import com.hd.student.entity.Weekdays;
 import com.hd.student.payload.response.ApiResponse;

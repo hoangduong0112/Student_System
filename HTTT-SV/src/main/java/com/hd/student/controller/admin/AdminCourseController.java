@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api/admin/")
 public class AdminCourseController {
 
     @Autowired

@@ -8,9 +8,10 @@ import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/guest")
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin
 @RestControllerAdvice
 public class HomeController {
+
 
     @Autowired
     private ServiceCateService serviceCateService;
