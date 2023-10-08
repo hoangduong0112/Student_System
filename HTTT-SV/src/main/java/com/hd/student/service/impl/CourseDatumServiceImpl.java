@@ -3,8 +3,6 @@ package com.hd.student.service.impl;
 import com.hd.student.entity.Course;
 import com.hd.student.entity.CourseDatum;
 import com.hd.student.entity.Lecture;
-import com.hd.student.entity.ScheduleInfo;
-import com.hd.student.exception.ResourceExistException;
 import com.hd.student.exception.ResourceNotFoundException;
 import com.hd.student.payload.request.CourseDatumRequest;
 import com.hd.student.payload.response.ApiResponse;
@@ -12,13 +10,16 @@ import com.hd.student.payload.response.CourseDatumResponse;
 import com.hd.student.repository.CourseDatumRepository;
 import com.hd.student.repository.CourseRepository;
 import com.hd.student.repository.LectureRepository;
+<<<<<<< HEAD:HTTT-SV/src/main/java/com/hd/student/service/impl/CourseDatumServiceImpl.java
 import com.hd.student.repository.ScheduleInfoRepository;
 import com.hd.student.service.CourseDatumService;
+=======
+import com.hd.student.service.CourseDataService;
+>>>>>>> parent of 45da031 (forked):HTTT-SV/src/main/java/com/hd/student/service/impl/CourseDataServiceImpl.java
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -37,8 +38,6 @@ public class CourseDatumServiceImpl implements CourseDatumService {
     private CourseRepository courseRepository;
     @Autowired
     private LectureRepository lectureRepository;
-    @Autowired
-    private ScheduleInfoRepository scheduleInfoRepository;
 
 
     @Override
@@ -61,7 +60,11 @@ public class CourseDatumServiceImpl implements CourseDatumService {
     }
 
     @Override
+<<<<<<< HEAD:HTTT-SV/src/main/java/com/hd/student/service/impl/CourseDatumServiceImpl.java
     public CourseDatumResponse addNewCourseData(CourseDatumRequest rq) {
+=======
+    public ApiResponse addNewCourseData(CourseDataRequest rq) {
+>>>>>>> parent of 45da031 (forked):HTTT-SV/src/main/java/com/hd/student/service/impl/CourseDataServiceImpl.java
         Course course = this.courseRepository.findById(rq.getCourseId()).orElseThrow(
                 () -> new ResourceNotFoundException("Không tìm thấy môn học", "id", rq.getCourseId())
         );
@@ -69,16 +72,10 @@ public class CourseDatumServiceImpl implements CourseDatumService {
                 () -> new ResourceNotFoundException("Không tìm thấy giảng viên", "id", rq.getLectureId())
         );
 
-        for(int schedule: rq.getScheduleInfoId()) {
-            ScheduleInfo scheduleInfo = this.scheduleInfoRepository.findById(schedule).orElseThrow(
-                    ()->new ResourceNotFoundException("Không tìm thấy lịch học", "id", schedule)
-            );
-            if(scheduleInfo.getCourseData()!= null)
-                throw new ResourceExistException("Lịch học", scheduleInfo.getId().toString());
-        }
         try {
             modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
             // loi modelmapper khi co 2 mapping thuoc tinh id
+<<<<<<< HEAD:HTTT-SV/src/main/java/com/hd/student/service/impl/CourseDatumServiceImpl.java
             modelMapper.typeMap(CourseDatumRequest.class, CourseDatum.class)
                     .addMappings(mapper -> mapper.skip(CourseDatum::setId));
             CourseDatum courseDatum = modelMapper.map(rq, CourseDatum.class);
@@ -104,18 +101,35 @@ public class CourseDatumServiceImpl implements CourseDatumService {
             throw ex;
         }catch (RuntimeException ex) {
             throw new RuntimeException("Có lỗi xảy ra");
+=======
+            modelMapper.typeMap(CourseDataRequest.class, CourseData.class)
+                    .addMappings(mapper -> mapper.skip(CourseData::setId));
+            CourseData courseData = modelMapper.map(rq, CourseData.class);
+            courseData.setCourse(course);
+            courseData.setLecture(lecture);
+
+            this.courseDataRepository.save(courseData);
+            return new ApiResponse("Success", true);
+        } catch (Exception ex) {
+            return new ApiResponse("Fail", false);
+>>>>>>> parent of 45da031 (forked):HTTT-SV/src/main/java/com/hd/student/service/impl/CourseDataServiceImpl.java
         }
     }
 
     @Override
+<<<<<<< HEAD:HTTT-SV/src/main/java/com/hd/student/service/impl/CourseDatumServiceImpl.java
     @Transactional
     public CourseDatumResponse updateCourseData(CourseDatumRequest rq, int id) {
+=======
+    public ApiResponse updateCourseData(CourseDataRequest rq, int id) {
+>>>>>>> parent of 45da031 (forked):HTTT-SV/src/main/java/com/hd/student/service/impl/CourseDataServiceImpl.java
         Course course = this.courseRepository.findById(rq.getCourseId()).orElseThrow(
                 () -> new ResourceNotFoundException("Không tìm thấy môn học", "id", rq.getCourseId())
         );
         Lecture lecture = this.lectureRepository.findById(rq.getLectureId()).orElseThrow(
                 () -> new ResourceNotFoundException("Không tìm thấy giảng viên", "id", rq.getLectureId())
         );
+<<<<<<< HEAD:HTTT-SV/src/main/java/com/hd/student/service/impl/CourseDatumServiceImpl.java
 
         List<ScheduleInfo> sc = scheduleInfoRepository.findByCourseData_Id(id);
         for(ScheduleInfo scheduleInfo: sc){
@@ -145,6 +159,24 @@ public class CourseDatumServiceImpl implements CourseDatumService {
             throw ex;
         }catch (RuntimeException ex) {
             throw new RuntimeException("Có lỗi xảy ra");
+=======
+        this.courseDataRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Không tìm thấy môn học mà bạn muốn chinh sua", "id", id)
+        );
+
+        try {
+            modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
+            CourseData courseData = modelMapper.map(rq, CourseData.class);
+            courseData.setId(id);
+            courseData.setCourse(course);
+            courseData.setLecture(lecture);
+
+            this.courseDataRepository.save(courseData);
+            return new ApiResponse("Success", true);
+        } catch (Exception ex) {
+            return new ApiResponse("Fail", false);
+>>>>>>> parent of 45da031 (forked):HTTT-SV/src/main/java/com/hd/student/service/impl/CourseDataServiceImpl.java
         }
     }
 }

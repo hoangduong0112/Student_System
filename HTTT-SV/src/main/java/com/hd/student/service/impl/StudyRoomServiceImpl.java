@@ -58,12 +58,16 @@ public class StudyRoomServiceImpl implements StudyRoomService {
     }
 
     @Override
-    public List<StudyRoomResponse> getAllRoom(Boolean isAvailable) {
-        List<StudyRoom> studyRooms;
-        if(isAvailable!=null)
-            studyRooms = studyRoomRepository.findByIsAvailable(isAvailable);
-        else
-            studyRooms = studyRoomRepository.findAll();
+    public List<StudyRoomResponse> getAllRoom() {
+        List<StudyRoom> studyRooms = this.studyRoomRepository.findAll();
+        return studyRooms.stream()
+                .map(studyRoom -> modelMapper.map(studyRoom, StudyRoomResponse.class))
+                .collect(Collectors.toList());
+
+    }
+    @Override
+    public List<StudyRoomResponse> getAllRoomAvailable() {
+        List<StudyRoom> studyRooms = this.studyRoomRepository.findAllByIsAvailableIsTrue();
         return studyRooms.stream()
                 .map(studyRoom -> modelMapper.map(studyRoom, StudyRoomResponse.class))
                 .collect(Collectors.toList());

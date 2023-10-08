@@ -1,4 +1,4 @@
-package com.hd.student.controller.user;
+package com.hd.student.controller;
 
 import com.hd.student.exception.UnauthorizedException;
 import com.hd.student.payload.response.PaymentResponse;

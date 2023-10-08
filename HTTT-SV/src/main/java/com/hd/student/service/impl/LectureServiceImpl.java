@@ -49,15 +49,12 @@ public class LectureServiceImpl implements LectureService {
     @Override
     public LectureResponse updateLecture(LectureRequest rq, int id){
         Lecture lecture;
-//        lecture = this.lectureRepository.findById(id).orElseThrow(
-//                ()->new ResourceNotFoundException("Không tìm thấy giảng viên", "id", id)
-//        );
-        if(this.lectureRepository.existsById(id)) {
-            lecture = modelMapper.map(rq, Lecture.class);
-            lecture.setId(id);
-            return modelMapper.map(this.lectureRepository.save(lecture), LectureResponse.class);
-        }else
-            throw new ResourceNotFoundException("Không tìm thấy Giảng viên", "id", id);
+        lecture = this.lectureRepository.findById(id).orElseThrow(
+                ()->new ResourceNotFoundException("Không tìm thấy giảng viên", "id", id)
+        );
+        lecture = modelMapper.map(rq, Lecture.class);
+        lecture.setId(id);
+        return modelMapper.map(this.lectureRepository.save(lecture), LectureResponse.class);
     }
 
     @Override

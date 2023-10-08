@@ -37,7 +37,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         String message = ex.getMessage();
         ExceptionDetailResponse details = new ExceptionDetailResponse(HttpStatus.UNAUTHORIZED.value(),
                 new Date(),
-                "",
+                message,
                 request.getDescription(false));
         return new ResponseEntity<>(details,HttpStatus.UNAUTHORIZED);
     }
@@ -67,9 +67,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ExceptionDetailResponse> enumNotFoundException(EnumNotFoundException ex,
             WebRequest request){
         ExceptionDetailResponse details = new ExceptionDetailResponse(
-                HttpStatus.NOT_ACCEPTABLE.value(), new Date(),
+                HttpStatus.BAD_REQUEST.value(), new Date(),
                 ex.getMessage(), request.getDescription(false));
-        return new ResponseEntity<>(details,HttpStatus.NOT_ACCEPTABLE);
+        return new ResponseEntity<>(details,HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ConflictException.class)
@@ -79,14 +79,5 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 HttpStatus.CONFLICT.value(), new Date(),
                 ex.getMessage(), request.getDescription(false));
         return new ResponseEntity<>(details,HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<ExceptionDetailResponse> badRequestException(BadRequestException ex,
-                                                                       WebRequest request){
-        ExceptionDetailResponse details = new ExceptionDetailResponse(
-                HttpStatus.BAD_REQUEST.value(), new Date(),
-                ex.getMessage(), request.getDescription(false));
-        return new ResponseEntity<>(details,HttpStatus.BAD_REQUEST);
     }
 }

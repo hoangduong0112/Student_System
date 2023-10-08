@@ -11,31 +11,45 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 @RestController
+<<<<<<< HEAD
 @RequestMapping("/api/admin/")
+=======
+@RequestMapping("/api/admin/room")
+>>>>>>> parent of 45da031 (forked)
 public class AdminScheduleController {
     @Autowired
     private StudyRoomService studyRoomService;
     @Autowired
     private ScheduleInfoService scheduleInfoService;
+<<<<<<< HEAD
     @PostMapping("/room/add")
+=======
+
+    @PostMapping("/add")
+>>>>>>> parent of 45da031 (forked)
     public ResponseEntity<?> addNewStudyRoom(@RequestBody StudyRoomRequest rq){
         return new ResponseEntity<>(this.studyRoomService.addStudyRoom(rq), HttpStatus.OK);
     }
 
-    @PutMapping("/room/update/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<?> updateStudyRoom(@RequestBody StudyRoomRequest rq, @PathVariable int id){
         return new ResponseEntity<>(this.studyRoomService.updateStudyRoom(rq, id), HttpStatus.OK);
     }
 
-    @DeleteMapping("/room/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteStudyRoom(@PathVariable Integer id) {
         ApiResponse rp = studyRoomService.deleteStudyRoom(id);
         return new ResponseEntity<>(rp, HttpStatus.OK);
     }
 
-    @GetMapping("/room/get")
-    public ResponseEntity<?> getAllRoom(@RequestParam(name = "isAvailable", required = false) Boolean isAvailable){
-        return new ResponseEntity<>(this.studyRoomService.getAllRoom(isAvailable), HttpStatus.OK);
+    @GetMapping("/getAll")
+    public ResponseEntity<?> getAllRoom(){
+        return new ResponseEntity<>(this.studyRoomService.getAllRoom(), HttpStatus.OK);
+    }
+
+    @GetMapping("/getAvailableRoom")
+    public ResponseEntity<?> getAvailableRoom(){
+        return new ResponseEntity<>(this.studyRoomService.getAllRoomAvailable(), HttpStatus.OK);
     }
 
     @GetMapping("/schedule-info/getall")
