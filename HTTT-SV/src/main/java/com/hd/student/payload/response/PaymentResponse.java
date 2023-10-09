@@ -12,9 +12,10 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentResponse {
-    private String id;
+    private Integer id;
     private double price;
     private Date createdDate;
     private String status;
+    private String vnpayTxnred;
     private String url;
 }

@@ -2,6 +2,8 @@ package com.hd.student.service.impl;
 
 
 import com.hd.student.entity.*;
+import com.hd.student.entity.enums.Role;
+import com.hd.student.entity.enums.ServiceStatus;
 import com.hd.student.exception.AccessDeniedException;
 import com.hd.student.exception.ResourceNotFoundException;
 import com.hd.student.payload.response.ApiResponse;
@@ -125,11 +127,11 @@ public class OnlineServiceImpl implements IOnlineService {
 
 
     @Override
-    public OnlineServiceResponse finishService(int id){
+    public OnlineServiceResponse acceptService(int id){
         OnlineService on = this.onlineServiceRepository.findById(id).orElseThrow(
                 ()-> new ResourceNotFoundException("Không tìm thấy yêu cầu", "id", id)
         );
-        on.setStatus(ServiceStatus.FINISH);
+        on.setStatus(ServiceStatus.ACCEPT);
         this.onlineServiceRepository.save(on);
         modelMapper.typeMap(OnlineService.class, OnlineServiceResponse.class).addMapping(OnlineService
                 -> OnlineService.getServiceCate().getServiceCateName(), OnlineServiceResponse::setServiceCateName);
@@ -159,6 +161,8 @@ public class OnlineServiceImpl implements IOnlineService {
         OnlineService on = this.onlineServiceRepository.findById(id).orElseThrow(
                 ()-> new ResourceNotFoundException("Không tìm thấy yêu cầu", "id", id)
         );
+        if (!on.getStatus().equals(ServiceStatus.PENDING))
+            throw new RuntimeException("Yêu cầu đã được xử lý hủy bỏ");
         try {
             switch (on.getServiceCate().getId()) {
                 case 1:

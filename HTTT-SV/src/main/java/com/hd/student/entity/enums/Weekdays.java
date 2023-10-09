@@ -1,4 +1,4 @@
-package com.hd.student.entity;
+package com.hd.student.entity.enums;
 
 public enum Weekdays {
     Mon,

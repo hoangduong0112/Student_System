@@ -1,11 +1,7 @@
 package com.hd.student.service.impl;
 
-import com.hd.student.entity.Role;
+import com.hd.student.entity.enums.Role;
 import com.hd.student.entity.User;
-import com.hd.student.exception.UnauthorizedException;
-import com.hd.student.payload.request.PasswordRequest;
-import com.hd.student.payload.request.UserRequest;
-import com.hd.student.payload.response.ApiResponse;
 import com.hd.student.payload.response.UserInfoResponse;
 import com.hd.student.repository.UserRepository;
 import com.hd.student.security.UserPrincipal;
@@ -21,7 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 

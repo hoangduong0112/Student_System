@@ -1,13 +1,10 @@
 package com.hd.student.payload.response;
 
-import com.hd.student.entity.Role;
+import com.hd.student.entity.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.security.core.GrantedAuthority;
-
-import java.util.Collection;
 
 @Getter
 @Setter

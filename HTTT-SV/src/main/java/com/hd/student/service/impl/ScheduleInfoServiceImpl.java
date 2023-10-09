@@ -2,7 +2,7 @@ package com.hd.student.service.impl;
 
 import com.hd.student.entity.ScheduleInfo;
 import com.hd.student.entity.StudyRoom;
-import com.hd.student.entity.Weekdays;
+import com.hd.student.entity.enums.Weekdays;
 import com.hd.student.exception.ConflictException;
 import com.hd.student.exception.EnumNotFoundException;
 import com.hd.student.exception.ResourceNotFoundException;
@@ -14,11 +14,9 @@ import com.hd.student.repository.StudyRoomRepository;
 import com.hd.student.service.ScheduleInfoService;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

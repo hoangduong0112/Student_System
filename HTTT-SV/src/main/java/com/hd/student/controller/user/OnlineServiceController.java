@@ -1,22 +1,18 @@
 package com.hd.student.controller.user;
 
-import com.hd.student.entity.OnlineService;
-import com.hd.student.entity.ServiceStatus;
-import com.hd.student.exception.ResourceNotFoundException;
 import com.hd.student.payload.request.DiplomaCopyRequest;
 import com.hd.student.payload.request.StudCertificationRequest;
 import com.hd.student.payload.request.TranscriptRequest;
 import com.hd.student.payload.request.UnlockStudentRequest;
 import com.hd.student.payload.response.*;
-import com.hd.student.repository.OnlineServiceRepository;
 import com.hd.student.security.UserPrincipal;
 import com.hd.student.service.*;
 
-import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +20,7 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
+@Secured("USER")
 @RequestMapping("/api/user/service")
 public class OnlineServiceController {
 

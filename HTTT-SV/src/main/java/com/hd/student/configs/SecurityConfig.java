@@ -1,12 +1,9 @@
 package com.hd.student.configs;
 
-import com.hd.student.exception.AccessDeniedException;
-import com.hd.student.exception.CustomAccessDeniedHandler;
+import com.hd.student.security.CustomAccessDeniedHandler;
 import com.hd.student.service.impl.UserServiceImpl;
 import com.hd.student.security.AuthEntryPointJwt;
 import com.hd.student.security.AuthTokenFilter;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -22,29 +20,27 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
-import org.springframework.security.web.savedrequest.RequestCache;
-import org.springframework.security.web.savedrequest.SimpleSavedRequest;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(securedEnabled = true, prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
 
 
     @Autowired
     private UserServiceImpl userDetailsService;
+    @Autowired
+    private CustomAccessDeniedHandler customAccessDeniedHandler;
 
+    @Autowired
+    private AuthEntryPointJwt unauthorizedHandler;
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
         return new AuthTokenFilter();
     }
-
-    @Autowired
-    private AuthEntryPointJwt unauthorizedHandler;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -55,19 +51,21 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler)
+                        .accessDeniedHandler(customAccessDeniedHandler)
+
+                )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/**").permitAll()
-                        .anyRequest().permitAll()
+                .authorizeHttpRequests(authorize -> authorize.requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .anyRequest().authenticated()
                 );
 
         http.authenticationProvider(authenticationProvider());
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
 
     }
@@ -98,8 +96,4 @@ public class SecurityConfig {
         return new ModelMapper();
     }
 
-    @Bean
-    public AuthenticationEntryPoint customAccessDeniedHandler() {
-        return new CustomAccessDeniedHandler();
-    }
 }

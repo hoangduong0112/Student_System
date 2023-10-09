@@ -11,6 +11,7 @@ import com.hd.student.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,11 +22,11 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
+@Secured("USER")
 @RequestMapping("/api/user")
 public class UserController {
     @Autowired
     private AuthenticationManager authenticationManager;
-
 
 
     @Autowired

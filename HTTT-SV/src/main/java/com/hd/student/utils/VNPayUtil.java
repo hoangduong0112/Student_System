@@ -2,11 +2,13 @@ package com.hd.student.utils;
 
 import com.hd.student.configs.VNPayConfig;
 import com.hd.student.entity.Payment;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
+import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import java.io.*;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -14,11 +16,11 @@ import java.util.*;
 
 @Service
 public class VNPayUtil {
-    public String CreatePayment(Payment payment) throws UnsupportedEncodingException {
+    public static String CreatePayment(Payment payment) throws UnsupportedEncodingException {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String orderType = "other";
-        String vnp_TxnRef = VNPayConfig.getRandomNumber(8);
+        String vnp_TxnRef = payment.getVnpayTxnred();
         String vnp_IpAddr = "127.0.0.1";
         String vnp_TmnCode = VNPayConfig.vnp_TmnCode;
         long amount = Math.round(payment.getPrice() * 100);
@@ -39,6 +41,7 @@ public class VNPayUtil {
 
         Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+        cld.setTime(payment.getCreatedDate());
         String vnp_CreateDate = formatter.format(cld.getTime());
         vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
 
@@ -79,5 +82,95 @@ public class VNPayUtil {
         String paymentUrl = VNPayConfig.vnp_PayUrl + "?" + queryUrl;
         return paymentUrl;
     }
+
+    public static Integer querydrPayment(Payment payment) throws ServletException, IOException {
+        String vnp_RequestId = payment.getId() + VNPayConfig.getRandomNumber(8);
+        String vnp_Version = "2.1.0";
+        String vnp_Command = "querydr";
+        String vnp_TxnRef = payment.getVnpayTxnred();
+        String vnp_OrderInfo = "Kiem tra ket qua GD " + vnp_TxnRef;
+
+        Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+        String vnp_CreateDate = formatter.format(cld.getTime());
+
+        cld.setTime(payment.getCreatedDate());
+        String vnp_TransDate = formatter.format(cld.getTime());
+
+        String vnp_IpAddr = "127.0.0.1";
+
+        try (final DatagramSocket socket = new DatagramSocket()) {
+            socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
+            vnp_IpAddr = socket.getLocalAddress().getHostAddress();
+        }
+        Map<String, String> vnp_Params = new HashMap<>();
+
+        vnp_Params.put("vnp_RequestId", vnp_RequestId);
+        vnp_Params.put("vnp_Version", vnp_Version);
+        vnp_Params.put("vnp_Command", vnp_Command);
+        vnp_Params.put("vnp_TmnCode", VNPayConfig.vnp_TmnCode);
+        vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
+        vnp_Params.put("vnp_OrderInfo", vnp_OrderInfo);
+        // vnp_Params.put("vnp_TransactionNo", vnp_TransactionNo);
+        vnp_Params.put("vnp_TransactionDate", vnp_TransDate);
+        vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
+        vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
+
+        String hashData = vnp_RequestId + "|" + vnp_Version + "|" + vnp_Command + "|" + VNPayConfig.vnp_TmnCode + "|" + vnp_TxnRef
+                + "|" + vnp_TransDate + "|" + vnp_CreateDate + "|" + vnp_IpAddr + "|" + vnp_OrderInfo;
+
+        String vnp_SecureHash = VNPayConfig.hmacSHA512(VNPayConfig.vnp_HashSecret, hashData.toString());
+        vnp_Params.put("vnp_SecureHash", vnp_SecureHash);
+
+        //Gửi yêu cầu post tới server
+        URL url = new URL(VNPayConfig.vnp_apiUrl);
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setRequestMethod("POST");
+        con.setRequestProperty("Content-Type", "application/json");
+        con.setDoOutput(true);
+        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+        wr.writeBytes(vnp_Params.toString());
+        wr.flush();
+        wr.close();
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+        String output;
+        StringBuffer response = new StringBuffer();
+        while ((output = in.readLine()) != null) {
+            response.append(output);
+        }
+        in.close();
+
+        JSONObject json = new JSONObject(response.toString());
+
+        String res_ResponseCode = (String) json.get("vnp_ResponseCode");
+        String res_TxnRef = (String) json.get("vnp_TxnRef");
+        String res_Message = (String) json.get("vnp_Message");
+        Double res_Amount = Double.valueOf((String) json.get("vnp_Amount")) / 100;
+        String res_TransactionType = (String) json.get("vnp_TransactionType");
+        String res_TransactionStatus = (String) json.get("vnp_TransactionStatus");
+
+
+        if (!res_ResponseCode.equals("00")) // Response Code == 0
+            return 1;
+
+        if (!res_TxnRef.equals(payment.getVnpayTxnred()))
+            return 1;
+
+        if (res_Amount != payment.getPrice()) // Amount payment not equal
+            return 2;
+
+        if (!res_TransactionType.equals("01")) // Transaction Type invaild
+            return 2;
+
+        if (res_TransactionStatus.equals("01")) // Transaction is pending
+            return 1;
+
+        if (!res_TransactionStatus.equals("00")) // Transaction Status invaild
+            return 2;
+
+        return 0;
+    }
+
 
 }

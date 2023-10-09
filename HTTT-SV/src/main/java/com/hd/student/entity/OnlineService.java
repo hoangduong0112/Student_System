@@ -1,5 +1,6 @@
 package com.hd.student.entity;
 
+import com.hd.student.entity.enums.ServiceStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,5 +1,6 @@
 package com.hd.student.entity;
 
+import com.hd.student.entity.enums.Weekdays;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -1,5 +1,6 @@
 package com.hd.student.entity;
 
+import com.hd.student.entity.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

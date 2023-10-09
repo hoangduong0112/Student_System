@@ -31,10 +31,11 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         try {
             String jwt = parseJwt(request);
             if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
-                String username = jwtUtils.getUserNameFromJwtToken(jwt);
+                String email = jwtUtils.getUserNameFromJwtToken(jwt);
 
-                UserPrincipal userPrincipal = (UserPrincipal) userDetailsService.loadUserByUsername(username);
+                UserPrincipal userPrincipal = (UserPrincipal) userDetailsService.loadUserByUsername(email);
 
+                //Không cần mk vì jwt
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(userPrincipal,
                                 null,
@@ -45,7 +46,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e) {
-            logger.error("Cannot set user authentication: {}", e);
+            logger.error("Có lỗi: ",e);
         }
 
         filterChain.doFilter(request, response);

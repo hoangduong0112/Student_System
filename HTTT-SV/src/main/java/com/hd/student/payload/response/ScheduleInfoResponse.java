@@ -1,6 +1,5 @@
 package com.hd.student.payload.response;
 
-import com.hd.student.entity.Weekdays;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

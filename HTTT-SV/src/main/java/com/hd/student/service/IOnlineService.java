@@ -18,7 +18,7 @@ public interface IOnlineService {
 
     List<OnlineServiceResponse> findAll();
 
-    OnlineServiceResponse finishService(int id);
+    OnlineServiceResponse acceptService(int id);
 
     OnlineServiceResponse cancelService(int serviceId, int userId);
     ApiResponse deleteRequest(int id);

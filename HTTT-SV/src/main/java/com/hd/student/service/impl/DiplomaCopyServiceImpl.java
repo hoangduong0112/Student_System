@@ -2,7 +2,7 @@ package com.hd.student.service.impl;
 
 import com.hd.student.entity.DiplomaCopy;
 import com.hd.student.entity.OnlineService;
-import com.hd.student.entity.ServiceStatus;
+import com.hd.student.entity.enums.ServiceStatus;
 import com.hd.student.exception.AccessDeniedException;
 import com.hd.student.exception.ResourceNotFoundException;
 import com.hd.student.payload.response.ApiResponse;

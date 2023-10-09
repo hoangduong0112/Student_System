@@ -5,6 +5,7 @@ import com.hd.student.entity.Course;
 import com.hd.student.entity.Lecture;
 import com.hd.student.entity.ScheduleInfo;
 import com.hd.student.payload.response.ScheduleInfoResponse;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,10 +21,13 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CourseDatumRequest {
+    @NotNull
     private LocalDate startDate;
+    @NotNull
     private LocalDate endDate;
-
+    @NotNull
     private Integer courseId;
+    @NotNull
     private Integer lectureId;
 
     private Set<Integer> scheduleInfoId = new LinkedHashSet<>();
