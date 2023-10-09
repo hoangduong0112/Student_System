@@ -8,6 +8,7 @@ import com.hd.student.payload.response.*;
 import com.hd.student.security.UserPrincipal;
 import com.hd.student.service.*;
 
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -49,16 +50,22 @@ public class OnlineServiceController {
         return new ResponseEntity<>(onlineServiceResponses,HttpStatus.OK);
     }
 
+    @PutMapping("/cancel/{id}")
+    public ResponseEntity<?> cancelMyServiceRequest(Authentication auth, @PathVariable int id){
+        UserPrincipal u = (UserPrincipal) auth.getPrincipal();
+        return ResponseEntity.ok().body(this.onlineService.cancelService(id, u.getId()));
+    }
+
     //Gui yeu cau bang sao bang tot nghiep
     @PostMapping("/diploma/add")
-    public ResponseEntity<ApiResponse> saveDiplomaCopy(Authentication auth, @RequestBody DiplomaCopyRequest rq){
+    public ResponseEntity<ApiResponse> saveDiplomaCopy(Authentication auth, @Valid @RequestBody DiplomaCopyRequest rq){
         UserPrincipal u = (UserPrincipal) auth.getPrincipal();
         ApiResponse rs = this.diplomaCopyService.addNewDiplomaCopy(rq, u.getId());
         return new ResponseEntity<>(rs,HttpStatus.OK);
     }
     //Update yeu cau bang sao bang tot nghiep
     @PutMapping("diploma/update/{id}")
-    public ResponseEntity<?> updateDiplomaCopy(Authentication auth, @RequestBody DiplomaCopyRequest rq, @PathVariable int id){
+    public ResponseEntity<?> updateDiplomaCopy(Authentication auth, @Valid @RequestBody DiplomaCopyRequest rq, @PathVariable int id){
         UserPrincipal u = (UserPrincipal) auth.getPrincipal();
         ApiResponse rs = this.diplomaCopyService.updateMyDiplomaCopy(rq, id, u.getId());
         return new ResponseEntity<>(rs,HttpStatus.OK);
@@ -76,7 +83,7 @@ public class OnlineServiceController {
 
     //Them yeu cau bang diem
     @PostMapping("/transcript/add")
-    public ResponseEntity<ApiResponse> saveTranscript(Authentication auth, @RequestBody TranscriptRequest rq){
+    public ResponseEntity<ApiResponse> saveTranscript(Authentication auth, @Valid @RequestBody TranscriptRequest rq){
         UserPrincipal u = (UserPrincipal) auth.getPrincipal();
         ApiResponse rs = this.transcriptService.addNewTranscript(rq, u.getId());
         return new ResponseEntity<>(rs,HttpStatus.OK);
@@ -84,7 +91,7 @@ public class OnlineServiceController {
 
     //update bang diem
     @PutMapping("/transcript/update/{id}")
-    public ResponseEntity<?> updateTranscript(Authentication auth, @RequestBody TranscriptRequest rq, @PathVariable int id) {
+    public ResponseEntity<?> updateTranscript(Authentication auth, @Valid @RequestBody TranscriptRequest rq, @PathVariable int id) {
         UserPrincipal u = (UserPrincipal) auth.getPrincipal();
         ApiResponse rs = this.transcriptService.updateMyTranscript(rq, id, u.getId());
         return new ResponseEntity<>(rs, HttpStatus.OK);
@@ -100,13 +107,13 @@ public class OnlineServiceController {
 
 
     @PostMapping("/stud-certification/add")
-    public ResponseEntity<ApiResponse> saveCertification(Authentication auth, @RequestBody StudCertificationRequest rq){
+    public ResponseEntity<ApiResponse> saveCertification(Authentication auth, @Valid @RequestBody StudCertificationRequest rq){
         UserPrincipal u = (UserPrincipal) auth.getPrincipal();
         ApiResponse rs = this.studCertificationService.addNewStudCertification(rq, u.getId());
         return new ResponseEntity<>(rs,HttpStatus.OK);
     }
     @PutMapping("/stud-certification/update/{id}")
-    public ResponseEntity<?> updateStudCertification(Authentication auth, @RequestBody StudCertificationRequest rq, @PathVariable int id) {
+    public ResponseEntity<?> updateStudCertification(Authentication auth, @Valid @RequestBody StudCertificationRequest rq, @PathVariable int id) {
         UserPrincipal u = (UserPrincipal) auth.getPrincipal();
         ApiResponse rs = this.studCertificationService.updateMyCertification(rq, id, u.getId());
         return new ResponseEntity<>(rs, HttpStatus.OK);
@@ -120,14 +127,14 @@ public class OnlineServiceController {
     }
 
     @PostMapping("/unlock-student/add")
-    public ResponseEntity<ApiResponse> saveUnlockStudent(Authentication auth, @RequestBody UnlockStudentRequest rq){
+    public ResponseEntity<ApiResponse> saveUnlockStudent(Authentication auth, @Valid @RequestBody UnlockStudentRequest rq){
         UserPrincipal u = (UserPrincipal) auth.getPrincipal();
         ApiResponse rs = this.unlockStudentService.addNewUnlockStudent(rq, u.getId());
         return new ResponseEntity<>(rs, HttpStatus.OK);
     }
 
     @PutMapping("/unlock/update/{id}")
-    public ResponseEntity<?> updateUnlockStudent(Authentication auth, @RequestBody UnlockStudentRequest rq, @PathVariable int id) {
+    public ResponseEntity<?> updateUnlockStudent(Authentication auth,@Valid @RequestBody UnlockStudentRequest rq, @PathVariable int id) {
         UserPrincipal u = (UserPrincipal) auth.getPrincipal();
         ApiResponse rs = this.unlockStudentService.updateUnlockStudent(rq, id, u.getId());
         return new ResponseEntity<>(rs, HttpStatus.OK);

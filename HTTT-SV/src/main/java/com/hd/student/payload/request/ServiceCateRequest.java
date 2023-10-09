@@ -19,4 +19,6 @@ public class ServiceCateRequest {
     private Boolean isAvailable;
     @NotNull
     private String description;
+    private Integer numOfDate;
+
 }

@@ -33,6 +33,9 @@ public class ServiceCate {
     @Column(name = "description", length = 45)
     private String description;
 
+    @Column(name = "num_of_date")
+    private Integer numOfDate;
+
     @OneToMany(mappedBy = "serviceCate")
     private Set<OnlineService> onlineServices = new LinkedHashSet<>();
 

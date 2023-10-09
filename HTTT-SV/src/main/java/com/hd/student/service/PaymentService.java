@@ -7,11 +7,11 @@ import com.hd.student.payload.response.TransactionPaymentResponse;
 import java.text.ParseException;
 
 public interface PaymentService {
-    PaymentResponse createPayment(int onlineServiceId, int userId);
+    PaymentResponse createPayment(int onlineServiceId, int userId, String url);
     TransactionPaymentResponse getStatusAfterPay(String amount, String title, String date, String success)
             throws ParseException;
 
     PaymentResponse getFromOnlineServiceId(String username, int onlineServiceId);
 
-    ApiResponse verifyPayment(String username, String payment_id);
+    ApiResponse verifyPayment(String username, int onlineServiceId);
 }

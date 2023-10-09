@@ -5,12 +5,15 @@ import com.hd.student.payload.response.PaymentResponse;
 import com.hd.student.security.UserPrincipal;
 import com.hd.student.service.PaymentService;
 import com.hd.student.service.impl.PaymentServiceImpl;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.text.ParseException;
 
 @RestController
@@ -24,10 +27,11 @@ public class PaymentController {
     private PaymentService paymentService;
 
     @PostMapping ("/create-payment/{onlineServiceId}")
-    public ResponseEntity<?> createPayment(@PathVariable int onlineServiceId, Authentication auth){
+    public ResponseEntity<?> createPayment(@PathVariable int onlineServiceId, Authentication auth, HttpServletRequest rq){
         UserPrincipal u = (UserPrincipal) auth.getPrincipal();
         PaymentResponse rp =  this.paymentService
-                .createPayment(onlineServiceId, u.getId());
+                .createPayment(onlineServiceId, u.getId(), "13.160.92.202");
+        // servletRequest.getRemoteAddr()
 
         return ResponseEntity.ok(rp);
 
@@ -47,5 +51,10 @@ public class PaymentController {
     public ResponseEntity<?> getPaymentInfor(Authentication auth, @PathVariable int onlineServiceId){
         String username = auth.getName();
         return ResponseEntity.ok(this.paymentService.getFromOnlineServiceId(username,onlineServiceId));
+    }
+
+    @GetMapping("/verify/{onlineServiceId}")
+    public ResponseEntity<?> verifyPaymentById(Principal principal, @PathVariable int onlineServiceId) {
+        return ResponseEntity.ok().body(paymentService.verifyPayment(principal.getName(), onlineServiceId));
     }
 }

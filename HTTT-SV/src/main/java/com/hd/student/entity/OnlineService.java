@@ -35,6 +35,9 @@ public class OnlineService {
     @Column(name = "is_shipped")
     private Boolean isShipped;
 
+    @Column(name = "price")
+    private Double price;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "service_cate_id", nullable = false)
     private ServiceCate serviceCate;

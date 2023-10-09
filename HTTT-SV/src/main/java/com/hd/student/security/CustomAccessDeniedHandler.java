@@ -22,7 +22,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         response.setStatus(HttpStatus.FORBIDDEN.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.getWriter().write(new JSONObject()
-                .put("message", "Can't access.")
+                .put("message", "Access denied.")
                 .put("status_code", response.getStatus())
                 .toString());
     }

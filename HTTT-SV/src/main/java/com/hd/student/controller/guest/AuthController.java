@@ -6,6 +6,7 @@ import com.hd.student.payload.response.MessageResponse;
 import com.hd.student.security.JwtUtils;
 import com.hd.student.security.UserPrincipal;
 import com.hd.student.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -38,7 +39,7 @@ public class AuthController {
 
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@RequestBody User user) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody User user) {
         this.userDetailsService.saveUser(user);
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
@@ -52,7 +53,7 @@ public class AuthController {
 
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest rq) {
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest rq) {
 
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(rq.getEmail(), rq.getPassword()));

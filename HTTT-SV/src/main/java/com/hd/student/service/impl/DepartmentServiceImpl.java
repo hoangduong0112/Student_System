@@ -33,7 +33,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public DepartmentResponse findDepartmentById(int id) {
         Department department = this.departmentRepository.findById(id).orElseThrow(
-                ()-> new ResourceNotFoundException("Không tìm thấy Khoa", "id", id)
+                ()-> new ResourceNotFoundException("Không tìm thấy Khoa")
         );
         modelMapper.typeMap(Department.class, DepartmentResponse.class).addMapping(
                 Department::getMajors, DepartmentResponse::setMajors

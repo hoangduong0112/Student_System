@@ -3,6 +3,7 @@ package com.hd.student.controller.admin;
 import com.hd.student.payload.request.CourseDatumRequest;
 import com.hd.student.payload.response.ApiResponse;
 import com.hd.student.service.CourseDatumService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,12 +25,12 @@ public class AdminCourseDataController {
     }
 
     @PostMapping("/course-data/add")
-    public ResponseEntity<?> addCourseData(@RequestBody CourseDatumRequest rq){
+    public ResponseEntity<?> addCourseData(@Valid @RequestBody CourseDatumRequest rq){
         return new ResponseEntity<>(this.courseDatumService.addNewCourseData(rq), HttpStatus.OK);
     }
 
     @PutMapping ("/course-data/update/{id}")
-    public ResponseEntity<?> updateCourseData(@RequestBody CourseDatumRequest rq,@PathVariable int id){
+    public ResponseEntity<?> updateCourseData(@Valid @RequestBody CourseDatumRequest rq,@PathVariable int id){
         return new ResponseEntity<>(this.courseDatumService.updateCourseData(rq, id), HttpStatus.OK);
     }
 

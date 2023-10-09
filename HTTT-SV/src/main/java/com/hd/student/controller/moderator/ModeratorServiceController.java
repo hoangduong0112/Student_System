@@ -4,7 +4,9 @@ package com.hd.student.controller.moderator;
 import com.hd.student.payload.request.ServiceCateRequest;
 import com.hd.student.payload.response.OnlineServiceResponse;
 import com.hd.student.service.IOnlineService;
+import com.hd.student.service.PaymentService;
 import com.hd.student.service.ServiceCateService;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -13,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -28,6 +31,8 @@ public class ModeratorServiceController {
     private IOnlineService onlineService;
     @Autowired
     private ServiceCateService serviceCateService;
+    @Autowired
+    private PaymentService paymentService;
 
 
     @GetMapping("/get-request")
@@ -36,7 +41,7 @@ public class ModeratorServiceController {
         return new ResponseEntity<>(rp, HttpStatus.OK);
     }
 
-    @PutMapping("/service/{id}/finish")
+    @PutMapping("/service/{id}/accept")
     public ResponseEntity<?> acceptTheRequest(@PathVariable int id){
         return new ResponseEntity<>(this.onlineService.acceptService(id), HttpStatus.OK);
     }
@@ -54,12 +59,12 @@ public class ModeratorServiceController {
     }
 
     @PostMapping("/service-cate/add")
-    public ResponseEntity<?> addService(@RequestBody ServiceCateRequest rq) {
+    public ResponseEntity<?> addService(@Valid @RequestBody ServiceCateRequest rq) {
         return new ResponseEntity<>(this.serviceCateService.addServiceCate(rq), HttpStatus.OK);
     }
 
     @PutMapping("/service-cate/update/{id}")
-    public ResponseEntity<?> updateService(@PathVariable int id,@RequestBody ServiceCateRequest rq) {
+    public ResponseEntity<?> updateService(@PathVariable int id,@Valid @RequestBody ServiceCateRequest rq) {
         return new ResponseEntity<>(this.serviceCateService.updateService(rq, id), HttpStatus.OK);
     }
 

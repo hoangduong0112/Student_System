@@ -9,6 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface StudyRoomRepository extends JpaRepository<StudyRoom, Integer> {
+    Optional<StudyRoom> findByStudyRoomNameIgnoreCase(String studyRoomName);
     List<StudyRoom> findByIsAvailable(Boolean isAvailable);
     boolean existsByStudyRoomNameIgnoreCase(String studyRoomName);
 }

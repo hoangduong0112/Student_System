@@ -7,6 +7,7 @@ import com.hd.student.payload.response.ApiResponse;
 import com.hd.student.service.CourseService;
 import com.hd.student.service.LectureService;
 import com.hd.student.service.StudyRoomService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,11 +39,11 @@ public class AdminCourseController {
     }
 
     @PostMapping("/course/add")
-    public ResponseEntity<?> addNewCourse(@RequestBody CourseRequest rq){
+    public ResponseEntity<?> addNewCourse(@Valid @RequestBody CourseRequest rq){
         return new ResponseEntity<>(this.courseService.addNewCourse(rq), HttpStatus.OK);
     }
     @PutMapping("/course/update/{id}")
-    public ResponseEntity<?>  updateCourse(@RequestBody CourseRequest rq, @PathVariable int id){
+    public ResponseEntity<?>  updateCourse(@Valid @RequestBody CourseRequest rq, @PathVariable int id){
         return new ResponseEntity<>(this.courseService.updateCourse(rq, id), HttpStatus.OK);
     }
 
@@ -58,11 +59,11 @@ public class AdminCourseController {
     }
 
     @PostMapping("/lecture/add")
-    public ResponseEntity<?> addNewLecture(@RequestBody LectureRequest rq){
+    public ResponseEntity<?> addNewLecture(@Valid @RequestBody LectureRequest rq){
         return new ResponseEntity<>(this.lectureService.addNewLecture(rq), HttpStatus.OK);
     }
     @PutMapping("/lecture/update/{id}")
-    public ResponseEntity<?>  updateLecture(@RequestBody LectureRequest rq, @PathVariable int id){
+    public ResponseEntity<?>  updateLecture(@Valid @RequestBody LectureRequest rq, @PathVariable int id){
         return new ResponseEntity<>(this.lectureService.updateLecture(rq, id), HttpStatus.OK);
     }
 

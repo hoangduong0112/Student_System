@@ -1,17 +1,21 @@
 package com.hd.student.service.impl;
 
 import com.hd.student.entity.OnlineService;
+import com.hd.student.entity.ServiceCate;
 import com.hd.student.entity.UnlockStudent;
+import com.hd.student.entity.enums.ServiceStatus;
 import com.hd.student.exception.ResourceNotFoundException;
 import com.hd.student.payload.request.UnlockStudentRequest;
 import com.hd.student.payload.response.ApiResponse;
 import com.hd.student.payload.response.UnlockStudentResponse;
+import com.hd.student.repository.ServiceCateRepository;
 import com.hd.student.repository.UnlockStudentRepository;
 import com.hd.student.service.IOnlineService;
 import com.hd.student.service.UnlockStudentService;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,20 +29,27 @@ public class UnlockStudentServiceImpl implements UnlockStudentService {
     private UnlockStudentRepository unlockStudentRepository;
     @Autowired
     private IOnlineService onlineService;
+    @Autowired
+    private ServiceCateRepository serviceCateRepository;
 
     @Override
     @Transactional
     public ApiResponse addNewUnlockStudent(UnlockStudentRequest rq, int userId) {
-        UnlockStudent us = new UnlockStudent();
+        try {
+            ServiceCate serviceCate = this.serviceCateRepository.findById(5).orElseThrow(
+                    ()->new ResourceNotFoundException("Không tìm thấy loại dịch vụ")
+            );
+        UnlockStudent us = modelMapper.map(rq, UnlockStudent.class);
 
-        us = modelMapper.map(rq, UnlockStudent.class);
-
-        OnlineService onlineService = this.onlineService.addOnlineService(userId,5);
+        OnlineService onlineService = this.onlineService.addOnlineService(userId,5, serviceCate.getPrice());
         us.setOnlineService(onlineService);
 
         this.unlockStudentRepository.save(us);
 
         return new ApiResponse("Success", true);
+        }catch (RuntimeException ex){
+            throw new RuntimeException("Lỗi server");
+        }
     }
 
     public UnlockStudentResponse findByOnlineServiceId(int id, int userId) {
@@ -46,23 +57,27 @@ public class UnlockStudentServiceImpl implements UnlockStudentService {
 
         UnlockStudent tr = on.getUnlockStudent();
         if(tr == null)
-            throw new ResourceNotFoundException("Không tìm thấy yêu cầu của bạn", "id", on.getId());
+            throw new ResourceNotFoundException("Không tìm thấy yêu cầu của bạn");
         return modelMapper.map(tr, UnlockStudentResponse.class);
     }
 
     @Override
     public ApiResponse updateUnlockStudent(UnlockStudentRequest rq, int id, int userId) {
-        UnlockStudent us = this.unlockStudentRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Không tìm thấy yêu cầu cấp", "id", id));
+        UnlockStudent us = this.unlockStudentRepository.findById(id).orElseThrow(()
+                ->new ResourceNotFoundException("Không tìm thấy yêu cầu cấp"));
 
         OnlineService on = us.getOnlineService();
 
-        if (this.onlineService.checkAccess(on.getId(), userId)) {
-            us = modelMapper.map(rq, UnlockStudent.class);
-            us.setId(id);
-            us.setOnlineService(on);
-            this.unlockStudentRepository.save(us);
-            return new ApiResponse("Success", true);
+        if (on.getStatus() == ServiceStatus.PENDING) {
+            if (this.onlineService.checkAccess(on.getId(), userId)) {
+                us = modelMapper.map(rq, UnlockStudent.class);
+                us.setId(id);
+                us.setOnlineService(on);
+                this.unlockStudentRepository.save(us);
+                return new ApiResponse("Success", true);
+            }
+            else throw new AccessDeniedException("Bạn không có quyền làm điều này");
         }
-        return new ApiResponse("Fail", false);
+        return new ApiResponse("Yêu cầu đã xác nhận hoặc hủy bỏ", true);
     }
 }

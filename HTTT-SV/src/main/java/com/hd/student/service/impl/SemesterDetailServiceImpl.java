@@ -45,7 +45,7 @@ public class SemesterDetailServiceImpl implements SemesterDetailService {
     @Override
     public ApiResponse addNewCourseInSemesterDetails(SemesterDetailRequest rq){
         SemesterUser semesterUser = this.semesterUserRepository.findById(rq.getSemesterUserId()).orElseThrow(
-                () -> new ResourceNotFoundException("Không tìm thấy dữ liệu sinh viên với học kỳ này", "semesterUser","not found")
+                () -> new ResourceNotFoundException("Không tìm thấy dữ liệu sinh viên với học kỳ này")
         );
         try {
             for (int id : rq.getCourseDataId()) {

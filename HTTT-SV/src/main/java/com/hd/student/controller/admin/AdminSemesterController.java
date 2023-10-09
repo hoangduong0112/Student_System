@@ -7,6 +7,7 @@ import com.hd.student.service.SemesterDetailService;
 
 import com.hd.student.service.SemesterService;
 import com.hd.student.service.SemesterUserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -47,12 +48,12 @@ public class AdminSemesterController {
     }
 
     @PostMapping("/semester/add")
-    public ResponseEntity<?> addNewSemester(@RequestBody SemesterRequest rq){
+    public ResponseEntity<?> addNewSemester(@Valid @RequestBody SemesterRequest rq){
         return ResponseEntity.ok().body(this.semesterService.addSemester(rq));
     }
 
     @PutMapping("/semester/update/{id}")
-    public ResponseEntity<?> updateSemester(@RequestBody SemesterRequest rq, @PathVariable int id){
+    public ResponseEntity<?> updateSemester(@Valid @RequestBody SemesterRequest rq, @PathVariable int id){
         return ResponseEntity.ok().body(this.semesterService.updateSemester(rq, id));
     }
 
@@ -61,7 +62,7 @@ public class AdminSemesterController {
         return ResponseEntity.ok().body(this.semesterService.deleteSemesterById(id));
     }
     @PutMapping("/semester-user")
-    public ResponseEntity<?> addSemesterUser(@RequestBody SemesterUserRequest rq){
+    public ResponseEntity<?> addSemesterUser(@Valid @RequestBody SemesterUserRequest rq){
         return ResponseEntity.ok().body(
                 this.semesterUserService.addSemesterForUser(rq)
         );
@@ -69,7 +70,7 @@ public class AdminSemesterController {
 
     //Tam thoi chua co chuc nang dang ky mon hoc
     @PostMapping("/semester-detail")
-    public ResponseEntity<?> addSemesterDetail(@RequestBody SemesterDetailRequest rq){
+    public ResponseEntity<?> addSemesterDetail(@Valid @RequestBody SemesterDetailRequest rq){
         return ResponseEntity.ok().body(
                 this.semesterDetailService.addNewCourseInSemesterDetails(rq)
         );

@@ -57,7 +57,7 @@ public class SemesterUserServiceImpl implements SemesterUserService {
     @Override
     public ApiResponse addSemesterForUser(SemesterUserRequest rq) {
         Semester semester = this.semesterRepository.findById(rq.getSemesterId()).orElseThrow(
-                () -> new ResourceNotFoundException("Không tìm thấy học kỳ", "học kỳ", rq.getSemesterId())
+                () -> new ResourceNotFoundException("Không tìm thấy học kỳ" + rq.getSemesterId())
         );
         try {
             for (int id : rq.getUserId()) {
@@ -72,7 +72,7 @@ public class SemesterUserServiceImpl implements SemesterUserService {
                         this.semesterUserRepository.save(su);
                     }
                 }
-                else throw new ResourceExistException("Hoc kỳ đã kết thúc", semester.getSemesterName());
+                else throw new ResourceExistException("Hoc kỳ đã kết thúc");
             }
         }catch (ResourceExistException e) {
             throw e;

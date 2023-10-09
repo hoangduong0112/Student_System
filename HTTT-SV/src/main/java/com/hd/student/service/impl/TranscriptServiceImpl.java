@@ -1,6 +1,7 @@
 package com.hd.student.service.impl;
 
 import com.hd.student.entity.OnlineService;
+import com.hd.student.entity.ServiceCate;
 import com.hd.student.entity.enums.ServiceStatus;
 import com.hd.student.entity.Transcript;
 import com.hd.student.exception.ResourceNotFoundException;
@@ -8,6 +9,7 @@ import com.hd.student.payload.response.ApiResponse;
 import com.hd.student.payload.request.TranscriptRequest;
 import com.hd.student.payload.response.TranscriptResponse;
 import com.hd.student.repository.SemesterRepository;
+import com.hd.student.repository.ServiceCateRepository;
 import com.hd.student.repository.TranscriptRepository;
 import com.hd.student.repository.UserRepository;
 import com.hd.student.service.IOnlineService;
@@ -15,6 +17,7 @@ import com.hd.student.service.TranscriptService;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,27 +32,37 @@ public class TranscriptServiceImpl implements TranscriptService {
     private SemesterRepository semesterRepository;
     @Autowired
     private ModelMapper modelMapper;
-
+    @Autowired
+    private ServiceCateRepository serviceCateRepository;
 
     @Override
     @Transactional
     public ApiResponse addNewTranscript(TranscriptRequest rq, int userId) {
+        try {
+            ServiceCate serviceCate = this.serviceCateRepository.findById(1).orElseThrow(
+                    ()->new ResourceNotFoundException("Không tìm thấy loại dịch vụ")
+            );
+            Transcript tr = new Transcript();
 
-        Transcript tr = new Transcript();
+            tr.setContactPhone(rq.getContactPhone());
+            tr.setLanguage(rq.getLanguage());
+            tr.setFromSemester(semesterRepository.findById(rq.getFromSemester()).orElseThrow(()
+                    -> new ResourceNotFoundException("Không tìm thấy học kỳ")));
+            tr.setToSemester(semesterRepository.findById(rq.getToSemester()).orElseThrow(()
+                    -> new ResourceNotFoundException("Không tìm thấy học kỳ")));
+            tr.setQuantity(rq.getQuantity());
+            tr.setIsSealed(rq.getIsSealed());
 
-        tr.setContactPhone(rq.getContactPhone());
-        tr.setLanguage(rq.getLanguage());
-        tr.setFromSemester(semesterRepository.findById(rq.getFromSemester()).orElseThrow(() -> new ResourceNotFoundException("Semester","Id",rq.getFromSemester())));
-        tr.setToSemester(semesterRepository.findById(rq.getToSemester()).orElseThrow(() -> new ResourceNotFoundException("Semester","Id",rq.getToSemester())));
-        tr.setQuantity(rq.getQuantity());
-        tr.setIsSealed(rq.getIsSealed());
-
-        OnlineService onlineService = this.onlineService.addOnlineService(userId,1);
+            OnlineService onlineService = this.onlineService.addOnlineService(userId, 1,
+                    serviceCate.getPrice()*tr.getQuantity());
 
 
-        tr.setOnlineService(onlineService);
-        this.transcriptRepository.save(tr);
-        return new ApiResponse("Success", true);
+            tr.setOnlineService(onlineService);
+            this.transcriptRepository.save(tr);
+            return new ApiResponse("Success", true);
+        }catch (RuntimeException ex){
+            throw new RuntimeException("Lỗi server");
+        }
     }
 
     @Override
@@ -58,31 +71,37 @@ public class TranscriptServiceImpl implements TranscriptService {
 
         Transcript tr = on.getTranscript();
         if(tr == null)
-            throw new ResourceNotFoundException("Không tìm thấy yêu cầu của bạn", "id", on.getId());
+            throw new ResourceNotFoundException("Không tìm thấy yêu cầu của bạn");
         return modelMapper.map(tr, TranscriptResponse.class);
     }
 
     @Override
     public ApiResponse updateMyTranscript(TranscriptRequest rq, int id, int userId){
-        Transcript tr = this.transcriptRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Không tìm thấy yêu cầu cấp bảng điểm", "id", id));
+        Transcript tr = this.transcriptRepository.findById(id).orElseThrow(()
+                ->new ResourceNotFoundException("Không tìm thấy yêu cầu cấp bảng điểm"));
         OnlineService on = tr.getOnlineService();
         if (on.getStatus() == ServiceStatus.PENDING) {
             if (onlineService.checkAccess(on.getId(), userId)) {
-                modelMapper.typeMap(TranscriptRequest.class, Transcript.class).addMapping(TranscriptRequest::getFromSemester, Transcript::setFromSemester);
-                modelMapper.typeMap(TranscriptRequest.class, Transcript.class).addMapping(TranscriptRequest::getToSemester, Transcript::setToSemester);
+                modelMapper.typeMap(TranscriptRequest.class, Transcript.class)
+                        .addMapping(TranscriptRequest::getFromSemester, Transcript::setFromSemester);
+                modelMapper.typeMap(TranscriptRequest.class, Transcript.class)
+                        .addMapping(TranscriptRequest::getToSemester, Transcript::setToSemester);
                 tr = modelMapper.map(rq, Transcript.class);
                 tr.setId(id);
                 tr.setOnlineService(on);
-                tr.setFromSemester(semesterRepository.findById(rq.getFromSemester()).orElseThrow(() -> new ResourceNotFoundException("Semester", "Id", rq.getFromSemester())));
-                tr.setToSemester(semesterRepository.findById(rq.getToSemester()).orElseThrow(() -> new ResourceNotFoundException("Semester", "Id", rq.getToSemester())));
+                tr.setFromSemester(semesterRepository.findById(rq.getFromSemester()).orElseThrow(()
+                        -> new ResourceNotFoundException("Không tìm thấy học kỳ")));
+                tr.setToSemester(semesterRepository.findById(rq.getToSemester()).orElseThrow(()
+                        -> new ResourceNotFoundException("Không tìm thấy học kỳ")));
 
                 this.transcriptRepository.save(tr);
 
                 return new ApiResponse("Thành công", true);
             }
-            else return new ApiResponse("Bạn không có quyền làm điều này", false);
+            else
+                throw new AccessDeniedException("Bạn không có quyền làm điều này");
         }
-        return new ApiResponse("Yêu cầu đã kết thúc", false);
+        return new ApiResponse("Yêu cầu đã xác nhận hoặc hủy bỏ", true);
 
     }
 

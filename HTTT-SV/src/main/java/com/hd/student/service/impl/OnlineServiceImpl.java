@@ -2,14 +2,18 @@ package com.hd.student.service.impl;
 
 
 import com.hd.student.entity.*;
+import com.hd.student.entity.enums.PaymentStatus;
 import com.hd.student.entity.enums.Role;
 import com.hd.student.entity.enums.ServiceStatus;
 import com.hd.student.exception.AccessDeniedException;
+import com.hd.student.exception.BadRequestException;
 import com.hd.student.exception.ResourceNotFoundException;
 import com.hd.student.payload.response.ApiResponse;
 import com.hd.student.payload.response.OnlineServiceResponse;
 import com.hd.student.repository.*;
+import com.hd.student.service.EmailService;
 import com.hd.student.service.IOnlineService;
+import com.twilio.twiml.voice.Pay;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,44 +42,42 @@ public class OnlineServiceImpl implements IOnlineService {
     private UnlockStudentRepository unlockStudentRepository;
     @Autowired
     private DiplomaCopyRepository diplomaCopyRepository;
+    @Autowired
+    private EmailService emailService;
+    @Autowired
+    private PaymentRepository paymentRepository;
 
 
     @Override
-    public OnlineService addOnlineService(int userId, int serviceCate){
-        User user = this.userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User","Id",userId));
-        ServiceCate sc = this.serviceCateRepository.findById(serviceCate).orElseThrow(() -> new ResourceNotFoundException("ServiceCate","Id",serviceCate));
+    public OnlineService addOnlineService(int userId, int serviceCate, double price){
+        User user = this.userRepository.findById(userId).orElseThrow(()
+                -> new ResourceNotFoundException("Không tìm thấy user đang đăng nhập"));
+        ServiceCate sc = this.serviceCateRepository.findById(serviceCate).orElseThrow(()
+                -> new ResourceNotFoundException("Không tìm thấy dịch vụ"));
 
-        OnlineService onlineService = new OnlineService();
-
-        onlineService.setUser(user);
-        onlineService.setStatus(ServiceStatus.PENDING);
-        onlineService.setCreatedDate(LocalDate.now());
-        onlineService.setIsShipped(false);
-        onlineService.setServiceCate(sc);
-        this.onlineServiceRepository.save(onlineService);
-
-        return onlineService;
+        if(sc.getIsAvailable()) {
+            OnlineService onlineService = new OnlineService();
+            onlineService.setPrice(price);
+            onlineService.setUser(user);
+            onlineService.setStatus(ServiceStatus.PENDING);
+            onlineService.setCreatedDate(LocalDate.now());
+            onlineService.setIsShipped(false);
+            onlineService.setServiceCate(sc);
+            this.onlineServiceRepository.save(onlineService);
+            return onlineService;
+        }
+        else throw new BadRequestException("Dịch vụ hiện tại đang khóa");
     }
 
     @Override
     public boolean checkAccess(int id, int userId){
         OnlineService on = this.onlineServiceRepository.findById(id).orElseThrow(
-                ()-> new ResourceNotFoundException("Online Service", "id", id));
+                ()-> new ResourceNotFoundException("Không tìm thấy dịch vụ"));
         if(on.getUser().getId() != userId)
             throw new AccessDeniedException("Bạn không có quyền làm điều này");
 
         return true;
     }
-//    public OnlineServiceResponse mapToResponse(OnlineService onlineService) {
-//        OnlineServiceResponse response = new OnlineServiceResponse();
-//        response.setId(onlineService.getId());
-//        response.setCreatedDate(onlineService.getCreatedDate());
-//        response.setStatus(onlineService.getStatus());
-//        response.setIsShipped(onlineService.getIsShipped());
-//        response.setServiceCateId(onlineService.getServiceCate().getId());
-//
-//        return response;
-//    }
     @Override
     public List<OnlineServiceResponse> findAllByUserId(Integer userId) {
         List<OnlineService> services = onlineServiceRepository.findAllByUserId(userId);
@@ -90,18 +92,15 @@ public class OnlineServiceImpl implements IOnlineService {
             rp.add(map);
         }
         return rp;
-//        return onlineServices.stream()
-//                .map(this::mapToResponse)
-//                .collect(Collectors.toList());
     }
 
     @Override
     public OnlineService findByIdWithAccess(int id, int userId) {
         User user = this.userRepository.findById(userId).orElseThrow(
-                ()-> new ResourceNotFoundException("Vui lòng đăng nhập lại", "id", userId));
+                ()-> new ResourceNotFoundException("Không tìm thấy user đang đăng nhập"));
 
         OnlineService on = this.onlineServiceRepository.findById(id).orElseThrow(
-                ()-> new ResourceNotFoundException("Online Service", "id", id));
+                ()-> new ResourceNotFoundException("Không tìm thấy yêu cầu"));
         if(on.getUser().getId() != userId || user.getUserRole() != Role.ADMIN)
             throw new AccessDeniedException("Bạn không có quyền làm điều này");
 
@@ -129,37 +128,77 @@ public class OnlineServiceImpl implements IOnlineService {
     @Override
     public OnlineServiceResponse acceptService(int id){
         OnlineService on = this.onlineServiceRepository.findById(id).orElseThrow(
-                ()-> new ResourceNotFoundException("Không tìm thấy yêu cầu", "id", id)
+                ()-> new ResourceNotFoundException("Không tìm thấy yêu cầu")
         );
-        on.setStatus(ServiceStatus.ACCEPT);
-        this.onlineServiceRepository.save(on);
-        modelMapper.typeMap(OnlineService.class, OnlineServiceResponse.class).addMapping(OnlineService
-                -> OnlineService.getServiceCate().getServiceCateName(), OnlineServiceResponse::setServiceCateName);
-        Converter<ServiceStatus, String> enumConverter =
-                ctx -> ctx.getSource() == null ? null : ctx.getSource().name();
-        modelMapper.addConverter(enumConverter);
-        return modelMapper.map(on, OnlineServiceResponse.class);
-
+        Payment payment = this.paymentRepository.findByServiceOnline_Id(id).orElseThrow(()->
+                new ResourceNotFoundException("Bạn chưa thanh toán"));
+        if(!payment.getPaymentStatus().equals(PaymentStatus.PAID)) {
+            on.setStatus(ServiceStatus.ACCEPT);
+            this.onlineServiceRepository.save(on);
+            modelMapper.typeMap(OnlineService.class, OnlineServiceResponse.class).addMapping(OnlineService
+                    -> OnlineService.getServiceCate().getServiceCateName(), OnlineServiceResponse::setServiceCateName);
+            Converter<ServiceStatus, String> enumConverter =
+                    ctx -> ctx.getSource() == null ? null : ctx.getSource().name();
+            modelMapper.addConverter(enumConverter);
+            this.emailService.sendNotifyAccept(on);
+            return modelMapper.map(on, OnlineServiceResponse.class);
+        }
+        else throw new BadRequestException("Bạn cần thực hiện thanh toán");
     }
 
     @Override
     public OnlineServiceResponse cancelService(int serviceId, int userId){
-        OnlineService on = this.findByIdWithAccess(serviceId, userId);
-        on.setStatus(ServiceStatus.CANCEL);
+        OnlineService on = this.onlineServiceRepository.findById(serviceId).orElseThrow(
+                ()-> new ResourceNotFoundException("Không tìm thấy yêu cầu")
+        );
+        if(!on.getUser().getId().equals(userId)) {
+            on.setStatus(ServiceStatus.CANCEL);
+            this.onlineServiceRepository.save(on);
+            modelMapper.typeMap(OnlineService.class, OnlineServiceResponse.class).addMapping(OnlineService
+                    -> OnlineService.getServiceCate().getServiceCateName(), OnlineServiceResponse::setServiceCateName);
+            Converter<ServiceStatus, String> enumConverter =
+                    ctx -> ctx.getSource() == null ? null : ctx.getSource().name();
+            modelMapper.addConverter(enumConverter);
+            return modelMapper.map(on, OnlineServiceResponse.class);
+        }else throw new AccessDeniedException("Bạn không có quền làm dều này");
+    }
+    @Override
+    public OnlineServiceResponse shippingService(int id){
+        OnlineService on = this.onlineServiceRepository.findById(id).orElseThrow(
+                ()-> new ResourceNotFoundException("Không tìm thấy yêu cầu")
+        );
+        if(on.getStatus().equals(ServiceStatus.ACCEPT)) {
+            on.setStatus(ServiceStatus.SHIPPING);
+            this.onlineServiceRepository.save(on);
+            modelMapper.typeMap(OnlineService.class, OnlineServiceResponse.class).addMapping(OnlineService
+                    -> OnlineService.getServiceCate().getServiceCateName(), OnlineServiceResponse::setServiceCateName);
+            Converter<ServiceStatus, String> enumConverter =
+                    ctx -> ctx.getSource() == null ? null : ctx.getSource().name();
+            modelMapper.addConverter(enumConverter);
+            return modelMapper.map(on, OnlineServiceResponse.class);
+        }
+        else throw new BadRequestException("Cần xem xét lại tình trạng thanh toán");
+    }
+
+    @Override
+    public OnlineServiceResponse receivedService(int id){
+        OnlineService on = this.onlineServiceRepository.findById(id).orElseThrow(
+                ()-> new ResourceNotFoundException("Không tìm thấy yêu cầu")
+        );
+        on.setStatus(ServiceStatus.RECEIVED);
         this.onlineServiceRepository.save(on);
-        modelMapper.typeMap(OnlineService.class, OnlineServiceResponse.class).addMapping(OnlineService
-                -> OnlineService.getServiceCate().getServiceCateName(), OnlineServiceResponse::setServiceCateName);
+        modelMapper.typeMap(OnlineService.class, OnlineServiceResponse.class)
+                .addMapping(OnlineService -> OnlineService.getServiceCate().getServiceCateName(),
+                        OnlineServiceResponse::setServiceCateName);
         Converter<ServiceStatus, String> enumConverter =
                 ctx -> ctx.getSource() == null ? null : ctx.getSource().name();
-        modelMapper.addConverter(enumConverter);
-        return modelMapper.map(on, OnlineServiceResponse.class);
-
+        modelMapper.addConverter(enumConverter);return modelMapper.map(on, OnlineServiceResponse.class);
     }
 
     @Override
     public ApiResponse deleteRequest(int id) {
         OnlineService on = this.onlineServiceRepository.findById(id).orElseThrow(
-                ()-> new ResourceNotFoundException("Không tìm thấy yêu cầu", "id", id)
+                ()-> new ResourceNotFoundException("Không tìm thấy yêu cầu")
         );
         if (!on.getStatus().equals(ServiceStatus.PENDING))
             throw new RuntimeException("Yêu cầu đã được xử lý hủy bỏ");

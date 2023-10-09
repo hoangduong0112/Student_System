@@ -6,12 +6,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ResourceExistException extends RuntimeException{
-    private String fieldName;
-    private String fieldValue;
+    private String message;
 
-    public ResourceExistException(String fieldName, String fieldValue){
-        super(String.format("Dữ liệu đã tồn tại ở %s : %s ", fieldName, fieldValue));
-        this.fieldName = fieldName;
-        this.fieldValue = fieldValue;
+    public ResourceExistException(String message) {
+        super(String.format("%s", message));
+        this.message = message;
     }
 }

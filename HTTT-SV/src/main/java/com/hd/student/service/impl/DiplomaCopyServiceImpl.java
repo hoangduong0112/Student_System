@@ -2,6 +2,7 @@ package com.hd.student.service.impl;
 
 import com.hd.student.entity.DiplomaCopy;
 import com.hd.student.entity.OnlineService;
+import com.hd.student.entity.ServiceCate;
 import com.hd.student.entity.enums.ServiceStatus;
 import com.hd.student.exception.AccessDeniedException;
 import com.hd.student.exception.ResourceNotFoundException;
@@ -9,6 +10,7 @@ import com.hd.student.payload.response.ApiResponse;
 import com.hd.student.payload.request.DiplomaCopyRequest;
 import com.hd.student.payload.response.DiplomaCopyResponse;
 import com.hd.student.repository.DiplomaCopyRepository;
+import com.hd.student.repository.ServiceCateRepository;
 import com.hd.student.service.DiplomaCopyService;
 import com.hd.student.service.IOnlineService;
 import jakarta.transaction.Transactional;
@@ -27,28 +29,28 @@ public class DiplomaCopyServiceImpl implements DiplomaCopyService {
     private IOnlineService onlineService;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private ServiceCateRepository serviceCateRepository;
 
 
     @Override
+    @Transactional
     public ApiResponse addNewDiplomaCopy(DiplomaCopyRequest rq, int userId) {
 
         try {
-            OnlineService onlineService = this.onlineService.addOnlineService(userId, 3);
+            ServiceCate serviceCate = this.serviceCateRepository.findById(3).orElseThrow(
+                    ()->new ResourceNotFoundException("Không tìm thấy loại dịch vụ hoặc dịch vụ tạm thời không hoạt động")
+            );
+            DiplomaCopy copy = modelMapper.map(rq, DiplomaCopy.class);
+            OnlineService onlineService = this.onlineService.addOnlineService(userId,
+                    3, serviceCate.getPrice()* copy.getCopy());
 
-            DiplomaCopy copy = new DiplomaCopy();
-
-            copy = modelMapper.map(rq, DiplomaCopy.class);
-//        copy.setCopy(rq.getCopy());
-//        copy.setDiplomaYear(rq.getDiplomaYear());
-//        copy.setDiplomaCode(rq.getDiplomaCode());
-//        copy.setEmail(rq.getEmail());
-//        copy.setPhoneContact(rq.getPhoneContact());
             copy.setOnlineService(onlineService);
             this.diplomaCopyRepository.save(copy);
 
             return new ApiResponse("Success", true);
-        }catch (Exception ex){
-            return new ApiResponse("Fail", false);
+        }catch (RuntimeException ex){
+            throw new RuntimeException("Lỗi server");
         }
     }
 
@@ -58,13 +60,14 @@ public class DiplomaCopyServiceImpl implements DiplomaCopyService {
 
         DiplomaCopy dp = on.getDiplomaCopy();
         if(dp == null)
-            throw new ResourceNotFoundException("Không tìm thấy yêu cầu của bạn", "id", on.getId());
+            throw new ResourceNotFoundException("Không tìm thấy yêu cầu của bạn");
         return modelMapper.map(dp, DiplomaCopyResponse.class);
     }
 
     @Override
     public ApiResponse updateMyDiplomaCopy(DiplomaCopyRequest rq,int id, int userId) {
-        DiplomaCopy copy = this.diplomaCopyRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Không tìm thấy yêu cầu", "id", id));
+        DiplomaCopy copy = this.diplomaCopyRepository.findById(id).orElseThrow(
+                ()->new ResourceNotFoundException("Không tìm thấy yêu cầu"));
         OnlineService on = copy.getOnlineService();
         if(on.getStatus() == ServiceStatus.PENDING) {
             if (this.onlineService.checkAccess(on.getId(), userId)) {

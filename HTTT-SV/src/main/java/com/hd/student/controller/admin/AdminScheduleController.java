@@ -5,6 +5,7 @@ import com.hd.student.payload.request.StudyRoomRequest;
 import com.hd.student.payload.response.ApiResponse;
 import com.hd.student.service.ScheduleInfoService;
 import com.hd.student.service.StudyRoomService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +21,12 @@ public class AdminScheduleController {
     @Autowired
     private ScheduleInfoService scheduleInfoService;
     @PostMapping("/room/add")
-    public ResponseEntity<?> addNewStudyRoom(@RequestBody StudyRoomRequest rq){
+    public ResponseEntity<?> addNewStudyRoom(@Valid @RequestBody StudyRoomRequest rq){
         return new ResponseEntity<>(this.studyRoomService.addStudyRoom(rq), HttpStatus.OK);
     }
 
     @PutMapping("/room/update/{id}")
-    public ResponseEntity<?> updateStudyRoom(@RequestBody StudyRoomRequest rq, @PathVariable int id){
+    public ResponseEntity<?> updateStudyRoom(@Valid @RequestBody StudyRoomRequest rq, @PathVariable int id){
         return new ResponseEntity<>(this.studyRoomService.updateStudyRoom(rq, id), HttpStatus.OK);
     }
 
@@ -46,12 +47,12 @@ public class AdminScheduleController {
     }
 
     @PostMapping("/schedule-info/add")
-    public ResponseEntity<?> addNewScheduleInfo(@RequestBody ScheduleInfoRequest rq){
+    public ResponseEntity<?> addNewScheduleInfo(@Valid @RequestBody ScheduleInfoRequest rq){
         return ResponseEntity.ok(this.scheduleInfoService.addScheduleInfo(rq));
     }
 
     @PutMapping("/schedule-info/update/{id}")
-    public ResponseEntity<?> updateScheduleInfo(@RequestBody ScheduleInfoRequest rq, @PathVariable int id){
+    public ResponseEntity<?> updateScheduleInfo(@Valid @RequestBody ScheduleInfoRequest rq, @PathVariable int id){
         return ResponseEntity.ok(this.scheduleInfoService.updateScheduleInfo(rq, id));
     }
 

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,8 +28,9 @@ public class CourseServiceImpl implements CourseService {
     @Autowired
     private ModelMapper modelMapper;
 
-    public boolean checkExistName(String name){
-        return courseRepository.existsByCourseNameLikeIgnoreCase(name);
+    public boolean checkExistName(String name, Integer id){
+        Optional<Course> courseExist = courseRepository.findByCourseNameIgnoreCase(name);
+        return courseExist.map(course->course.getId().equals(id)).orElse(true);
     }
 
     @Override
@@ -46,37 +48,37 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public CourseResponse getCourseById(int id) {
         return this.courseRepository.findById(id).map((element) -> modelMapper.map(element, CourseResponse.class))
-                .orElseThrow(()-> new ResourceNotFoundException("Không tìm thấy môn học", "id", id));
+                .orElseThrow(()-> new ResourceNotFoundException("Không tìm thấy môn học"));
     }
 
     @Override
     public CourseResponse addNewCourse(CourseRequest rq) {
-        if (!this.checkExistName(rq.getCourseName())) {
+        if (checkExistName(rq.getCourseName(), null)) {
             Course course = modelMapper.map(rq, Course.class);
 
             return modelMapper.map(this.courseRepository.save(course), CourseResponse.class);
         }
-        else throw new ResourceExistException("Tên môn học", rq.getCourseName());
+        else throw new ResourceExistException("Tên phòng học đã tồn tại");
     }
 
     @Override
     public CourseResponse updateCourse(CourseRequest rq, int id) {
-        if (!this.checkExistName(rq.getCourseName())) {
+        if (checkExistName(rq.getCourseName(), id)) {
             Course course;
             course = this.courseRepository.findById(id).orElseThrow(
-                    ()-> new ResourceNotFoundException("Không tìm thấy môn học", "id", id)
+                    ()-> new ResourceNotFoundException("Không tìm thấy môn học")
             );
             course.setId(id);
             course = modelMapper.map(rq, Course.class);
             return modelMapper.map(this.courseRepository.save(course), CourseResponse.class);
         }
-        else throw new ResourceExistException("Tên môn học", rq.getCourseName());
+        else throw new ResourceExistException("Tên phòng học đã tồn tại");
     }
 
     @Override
     public ApiResponse deleteCourse(int id) {
         Course course = this.courseRepository.findById(id).orElseThrow(
-                ()-> new ResourceNotFoundException("Không tìm thấy môn học này", "id",id)
+                ()-> new ResourceNotFoundException("Không tìm thấy môn học này")
         );
         try{
             this.courseRepository.delete(course);

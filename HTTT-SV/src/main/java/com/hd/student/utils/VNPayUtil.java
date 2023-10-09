@@ -16,12 +16,12 @@ import java.util.*;
 
 @Service
 public class VNPayUtil {
-    public static String CreatePayment(Payment payment) throws UnsupportedEncodingException {
+    public String CreatePayment(Payment payment, String url) throws UnsupportedEncodingException {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String orderType = "other";
         String vnp_TxnRef = payment.getVnpayTxnred();
-        String vnp_IpAddr = "127.0.0.1";
+        String vnp_IpAddr = url;
         String vnp_TmnCode = VNPayConfig.vnp_TmnCode;
         long amount = Math.round(payment.getPrice() * 100);
         Map<String, String> vnp_Params = new HashMap<>();
@@ -45,7 +45,7 @@ public class VNPayUtil {
         String vnp_CreateDate = formatter.format(cld.getTime());
         vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
 
-        cld.add(Calendar.MINUTE, 15);
+        cld.add(Calendar.MINUTE, 5);
         String vnp_ExpireDate = formatter.format(cld.getTime());
         vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
 
@@ -83,7 +83,7 @@ public class VNPayUtil {
         return paymentUrl;
     }
 
-    public static Integer querydrPayment(Payment payment) throws ServletException, IOException {
+    public Integer querydrPayment(Payment payment) throws ServletException, IOException {
         String vnp_RequestId = payment.getId() + VNPayConfig.getRandomNumber(8);
         String vnp_Version = "2.1.0";
         String vnp_Command = "querydr";
@@ -103,7 +103,7 @@ public class VNPayUtil {
             socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
             vnp_IpAddr = socket.getLocalAddress().getHostAddress();
         }
-        Map<String, String> vnp_Params = new HashMap<>();
+        JSONObject vnp_Params = new JSONObject();
 
         vnp_Params.put("vnp_RequestId", vnp_RequestId);
         vnp_Params.put("vnp_Version", vnp_Version);
@@ -116,10 +116,11 @@ public class VNPayUtil {
         vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
         vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
 
-        String hashData = vnp_RequestId + "|" + vnp_Version + "|" + vnp_Command + "|" + VNPayConfig.vnp_TmnCode + "|" + vnp_TxnRef
+        String hash_Data = vnp_RequestId + "|" + vnp_Version + "|" + vnp_Command + "|" + VNPayConfig.vnp_TmnCode + "|" + vnp_TxnRef
                 + "|" + vnp_TransDate + "|" + vnp_CreateDate + "|" + vnp_IpAddr + "|" + vnp_OrderInfo;
 
-        String vnp_SecureHash = VNPayConfig.hmacSHA512(VNPayConfig.vnp_HashSecret, hashData.toString());
+        String vnp_SecureHash = VNPayConfig.hmacSHA512(VNPayConfig.vnp_HashSecret, hash_Data.toString());
+
         vnp_Params.put("vnp_SecureHash", vnp_SecureHash);
 
         //Gửi yêu cầu post tới server

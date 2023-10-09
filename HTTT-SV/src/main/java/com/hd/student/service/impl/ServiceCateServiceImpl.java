@@ -35,7 +35,7 @@ public class ServiceCateServiceImpl implements ServiceCateService {
     @Override
     public ServiceCateResponse getServiceById(int id){
         ServiceCate sc = this.serviceCateRepository.findById(id).orElseThrow(
-                ()-> new ResourceNotFoundException("Không tìm thấy loại dịch vụ", "id", id));
+                ()-> new ResourceNotFoundException("Không tìm thấy loại dịch vụ"));
         return modelMapper.map(sc, ServiceCateResponse.class);
     }
 
@@ -57,12 +57,12 @@ public class ServiceCateServiceImpl implements ServiceCateService {
             this.serviceCateRepository.save(sc);
             return new ApiResponse("success", true);
         }
-        else throw new ResourceNotFoundException("Không tìm thấy dịch vụ", "id", id);
+        else throw new ResourceNotFoundException("Không tìm thấy dịch vụ");
     }
     @Override
     public ApiResponse changeAvailableService(int id){
         ServiceCate sc = serviceCateRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Không tìm thấy dịch vụ", "id", id)
+                () -> new ResourceNotFoundException("Không tìm thấy dịch vụ")
         );
         sc.setIsAvailable(!sc.getIsAvailable());
         this.serviceCateRepository.save(sc);

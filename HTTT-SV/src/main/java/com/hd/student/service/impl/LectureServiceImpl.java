@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,7 +35,7 @@ public class LectureServiceImpl implements LectureService {
     @Override
     public LectureResponse getById(int id){
         Lecture lecture = this.lectureRepository.findById(id).orElseThrow(
-                ()-> new ResourceNotFoundException("Không tìm thấy giảng viên","id", id));
+                ()-> new ResourceNotFoundException("Không tìm thấy giảng viên"));
         return modelMapper.map(lecture, LectureResponse.class);
     }
 
@@ -58,13 +57,13 @@ public class LectureServiceImpl implements LectureService {
             lecture.setId(id);
             return modelMapper.map(this.lectureRepository.save(lecture), LectureResponse.class);
         }else
-            throw new ResourceNotFoundException("Không tìm thấy Giảng viên", "id", id);
+            throw new ResourceNotFoundException("Không tìm thấy Giảng viên");
     }
 
     @Override
     public ApiResponse deleteLecture(int id){
         Lecture lecture = this.lectureRepository.findById(id).orElseThrow(
-                ()->new ResourceNotFoundException("Không tìm thấy giảng viên", "id", id)
+                ()->new ResourceNotFoundException("Không tìm thấy giảng viên")
         );
         try{
             this.lectureRepository.delete(lecture);

@@ -26,7 +26,7 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.getWriter().write(new JSONObject()
-                .put("message", "Sign in fails.")
+                .put("message", "Unauthorized.")
                 .put("status_code", response.getStatus())
                 .toString());
     }

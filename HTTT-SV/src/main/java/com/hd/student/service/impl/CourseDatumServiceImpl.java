@@ -18,11 +18,9 @@ import com.hd.student.service.CourseDatumService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -65,19 +63,19 @@ public class CourseDatumServiceImpl implements CourseDatumService {
     @Override
     public CourseDatumResponse addNewCourseData(CourseDatumRequest rq) {
         Course course = this.courseRepository.findById(rq.getCourseId()).orElseThrow(
-                () -> new ResourceNotFoundException("Không tìm thấy môn học", "id", rq.getCourseId())
+                () -> new ResourceNotFoundException("Không tìm thấy môn học")
         );
         Lecture lecture = this.lectureRepository.findById(rq.getLectureId()).orElseThrow(
-                () -> new ResourceNotFoundException("Không tìm thấy giảng viên", "id", rq.getLectureId())
+                () -> new ResourceNotFoundException("Không tìm thấy giảng viên")
         );
 
         Set<ScheduleInfo> scheduleInfos = new HashSet<>();
         for(int schedule: rq.getScheduleInfoId()) {
             ScheduleInfo scheduleInfo = this.scheduleInfoRepository.findById(schedule).orElseThrow(
-                    ()->new ResourceNotFoundException("Không tìm thấy lịch học", "id", schedule)
+                    ()->new ResourceNotFoundException("Không tìm thấy lịch học")
             );
             if(scheduleInfo.getCourseData()!= null)
-                throw new ResourceExistException("Lịch học", scheduleInfo.getId().toString());
+                throw new ResourceExistException("Môn học đã được xếp lịch");
             else scheduleInfos.add(scheduleInfo);
         }
         try {
@@ -107,22 +105,22 @@ public class CourseDatumServiceImpl implements CourseDatumService {
     @Transactional
     public CourseDatumResponse updateCourseData(CourseDatumRequest rq, int id) {
         CourseDatum courseDatum = this.courseDatumRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Không tìm thấy môn học mà bạn muốn chinh sua", "id", id));
+                () -> new ResourceNotFoundException("Không tìm thấy môn học mà bạn muốn chinh sua"));
         Course course = this.courseRepository.findById(rq.getCourseId()).orElseThrow(
-                () -> new ResourceNotFoundException("Không tìm thấy môn học", "id", rq.getCourseId())
+                () -> new ResourceNotFoundException("Không tìm thấy môn học")
         );
         Lecture lecture = this.lectureRepository.findById(rq.getLectureId()).orElseThrow(
-                () -> new ResourceNotFoundException("Không tìm thấy giảng viên", "id", rq.getLectureId())
+                () -> new ResourceNotFoundException("Không tìm thấy giảng viên")
         );
 
         Set<ScheduleInfo> scheduleInfos = new HashSet<>();
         for(int schedule: rq.getScheduleInfoId()) {
             ScheduleInfo scheduleInfo = this.scheduleInfoRepository.findById(schedule).orElseThrow(
-                    ()->new ResourceNotFoundException("Không tìm thấy lịch học", "id", schedule)
+                    ()->new ResourceNotFoundException("Không tìm thấy lịch học")
             );
             //Nếu lich đã được xếp trước hoặc lịch có id != id
             if(scheduleInfo.getCourseData()!= null && scheduleInfo.getCourseData().getId() != id)
-                throw new ResourceExistException("Lịch học", scheduleInfo.getId().toString());
+                throw new ResourceExistException("Môn học đã được xếp lịch");
             else scheduleInfos.add(scheduleInfo);
         }
 
@@ -151,7 +149,7 @@ public class CourseDatumServiceImpl implements CourseDatumService {
     @Override
     public ApiResponse removeScheduleInfoByCourseDataId(int id){
         CourseDatum courseDatum = this.courseDatumRepository.findById(id).orElseThrow(
-                ()-> new ResourceNotFoundException("dữ liệu môn học", "id",id)
+                ()-> new ResourceNotFoundException("Dữ liệu môn học không tìm thấy")
         );
         courseDatum.getScheduleInfos().forEach(scheduleInfo -> scheduleInfo.setCourseData(null));
         return new ApiResponse("Gỡ thành công thông tin lịch học", true);
@@ -160,7 +158,7 @@ public class CourseDatumServiceImpl implements CourseDatumService {
     @Override
     public ApiResponse deleteCourseData(int id){
         CourseDatum courseDatum = this.courseDatumRepository.findById(id).orElseThrow(
-                ()-> new ResourceNotFoundException("dữ liệu môn học", "id",id)
+                ()-> new ResourceNotFoundException("dữ liệu môn học không tìm thấy")
         );
         if(courseDatum.getSemesterDetails() != null)
             throw new ForeignKeyViolationException("Không thể xóa do dữ liệu đã được đăng ký");

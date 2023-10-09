@@ -18,5 +18,7 @@ public class ServiceCateResponse {
     private Boolean isAvailable;
 
     private String description;
+    private Integer numOfDate;
+
 
 }

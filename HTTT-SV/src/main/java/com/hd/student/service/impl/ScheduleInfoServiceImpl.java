@@ -54,7 +54,7 @@ public class ScheduleInfoServiceImpl implements ScheduleInfoService {
                 ScheduleInfo ->ScheduleInfo.getStudyRoom().getStudyRoomName(),ScheduleInfoResponse::setStudyRoom
         );
         ScheduleInfo info = this.scheduleInfoRepository.findById(id).orElseThrow(
-                ()->new ResourceNotFoundException("Không tồn tại lịch", "id", id));
+                ()->new ResourceNotFoundException("Không tồn tại lịch"));
         return modelMapper.map(info,ScheduleInfoResponse.class);
     }
 
@@ -63,17 +63,17 @@ public class ScheduleInfoServiceImpl implements ScheduleInfoService {
                 .findByWeekdaysAndStudyRoom_Id(si.getWeekdays(), si.getStudyRoom().getId());
         if (si.getId() != null) {
             ScheduleInfo oldScheduleInfo = this.scheduleInfoRepository.findById(si.getId()).orElseThrow(
-                    ()->new ResourceNotFoundException("thông tin buổi học", "id",si.getId())
+                    ()->new ResourceNotFoundException("thông tin buổi học")
             );
             scheduleInfos.remove(oldScheduleInfo);
         }
 
         for (ScheduleInfo scheduleInfo : scheduleInfos) {
             if(si.getStartAt()<=scheduleInfo.getEndAt() && si.getEndAt()>=scheduleInfo.getStartAt())
-                return true;
+                return false;
 
         }
-        return false;
+        return true;
     }
 
 
@@ -88,9 +88,9 @@ public class ScheduleInfoServiceImpl implements ScheduleInfoService {
         ScheduleInfo si = modelMapper.map(rq, ScheduleInfo.class);
         if(si.getWeekdays() != null){
             StudyRoom st = this.studyRoomRepository.findById(rq.getStudyRoom()).orElseThrow(
-                    () -> new ResourceNotFoundException("Không tìm thấy phòng học", "id", rq.getStudyRoom()));
+                    () -> new ResourceNotFoundException("Không tìm thấy phòng học"));
             si.setStudyRoom(st);
-            if(!this.isTimeSlotConflict(si)){
+            if(this.isTimeSlotConflict(si)){
                 return modelMapper.map(this.scheduleInfoRepository.save(si), ScheduleInfoResponse.class);
             }
             else
@@ -111,10 +111,10 @@ public class ScheduleInfoServiceImpl implements ScheduleInfoService {
         );
         ScheduleInfo si = modelMapper.map(rq, ScheduleInfo.class);
         StudyRoom st = this.studyRoomRepository.findById(rq.getStudyRoom()).orElseThrow(
-                () -> new ResourceNotFoundException("Không tìm thấy phòng học", "id", rq.getStudyRoom()));
+                () -> new ResourceNotFoundException("Không tìm thấy phòng học"));
         si.setStudyRoom(st);
         si.setId(id);
-        if(!this.isTimeSlotConflict(si)){
+        if(this.isTimeSlotConflict(si)){
             return modelMapper.map(this.scheduleInfoRepository.save(si), ScheduleInfoResponse.class);
         }
         else
@@ -123,7 +123,7 @@ public class ScheduleInfoServiceImpl implements ScheduleInfoService {
     @Override
     public ApiResponse deleteSchedule(int id){
         ScheduleInfo si = this.scheduleInfoRepository.findById(id).orElseThrow(
-                ()->new ResourceNotFoundException("Không tìm thấy thông tin buổi học", "id", id)
+                ()->new ResourceNotFoundException("Không tìm thấy thông tin buổi học")
         );
         this.scheduleInfoRepository.delete(si);
         return new ApiResponse("Xóa thành công", true);

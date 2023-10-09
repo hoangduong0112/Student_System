@@ -18,4 +18,5 @@ public class TransactionPaymentResponse {
     private String title;
     private LocalDateTime date;
     private double amount;
+    private String message;
 }

@@ -41,7 +41,7 @@ public class SemesterServiceImpl implements SemesterService {
     @Override
     public SemesterResponse getSemesterById(int id){
         Semester semester = this.semesterRepository.findById(id).orElseThrow(
-                ()-> new ResourceNotFoundException("Không tìm thấy học kỳ", "id", id)
+                ()-> new ResourceNotFoundException("Không tìm thấy học kỳ")
         );
         return modelMapper.map(semester, SemesterResponse.class);
     }
@@ -57,7 +57,7 @@ public class SemesterServiceImpl implements SemesterService {
     @Override
     public SemesterResponse updateSemester(SemesterRequest rq, int id){
         Semester semester = semesterRepository.findById(id).orElseThrow(()->
-             new ResourceNotFoundException("Không tìm thấy học kỳ", "id", id));
+             new ResourceNotFoundException("Không tìm thấy học kỳ"));
         boolean isFinish = semester.getIsFinish();
         semester = modelMapper.map(rq, Semester.class);
 
@@ -69,7 +69,7 @@ public class SemesterServiceImpl implements SemesterService {
     @Override
     public ApiResponse deleteSemesterById(int id){
         Semester semester = this.semesterRepository.findById(id).orElseThrow(
-                ()-> new ResourceNotFoundException("Không tìm thấy học kỳ", "id", id)
+                ()-> new ResourceNotFoundException("Không tìm thấy học kỳ")
         );
 //        if(semester.getIsFinish()){
 //            return new ApiResponse("Xóa thất bại vì học kì đã kết thúc", false);
@@ -87,7 +87,7 @@ public class SemesterServiceImpl implements SemesterService {
     @Override
     public SemesterResponse setFinish(int id){
         Semester semester = this.semesterRepository.findById(id).orElseThrow(
-                ()-> new ResourceNotFoundException("Không tìm thấy học kỳ", "id", id)
+                ()-> new ResourceNotFoundException("Không tìm thấy học kỳ")
         );
         semester.setIsFinish(true);
         semester = this.semesterRepository.save(semester);
