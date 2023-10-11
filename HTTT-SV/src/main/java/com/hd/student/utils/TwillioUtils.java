@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class TwillioUtils {
 //    @Value("${twilio.account-sid")
-    public static final String ACCOUNT_SID = "AC6de1ea176dcdba5a1bb96e1314229f8c";
+    public static final String ACCOUNT_SID = "";
 
 //    @Value("${twilio.auth-token")
-    public static final String AUTH_TOKEN = "774b19a19c8c396ea2b04d11b4401245";
+    public static final String AUTH_TOKEN = "";
 
 //    @Value("${twilio.to-phone}")
     public static final String TO_PHONE = "+84931867427";
