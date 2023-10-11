@@ -101,9 +101,9 @@ public class OnlineServiceImpl implements IOnlineService {
 
         OnlineService on = this.onlineServiceRepository.findById(id).orElseThrow(
                 ()-> new ResourceNotFoundException("Không tìm thấy yêu cầu"));
-        if(on.getUser().getId() != userId || user.getUserRole() != Role.ADMIN)
-            throw new AccessDeniedException("Bạn không có quyền làm điều này");
-
+        if (!(on.getUser().getId() == userId || user.getUserRole() == Role.MODERATOR)) {
+            throw new AccessDeniedException("Bạn không có quyền truy cập tài nguyên này");
+        }
         return on;
     }
 
@@ -124,6 +124,23 @@ public class OnlineServiceImpl implements IOnlineService {
         return rp;
     }
 
+    @Override
+    public List<OnlineServiceResponse> findByCateId(int cateId) {
+        modelMapper.typeMap(OnlineService.class, OnlineServiceResponse.class).addMapping(OnlineService
+                -> OnlineService.getServiceCate().getServiceCateName(), OnlineServiceResponse::setServiceCateName);
+        Converter<ServiceStatus, String> enumConverter =
+                ctx -> ctx.getSource() == null ? null : ctx.getSource().name();
+        modelMapper.addConverter(enumConverter);
+
+        List<OnlineService> services = onlineServiceRepository.findByServiceCate_Id(cateId);
+
+        List<OnlineServiceResponse> rp = new ArrayList<>();
+        for (OnlineService service : services) {
+            OnlineServiceResponse map = modelMapper.map(service, OnlineServiceResponse.class);
+            rp.add(map);
+        }
+        return rp;
+    }
 
     @Override
     public OnlineServiceResponse acceptService(int id){

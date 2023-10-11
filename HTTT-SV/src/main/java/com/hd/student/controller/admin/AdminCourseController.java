@@ -2,26 +2,20 @@ package com.hd.student.controller.admin;
 
 import com.hd.student.payload.request.CourseRequest;
 import com.hd.student.payload.request.LectureRequest;
-import com.hd.student.payload.request.StudyRoomRequest;
-import com.hd.student.payload.response.ApiResponse;
 import com.hd.student.service.CourseService;
 import com.hd.student.service.LectureService;
-import com.hd.student.service.StudyRoomService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @CrossOrigin
 @RestController
-@Secured("ADMIN")
+@Tag(name = "07. Course/Lecture", description = "QL mon hoc va giang vien")
 @RequestMapping("/api/admin/")
 public class AdminCourseController {
-
     @Autowired
     private CourseService courseService;
     @Autowired
@@ -71,5 +65,4 @@ public class AdminCourseController {
     public ResponseEntity<?>  deleteLecture(@PathVariable int id){
         return new ResponseEntity<>(this.lectureService.deleteLecture(id), HttpStatus.OK);
     }
-
 }

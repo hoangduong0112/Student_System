@@ -8,10 +8,7 @@ import com.hd.student.exception.ResourceNotFoundException;
 import com.hd.student.payload.response.ApiResponse;
 import com.hd.student.payload.request.TranscriptRequest;
 import com.hd.student.payload.response.TranscriptResponse;
-import com.hd.student.repository.SemesterRepository;
-import com.hd.student.repository.ServiceCateRepository;
-import com.hd.student.repository.TranscriptRepository;
-import com.hd.student.repository.UserRepository;
+import com.hd.student.repository.*;
 import com.hd.student.service.IOnlineService;
 import com.hd.student.service.TranscriptService;
 import jakarta.transaction.Transactional;
@@ -34,6 +31,7 @@ public class TranscriptServiceImpl implements TranscriptService {
     private ModelMapper modelMapper;
     @Autowired
     private ServiceCateRepository serviceCateRepository;
+
 
     @Override
     @Transactional
@@ -88,6 +86,8 @@ public class TranscriptServiceImpl implements TranscriptService {
                         .addMapping(TranscriptRequest::getToSemester, Transcript::setToSemester);
                 tr = modelMapper.map(rq, Transcript.class);
                 tr.setId(id);
+
+                on.setPrice(rq.getQuantity() * on.getServiceCate().getPrice());
                 tr.setOnlineService(on);
                 tr.setFromSemester(semesterRepository.findById(rq.getFromSemester()).orElseThrow(()
                         -> new ResourceNotFoundException("Không tìm thấy học kỳ")));

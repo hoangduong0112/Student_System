@@ -10,6 +10,7 @@ import java.util.List;
 public interface IOnlineService {
     public OnlineService addOnlineService(int userId, int serviceCate,double price);
 
+
     public List<OnlineServiceResponse> findAllByUserId(Integer userId);
 
     public OnlineService findByIdWithAccess(int id, int userId);
@@ -17,6 +18,8 @@ public interface IOnlineService {
     boolean checkAccess(int id, int userId);
 
     List<OnlineServiceResponse> findAll();
+
+    List<OnlineServiceResponse> findByCateId(int cateId);
 
     OnlineServiceResponse acceptService(int id);
     OnlineServiceResponse shippingService(int id);

@@ -17,4 +17,5 @@ public class StudCertificationResponse {
 
     private String email;
     private String content;
+    private OnlineServiceResponse onlineService;
 }

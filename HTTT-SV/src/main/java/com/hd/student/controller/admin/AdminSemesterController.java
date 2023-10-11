@@ -7,15 +7,16 @@ import com.hd.student.service.SemesterDetailService;
 
 import com.hd.student.service.SemesterService;
 import com.hd.student.service.SemesterUserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
 @RestController
-@Secured("ADMIN")
+@Tag(name = "10. Quản lý học kỳ", description = "Quản lý học kỳ của admin")
 @RequestMapping("/api/admin/")
 public class AdminSemesterController {
 

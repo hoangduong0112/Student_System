@@ -8,7 +8,7 @@ import java.text.ParseException;
 
 public interface PaymentService {
     PaymentResponse createPayment(int onlineServiceId, int userId, String url);
-    TransactionPaymentResponse getStatusAfterPay(String amount, String title, String date, String success)
+    TransactionPaymentResponse getStatusAfterPay(String amount, String title, String date, String success, String IdRef)
             throws ParseException;
 
     PaymentResponse getFromOnlineServiceId(String username, int onlineServiceId);

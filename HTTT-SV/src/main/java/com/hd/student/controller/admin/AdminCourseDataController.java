@@ -1,18 +1,18 @@
 package com.hd.student.controller.admin;
 
 import com.hd.student.payload.request.CourseDatumRequest;
-import com.hd.student.payload.response.ApiResponse;
 import com.hd.student.service.CourseDatumService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
 @RestController
-@Secured("ADMIN")
+@Tag(name = "08. CourseData", description = "QL thong tin mon hoc")
 @RequestMapping("/api/admin/")
 public class AdminCourseDataController {
 

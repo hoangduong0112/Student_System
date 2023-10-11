@@ -72,6 +72,8 @@ public class StudCertificationServiceImpl implements StudCertificationService {
             if (this.onlineService.checkAccess(on.getId(), userId)) {
                 sc = modelMapper.map(rq, StudCertification.class);
                 sc.setId(id);
+
+                on.setPrice(on.getServiceCate().getPrice() * sc.getEngCopy());
                 sc.setOnlineService(on);
                 this.studCertificationRepository.save(sc);
                 return new ApiResponse("Success", true);

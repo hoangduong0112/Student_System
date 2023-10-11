@@ -20,4 +20,6 @@ public class TranscriptResponse {
     private String contactPhone;
 
     private Boolean isSealed;
+
+    private OnlineServiceResponse onlineService;
 }

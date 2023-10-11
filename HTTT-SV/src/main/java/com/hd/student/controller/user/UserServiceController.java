@@ -8,12 +8,14 @@ import com.hd.student.payload.response.*;
 import com.hd.student.security.UserPrincipal;
 import com.hd.student.service.*;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,9 +23,9 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@Secured("USER")
+@Tag(name = "04. Yeu cau dich vu", description = "Gui, chinh sua, tra cuu yeu cau dich vu")
 @RequestMapping("/api/user/service")
-public class OnlineServiceController {
+public class UserServiceController {
 
 
     @Autowired
@@ -145,6 +147,12 @@ public class OnlineServiceController {
 
         UnlockStudentResponse rp = this.unlockStudentService.findByOnlineServiceId(serviceId, u.getId());
         return new ResponseEntity<>(rp, HttpStatus.OK);
+    }
+
+    @PutMapping("/cancel/{onlineServiceId}")
+    public ResponseEntity<?> cancelMyRequest(Authentication auth, @PathVariable int onlineServiceId){
+        UserPrincipal u = (UserPrincipal) auth.getPrincipal();
+        return new ResponseEntity<>(this.onlineService.cancelService(onlineServiceId,u.getId()), HttpStatus.OK);
     }
 
 }

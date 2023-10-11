@@ -72,6 +72,7 @@ public class DiplomaCopyServiceImpl implements DiplomaCopyService {
         if(on.getStatus() == ServiceStatus.PENDING) {
             if (this.onlineService.checkAccess(on.getId(), userId)) {
                 copy = modelMapper.map(rq, DiplomaCopy.class);
+                on.setPrice(on.getServiceCate().getPrice()* copy.getCopy());
 
                 copy.setId(id);
                 copy.setOnlineService(on);

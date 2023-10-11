@@ -16,7 +16,7 @@ import java.util.Date;
 public class TransactionPaymentResponse {
     private String status;
     private String title;
-    private LocalDateTime date;
+    private Date date;
     private double amount;
     private String message;
 }

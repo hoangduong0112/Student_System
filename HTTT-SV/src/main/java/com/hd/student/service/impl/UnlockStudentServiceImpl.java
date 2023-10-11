@@ -8,6 +8,7 @@ import com.hd.student.exception.ResourceNotFoundException;
 import com.hd.student.payload.request.UnlockStudentRequest;
 import com.hd.student.payload.response.ApiResponse;
 import com.hd.student.payload.response.UnlockStudentResponse;
+import com.hd.student.repository.OnlineServiceRepository;
 import com.hd.student.repository.ServiceCateRepository;
 import com.hd.student.repository.UnlockStudentRepository;
 import com.hd.student.service.IOnlineService;
@@ -31,6 +32,9 @@ public class UnlockStudentServiceImpl implements UnlockStudentService {
     private IOnlineService onlineService;
     @Autowired
     private ServiceCateRepository serviceCateRepository;
+    @Autowired
+    private OnlineServiceRepository onlineServiceRepository;
+
 
     @Override
     @Transactional
@@ -71,6 +75,8 @@ public class UnlockStudentServiceImpl implements UnlockStudentService {
         if (on.getStatus() == ServiceStatus.PENDING) {
             if (this.onlineService.checkAccess(on.getId(), userId)) {
                 us = modelMapper.map(rq, UnlockStudent.class);
+                on.setPrice(on.getServiceCate().getPrice());
+                this.onlineServiceRepository.save(on);
                 us.setId(id);
                 us.setOnlineService(on);
                 this.unlockStudentRepository.save(us);

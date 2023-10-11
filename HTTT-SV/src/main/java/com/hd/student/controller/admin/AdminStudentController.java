@@ -5,18 +5,19 @@ import com.hd.student.payload.response.UserInfoResponse;
 import com.hd.student.service.DepartmentService;
 import com.hd.student.service.MajorService;
 import com.hd.student.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @CrossOrigin
 @RestController
-@Secured("ADMIN")
+@Tag(name = "11. Quản lý sinh viên", description = "Quản lý sinh viên của admin ")
 @RequestMapping("/api/admin/")
 public class AdminStudentController {
 

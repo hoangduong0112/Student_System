@@ -6,6 +6,7 @@ import com.hd.student.payload.response.MessageResponse;
 import com.hd.student.security.JwtUtils;
 import com.hd.student.security.UserPrincipal;
 import com.hd.student.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -23,7 +24,8 @@ import java.util.Map;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/api/auth/")
+@Tag(name = "01. Authentication", description = "Authentication")
+@RequestMapping("/api/guest/auth/")
 public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;

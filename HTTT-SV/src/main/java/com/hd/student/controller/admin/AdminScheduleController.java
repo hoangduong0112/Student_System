@@ -5,15 +5,16 @@ import com.hd.student.payload.request.StudyRoomRequest;
 import com.hd.student.payload.response.ApiResponse;
 import com.hd.student.service.ScheduleInfoService;
 import com.hd.student.service.StudyRoomService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 @RestController
-@Secured("ADMIN")
+@Tag(name = "09. Quản lý lịch học/phòng học", description = "Quản lý lịch học và phòng hcc")
 @RequestMapping("/api/admin/")
 public class AdminScheduleController {
     @Autowired

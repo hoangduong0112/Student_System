@@ -13,6 +13,7 @@ import com.hd.student.payload.response.TransactionPaymentResponse;
 import com.hd.student.repository.OnlineServiceRepository;
 import com.hd.student.repository.PaymentRepository;
 import com.hd.student.service.PaymentService;
+import com.hd.student.utils.TwillioUtils;
 import com.hd.student.utils.VNPayUtil;
 import jakarta.servlet.ServletException;
 import org.modelmapper.ModelMapper;
@@ -24,12 +25,14 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.TimeZone;
 
 @Service
 @EnableScheduling
@@ -44,6 +47,8 @@ public class PaymentServiceImpl implements PaymentService {
     private PaymentRepository paymentRepository;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private TwillioUtils twillioUtils;
 
 
     @Override
@@ -78,19 +83,34 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public TransactionPaymentResponse getStatusAfterPay(String amount, String title, String date, String success) throws ParseException {
+    public TransactionPaymentResponse getStatusAfterPay(String amount, String title,
+                                                        String date, String success, String IdRef) throws ParseException {
         TransactionPaymentResponse rp = new TransactionPaymentResponse();
-        if(success.equals("00")) {
-            rp.setStatus("Success");
-            rp.setMessage("Bạn đã thanh toán thành công, vui long verify lại yêu cầu");
+        if (success.equals("00")) {
+            rp.setStatus("Thành công");
+            rp.setMessage("Bạn đã thanh toán thành công yêu cầu này, hãy đợi trường xác nhận yêu cầu");
+        } else {
+            rp.setStatus("Thất bại");
+            rp.setMessage("Có lỗi xảy ra ở yêu cầu này");
         }
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-        formatter = formatter.withZone(ZoneId.of("GMT+7"));
-        LocalDateTime newDate = LocalDateTime.parse(date, formatter);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+
+        Date newDate = null;
+        try {
+            newDate = sdf.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         rp.setDate(newDate);
         rp.setTitle(title);
-        rp.setAmount(Double.parseDouble(amount)/100);
+        rp.setAmount(Double.parseDouble(amount) / 100);
 
+        String paymentMessage = "Bạn đã thanh toán " + rp.getStatus() + "\n" +
+                "Ngày thực hiện thanh toán: " + rp.getDate() + "\n" + "Số tiền: " +
+                rp.getAmount();
+        this.twillioUtils.sendSMS(paymentMessage);
         return rp;
 
     }

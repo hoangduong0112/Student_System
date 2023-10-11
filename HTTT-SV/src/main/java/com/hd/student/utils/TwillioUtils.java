@@ -21,12 +21,12 @@ public class TwillioUtils {
 //    @Value("${twilio.from-phone}")
     public static final String FROM_PHONE = "+12568264993";
 
-    public String sendSMS(){
+    public String sendSMS(String payment){
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
         PhoneNumber fromPhone = new PhoneNumber(FROM_PHONE);
         PhoneNumber toPhone = new PhoneNumber(TO_PHONE);
 
-        Message message = Message.creator(toPhone, fromPhone, "test").create();
+        Message message = Message.creator(toPhone, fromPhone, payment).create();
 
         return "success";
     }
