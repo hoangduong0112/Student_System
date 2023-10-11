@@ -28,12 +28,6 @@ public class AdminSemesterController {
     @Autowired
     private SemesterService semesterService;
 
-
-    @GetMapping("/semester/getall")
-    public ResponseEntity<?> getSemester() {
-        return ResponseEntity.ok().body(this.semesterService.getAll());
-    }
-
     @GetMapping("/semester/getavailable")
     public ResponseEntity<?> getAvailableSemester(){
         return ResponseEntity.ok().body(this.semesterService.getAvailable());
