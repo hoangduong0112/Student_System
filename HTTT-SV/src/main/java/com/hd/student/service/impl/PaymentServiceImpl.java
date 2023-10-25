@@ -13,24 +13,18 @@ import com.hd.student.payload.response.TransactionPaymentResponse;
 import com.hd.student.repository.OnlineServiceRepository;
 import com.hd.student.repository.PaymentRepository;
 import com.hd.student.service.PaymentService;
-import com.hd.student.utils.TwillioUtils;
-import com.hd.student.utils.VNPayUtil;
+import com.hd.student.utils.TwilioUtils;
 import jakarta.servlet.ServletException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
 
@@ -48,13 +42,14 @@ public class PaymentServiceImpl implements PaymentService {
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
-    private TwillioUtils twillioUtils;
+    private TwilioUtils twilioUtils;
 
 
     @Override
     public PaymentResponse createPayment(int onlineServiceId, int userId, String url){
         OnlineService onlineService = this.onlineServiceRepository.findById(onlineServiceId)
-                .orElseThrow(()-> new ResourceNotFoundException("Không tìm thấy yêu cầu, mã yêu cầu" + onlineServiceId));
+                .orElseThrow(()-> new ResourceNotFoundException("Không tìm thấy yêu cầu, mã yêu cầu"
+                        + onlineServiceId));
         if (!onlineService.getStatus().equals(ServiceStatus.PENDING))
             throw new ResourceExistException("Yêu cầu đang được xử lý");
         Optional<Payment> payment = paymentRepository.findByServiceOnline_Id(onlineServiceId);
@@ -110,30 +105,26 @@ public class PaymentServiceImpl implements PaymentService {
         String paymentMessage = "Bạn đã thanh toán " + rp.getStatus() + "\n" +
                 "Ngày thực hiện thanh toán: " + rp.getDate() + "\n" + "Số tiền: " +
                 rp.getAmount();
-        this.twillioUtils.sendSMS(paymentMessage);
+        this.twilioUtils.sendSMS(paymentMessage);
         return rp;
 
     }
 
     @Override
-    public PaymentResponse getFromOnlineServiceId(String username, int onlineServiceId) {
-        Payment payment = paymentRepository.findByServiceOnline_Id(onlineServiceId).orElseThrow(()
-                -> new ResourceNotFoundException("Không tìm thấy thanh toán của yêu cầu này, mã yêu cầu"+ onlineServiceId));
+    public PaymentResponse getById(int id) {
+        Payment payment = paymentRepository.findById(id).orElseThrow(()
+                -> new ResourceNotFoundException("Không tìm thấy thanh toán của yêu cầu này, mã yêu cầu"+ id));
         String userOfPayment = payment.getServiceOnline().getUser().getEmail();
-        if (username.equals(userOfPayment))
-            return modelMapper.map(payment, PaymentResponse.class);
-        throw new ResourceNotFoundException("Không tìm thấy thanh toán của yêu cầu này" + onlineServiceId);
+        return modelMapper.map(payment, PaymentResponse.class);
     }
 
     @Override
-    public ApiResponse verifyPayment(String username, int onlineServiceId) {
-        Payment payment = paymentRepository.findByServiceOnline_Id(onlineServiceId).orElseThrow(()
-                -> new ResourceNotFoundException("Không tồn tại giao dịch"));
-        String userOfPayment = payment.getServiceOnline().getUser().getEmail();
-        if (username.equals(userOfPayment)) {
-            if (payment.getPaymentStatus() != PaymentStatus.PENDING)
-                return new ApiResponse("Hóa đơn đã được thanh toán hoặc đã bị trì hoãn", true);
-
+    public ApiResponse verifyPayment(int id) {
+        Payment payment = paymentRepository.findById(id).orElseThrow(()
+                -> new ResourceNotFoundException("Không tìm thấy thanh toán của yêu cầu này, mã yêu cầu"+ id));
+        if (payment.getPaymentStatus() != PaymentStatus.PENDING)
+            return new ApiResponse("Hóa đơn đã được thanh toán hoặc đã bị trì hoãn", true);
+        else {
             try {
                 Integer paid = VNPayUtil.querydrPayment(payment);
 
@@ -147,12 +138,12 @@ public class PaymentServiceImpl implements PaymentService {
                     return new ApiResponse("Yêu cầu đã bị hủy", true);
                 }
 
-                return new ApiResponse("Ticket is pending", true);
+
             } catch (RuntimeException | ServletException | IOException e) {
                 e.printStackTrace();
             }
         }
 
-        throw new ResourceNotFoundException("Không tìm thấy kết quả, thử lại sau");
+        return new ApiResponse("Hệ thống bị lỗi", true);
     }
 }

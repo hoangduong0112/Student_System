@@ -44,13 +44,13 @@ public class UnlockStudentServiceImpl implements UnlockStudentService {
             ServiceCate serviceCate = this.serviceCateRepository.findById(5).orElseThrow(
                     ()->new ResourceNotFoundException("Không tìm thấy loại dịch vụ")
             );
-        UnlockStudent us = modelMapper.map(rq, UnlockStudent.class);
+            UnlockStudent us = modelMapper.map(rq, UnlockStudent.class);
 
-        OnlineService onlineService = this.onlineService.addOnlineService(userId,5, serviceCate.getPrice());
-        us.setOnlineService(onlineService);
+            OnlineService onlineService = this.onlineService.addOnlineService(userId,5, serviceCate.getPrice());
+            us.setOnlineService(onlineService);
 
 
-        return modelMapper.map(this.unlockStudentRepository.save(us), UnlockStudentResponse.class);
+            return modelMapper.map(this.unlockStudentRepository.save(us), UnlockStudentResponse.class);
         }catch (RuntimeException ex){
             throw new RuntimeException("Lỗi server");
         }

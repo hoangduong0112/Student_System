@@ -8,6 +8,6 @@ import java.util.Date;
 import java.util.Optional;
 
 @Repository
-public interface PaymentRepository extends JpaRepository<Payment, String> {
+public interface PaymentRepository extends JpaRepository<Payment, Integer> {
     Optional<Payment> findByServiceOnline_Id(Integer id);
 }

@@ -15,7 +15,7 @@ import java.util.*;
 
 
 @Service
-public class VNPayUtil {
+public class VNPayUtil extends HttpServlet{
     public String CreatePayment(Payment payment, String url) throws UnsupportedEncodingException {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
@@ -110,6 +110,7 @@ public class VNPayUtil {
         vnp_Params.put("vnp_Command", vnp_Command);
         vnp_Params.put("vnp_TmnCode", VNPayConfig.vnp_TmnCode);
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
+
         vnp_Params.put("vnp_OrderInfo", vnp_OrderInfo);
         // vnp_Params.put("vnp_TransactionNo", vnp_TransactionNo);
         vnp_Params.put("vnp_TransactionDate", vnp_TransDate);
@@ -123,7 +124,7 @@ public class VNPayUtil {
 
         vnp_Params.put("vnp_SecureHash", vnp_SecureHash);
 
-        //Gửi yêu cầu post tới server
+        //Gửi yêu cầu post tới vnpay
         URL url = new URL(VNPayConfig.vnp_apiUrl);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("POST");
@@ -144,30 +145,14 @@ public class VNPayUtil {
 
         JSONObject json = new JSONObject(response.toString());
 
-        String res_ResponseCode = (String) json.get("vnp_ResponseCode");
-        String res_TxnRef = (String) json.get("vnp_TxnRef");
-        String res_Message = (String) json.get("vnp_Message");
-        Double res_Amount = Double.valueOf((String) json.get("vnp_Amount")) / 100;
-        String res_TransactionType = (String) json.get("vnp_TransactionType");
         String res_TransactionStatus = (String) json.get("vnp_TransactionStatus");
 
 
-        if (!res_ResponseCode.equals("00")) // Response Code == 0
+
+        if (res_TransactionStatus.equals("01")) // Giao dịch chưa hoàn tất
             return 1;
 
-        if (!res_TxnRef.equals(payment.getVnpayTxnred()))
-            return 1;
-
-        if (res_Amount != payment.getPrice()) // Amount payment not equal
-            return 2;
-
-        if (!res_TransactionType.equals("01")) // Transaction Type invaild
-            return 2;
-
-        if (res_TransactionStatus.equals("01")) // Transaction is pending
-            return 1;
-
-        if (!res_TransactionStatus.equals("00")) // Transaction Status invaild
+        if (!res_TransactionStatus.equals("00")) // Giao dịch bị lỗi
             return 2;
 
         return 0;

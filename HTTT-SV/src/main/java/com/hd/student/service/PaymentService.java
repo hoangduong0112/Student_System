@@ -11,7 +11,7 @@ public interface PaymentService {
     TransactionPaymentResponse getStatusAfterPay(String amount, String title, String date, String success, String IdRef)
             throws ParseException;
 
-    PaymentResponse getFromOnlineServiceId(String username, int onlineServiceId);
+    PaymentResponse getById(int id);
 
-    ApiResponse verifyPayment(String username, int onlineServiceId);
+    ApiResponse verifyPayment(int id);
 }
