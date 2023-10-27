@@ -1,7 +1,7 @@
 import axios from "axios";
 import cookie from "react-cookies";
 
-export const AUTHORIZATION_API = '/api/guest/auth';
+export const AUTHORIZATION_API = '/api/auth';
 const USER_API = '/api/user';
 
 export const endpoints = {
