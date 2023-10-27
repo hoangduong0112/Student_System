@@ -27,7 +27,7 @@ public class UnlockStudentController {
             description = "Thêm 1 yêu cầu về mở khóa sinh viên - Role User"
     )
     @PreAuthorize("hasAuthority('USER')")
-    @PostMapping("/add")
+    @PostMapping("")
     public ResponseEntity<?> saveUnlockStudent(Authentication auth, @Valid @RequestBody UnlockStudentRequest rq){
         UserPrincipal u = (UserPrincipal) auth.getPrincipal();
         return new ResponseEntity<>(this.unlockStudentService.addNewUnlockStudent(rq, u.getId()), HttpStatus.OK);
@@ -38,7 +38,7 @@ public class UnlockStudentController {
             description = "Sửa 1 yêu cầu mở khóa sinh viên - Role User"
     )
     @PreAuthorize("hasAuthority('USER')")
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateUnlockStudent(Authentication auth,@Valid @RequestBody UnlockStudentRequest rq, @PathVariable int id) {
         UserPrincipal u = (UserPrincipal) auth.getPrincipal();
         return new ResponseEntity<>(this.unlockStudentService.updateUnlockStudent(rq, id, u.getId()), HttpStatus.OK);

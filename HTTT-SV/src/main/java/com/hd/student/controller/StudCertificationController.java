@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 @RestController
 @Tag(name = "05. Stud-Certification", description = "Yêu cầu chứng nhận sinh viên")
-@RequestMapping("/api/stud-certification")
+@RequestMapping("/api/stud-certificate")
 public class StudCertificationController {
     @Autowired
     private StudCertificationService studCertificationService;
@@ -27,7 +27,7 @@ public class StudCertificationController {
             description = "Thêm 1 yêu cầu về chứng nhận sinh viên - Role User"
     )
     @PreAuthorize("hasAuthority('USER')")
-    @PostMapping("/add")
+    @PostMapping("")
     public ResponseEntity<?> saveCertification(Authentication auth, @Valid @RequestBody StudCertificationRequest rq){
         UserPrincipal u = (UserPrincipal) auth.getPrincipal();
         return new ResponseEntity<>(this.studCertificationService.addNewStudCertification(rq, u.getId())
@@ -39,7 +39,7 @@ public class StudCertificationController {
             description = "Thêm 1 yêu cầu về chứng nhận sinh viên - Role User"
     )
     @PreAuthorize("hasAuthority('USER')")
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateStudCertification(Authentication auth, @Valid @RequestBody StudCertificationRequest rq, @PathVariable int id) {
         UserPrincipal u = (UserPrincipal) auth.getPrincipal();
         return new ResponseEntity<>(this.studCertificationService.updateMyCertification(rq,id, u.getId()), HttpStatus.OK);

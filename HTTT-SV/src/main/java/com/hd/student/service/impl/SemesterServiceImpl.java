@@ -1,6 +1,7 @@
 package com.hd.student.service.impl;
 
 import com.hd.student.entity.Semester;
+import com.hd.student.exception.ConflictException;
 import com.hd.student.exception.ResourceNotFoundException;
 import com.hd.student.exception.ForeignKeyViolationException;
 import com.hd.student.payload.request.SemesterRequest;
@@ -71,9 +72,9 @@ public class SemesterServiceImpl implements SemesterService {
         Semester semester = this.semesterRepository.findById(id).orElseThrow(
                 ()-> new ResourceNotFoundException("Không tìm thấy học kỳ")
         );
-//        if(semester.getIsFinish()){
-//            return new ApiResponse("Xóa thất bại vì học kì đã kết thúc", false);
-//        }
+        if(semester.getIsFinish()){
+            throw new ConflictException("Học kỳ đã kết thúc");
+        }
         try {
             this.semesterRepository.delete(semester);
             return new ApiResponse("Xóa thành công", true);

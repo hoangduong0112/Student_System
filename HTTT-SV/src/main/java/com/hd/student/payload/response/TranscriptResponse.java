@@ -21,5 +21,5 @@ public class TranscriptResponse {
 
     private Boolean isSealed;
 
-    private OnlineServiceResponse onlineService;
+    private int onlineServiceId;
 }

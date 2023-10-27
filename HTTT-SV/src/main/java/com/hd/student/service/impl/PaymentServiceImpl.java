@@ -118,12 +118,40 @@ public class PaymentServiceImpl implements PaymentService {
         return modelMapper.map(payment, PaymentResponse.class);
     }
 
+//    @Override
+//    public ApiResponse verifyPayment(int id) {
+//        Payment payment = paymentRepository.findById(id).orElseThrow(()
+//                -> new ResourceNotFoundException("Không tìm thấy thanh toán của yêu cầu này, mã yêu cầu"+ id));
+//        if (payment.getPaymentStatus() != PaymentStatus.PENDING)
+//            return new ApiResponse("Hóa đơn đã được thanh toán hoặc đã bị trì hoãn", true);
+//        else {
+//            try {
+//                Integer paid = VNPayUtil.querydrPayment(payment);
+//
+//                if (paid == 0) {
+//                    payment.setPaymentStatus(PaymentStatus.PAID);
+//                    this.paymentRepository.save(payment);
+//                    return new ApiResponse("Bạn đã thanh toán xong dịch vụ.", true);
+//                } else if (paid == 2) {
+//                    payment.setPaymentStatus(PaymentStatus.CANCEL);
+//                    this.paymentRepository.save(payment);
+//                    return new ApiResponse("Yêu cầu đã bị hủy", true);
+//                }
+//
+//
+//            } catch (RuntimeException | ServletException | IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        return new ApiResponse("Hệ thống bị lỗi", true);
+//    }
     @Override
-    public ApiResponse verifyPayment(int id) {
+    public boolean verifyPayment(int id) {
         Payment payment = paymentRepository.findById(id).orElseThrow(()
                 -> new ResourceNotFoundException("Không tìm thấy thanh toán của yêu cầu này, mã yêu cầu"+ id));
         if (payment.getPaymentStatus() != PaymentStatus.PENDING)
-            return new ApiResponse("Hóa đơn đã được thanh toán hoặc đã bị trì hoãn", true);
+            return false;
         else {
             try {
                 Integer paid = VNPayUtil.querydrPayment(payment);
@@ -131,19 +159,16 @@ public class PaymentServiceImpl implements PaymentService {
                 if (paid == 0) {
                     payment.setPaymentStatus(PaymentStatus.PAID);
                     this.paymentRepository.save(payment);
-                    return new ApiResponse("Bạn đã thanh toán xong dịch vụ.", true);
+                    return true;
                 } else if (paid == 2) {
                     payment.setPaymentStatus(PaymentStatus.CANCEL);
                     this.paymentRepository.save(payment);
-                    return new ApiResponse("Yêu cầu đã bị hủy", true);
+                    return true;
                 }
-
-
             } catch (RuntimeException | ServletException | IOException e) {
                 e.printStackTrace();
             }
         }
-
-        return new ApiResponse("Hệ thống bị lỗi", true);
+        return false;
     }
 }

@@ -13,9 +13,6 @@ export const UserContext = createContext(null);
 const App = () => {
     const [user, setUser] = useReducer(Reducer,cookie.load('user') || null);
 
-    useEffect(() => {
-        localStorage.getItem('user');
-    })
 
     return (
         <UserContext.Provider value={[user, setUser]}>
@@ -31,13 +28,9 @@ const App = () => {
                     <Route path="/user/info" element={<Comp.UserInfoList />} />
                     <Route path="/user/semester" element={<Comp.UserSemesterList />} />
                     <Route path="/user/semester/:id/course" element={<Comp.UserDetailsList />} />
-                    <Route path="/user/payment/create/:id" element={<Comp.CreatePayment />} />
-                    <Route path="/user/payment/status/" element={<Comp.PaymentStatus />} />
-
-                    <Route path="/user/service/transcript/:id" element={<Comp.TranscriptList />} />
-                    <Route path="/user/service/diploma/:id" element={<Comp.DiplomaList />} />
-                    <Route path="/user/service/stud-cert/:id" element={<Comp.StudCertificateList />} />
-                    <Route path="/user/service/unlock-stud/:id" element={<Comp.UnlockStudList />} />
+                    <Route path="/user/payment/create" element={<Comp.CreatePayment />} />
+                    <Route path="/user/payment/result/" element={<Comp.PaymentStatus />} />
+                    <Route path="/user/payment/detail/:id" element={<Comp.PaymentDetails />} />
 
                     <Route path="/user/service/transcript/add" element={<Comp.AddTranscript />} />
                     <Route path="/user/service/diploma/add" element={<Comp.AddDiploma />} />
@@ -59,11 +52,14 @@ const App = () => {
                     <Route path="/admin/course-data/update/:id" element={<Comp.UpdateCourseData />} />
 
                     <Route path="/admin/course/all" element={<Comp.CourseList />} />
-                    <Route path="/admin/course/:id" element={<Comp.CourseList />} />
                     <Route path="/admin/course/add" element={<Comp.AddCourse />} />
                     <Route path="/admin/course/update/:id" element={<Comp.UpdateCourse />} />
 
-                    <Route path="/admin/semester/available" element={<Comp.SemesterList />} />
+                    <Route path="/admin/lecture/all" element={<Comp.LectureList />} />
+                    <Route path="/admin/lecture/add" element={<Comp.AddLecture />} />
+                    <Route path="/admin/lecture/update/:id" element={<Comp.UpdateLecture />} />
+
+                    <Route path="/admin/semester/all" element={<Comp.SemesterList />} />
                     <Route path="/admin/semester/:id" element={<Comp.SemesterList />} />
                     <Route path="/admin/semester/add" element={<Comp.AddSemester />} />
                     <Route path="/admin/semester/update/:id" element={<Comp.UpdateSemester />} />

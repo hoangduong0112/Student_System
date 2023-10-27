@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import DiplomaService from "../../services/User/DiplomaService";
+import DiplomaService from "../../services/DiplomaService";
 import {useNavigate} from "react-router-dom";
 
 function AddDiploma() {
@@ -15,7 +15,7 @@ function AddDiploma() {
         e.preventDefault();
         if (copy === null || phoneContact === '' || email === '' || diplomaYear === null || diplomaCode === '')
             setErr('Vui lòng nhập đầy đủ thông tin');
-        else if (copy <= 0 || diplomaYear <= 1970)
+        else if (copy <= 0 || diplomaYear < 1970)
             setErr('Số nhập không hợp lệ');
         else {
             const diploma = {
@@ -27,9 +27,8 @@ function AddDiploma() {
             };
 
             DiplomaService.addDiploma(diploma).then((res) => {
-                let data = res.data;
-                nav(`/user/payment/create/${data.onlineService.id}`);
-                setErr('Đăng ký thành công.');
+                const onlineServiceId = res.data.onlineServiceId;
+                nav(`/user/service/diploma/update/${onlineServiceId}`);
             });
         }
     }

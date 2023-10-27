@@ -22,6 +22,7 @@ const Home = () => {
     const viewServices = () => { nav('/moderator/get-request'); }
     const viewCourses = () => { nav('/admin/course/all'); }
     const viewCourseDatas = () => { nav('/admin/course-data/all'); }
+    const viewLecture = () => { nav('/admin/lecture/all'); }
     const viewSemesters = () => { nav('/admin/semester/available'); }
     const viewStuds = () => { nav('/admin/student'); }
     const viewDepts = () => { nav('/admin/department'); }
@@ -36,45 +37,63 @@ const Home = () => {
             nav(`/user/service/unlock-stud/update/${request.id}`);
     }
 
+    const createPayment = (request) => {
+        nav(`/user/payment/create?service=${request.id}`);
+    }
+
+    const viewPayment = (request) => {
+        nav(`/user/payment/detail/${request.paymentId}`);
+    }
+
+
     useEffect(() => {
         const getUser = async () => {
             try {
                 setLoading(true);
                 const res = await UserService.getUser();
                 setUser(res.data);
-
-            } catch (error) { console.error('Lỗi lấy data: ', error); }
-
-            finally { setLoading(false); }
+            } catch (error) {
+                console.error('Lỗi lấy thông tin người dùng: ', error);
+            } finally {
+                setLoading(false);
+            }
         }
 
+        getUser();
+    }, []);
+
+    useEffect(() => {
         const getUserSemester = async () => {
             try {
                 setLoading(true);
                 const res = await UserService.getSemester();
                 setSemesters(res.data);
-
-            } catch (error) { console.error('Lỗi lấy data: ', error); }
-
-            finally { setLoading(false); }
+            } catch (error) {
+                console.error('Lỗi lấy thông tin học kỳ: ', error);
+            } finally {
+                setLoading(false);
+            }
         }
 
+        getUserSemester();
+    }, []);
+
+    useEffect(() => {
         const getRequest = async () => {
             try {
                 setLoading(true);
                 const res = await UserService.getRequest();
                 setRequests(res.data);
-
-            } catch (error) { console.error('Lỗi lấy data: ', error); }
-
-            finally { setLoading(false); }
+            } catch (error) {
+                console.error('Lỗi lấy thông tin yêu cầu: ', error);
+            } finally {
+                setLoading(false);
+            }
         }
 
-        getUser().then();
-        getUserSemester().then();
-        getRequest().then();
-        //window.location.reload();
+        getRequest();
     }, []);
+
 
     return (
         <div className="pb-5">
@@ -99,6 +118,8 @@ const Home = () => {
                                         onClick={viewSemesters}>Quản lý học kỳ</button>
                                 <button className="me-1 btn btn-success rounded-pill rounded-start-0 rounded-end-0"
                                         onClick={viewCourses}>Quản lý môn học</button>
+                                <button className="me-1 btn btn-success rounded-pill rounded-start-0 rounded-end-0"
+                                        onClick={viewLecture}>Quản lý giảng viên</button>
                                 <button className="btn btn-success rounded-pill rounded-start-0"
                                         onClick={viewCourseDatas}>Quản lý lớp học</button>
                             </span>
@@ -106,12 +127,11 @@ const Home = () => {
                         {user.fullName ? (<>
                             <h2 className='App'>
                                 Xin chào, {user.fullName}
-                                {user.avatar !== '' ? (<span> {user.avatar}</span>) : (
-                                    <span className='ms-2' dangerouslySetInnerHTML={{ __html: '&#x1F464;' }}></span>
-                                )}
                             </h2>
                                 <h5 className="my-3 pb-2 border-bottom">Các học kỳ</h5>
-                                {semesters.length ? (<>
+
+                                {
+                                    semesters.length ? (<>
                                     {semesters.map((semester) => (
                                         <span className="list-group-horizontal row-cols-4" key={semester.id}>
                                             <div className="list-inline-item mx-1">
@@ -149,6 +169,7 @@ const Home = () => {
                                             <th>Ngày yêu cầu</th>
                                             <th>Trạng thái</th>
                                             <th>Thành tiền</th>
+                                            <th>Thanh toán</th>
                                             <th>Thao tác</th>
                                         </tr>
                                         </thead>
@@ -159,6 +180,16 @@ const Home = () => {
                                                 <td>{request.createdDate}</td>
                                                 <td>{request.status}</td>
                                                 <td>{request.price}</td>
+                                                <td>
+                                                    {request.paymentId === 0 ?
+                                                        <button className="btn-secondary btn" onClick={() => {
+                                                            createPayment(request)}}>Thanh toán ngay
+                                                        </button>
+                                                        : <button className="btn-info btn" onClick={() => {
+                                                            viewPayment(request)}}>Thông tin thanh toán
+                                                        </button>
+                                                    }
+                                                </td>
                                                 {request.status === 'PENDING' ?
                                                 <td className="text-center">
                                                     <button className="btn-success btn" onClick={() => {
@@ -181,9 +212,6 @@ const Home = () => {
                             <button className="border-0 bg-white h5 my-3 pb-2 border-bottom"
                                 data-toggle="tooltip" title="Nhấn vào để xem chi tiết"
                                 onClick={viewInfo}>Thông tin sinh viên
-                            {user.avatar !== '' ? (<span> {user.avatar}</span>) : (
-                                <span className="ms-2" dangerouslySetInnerHTML={{ __html: '&#x1F464;' }}></span>
-                            )}
                             </button>
                             <div>
                                 <span className="fw-bold ps-4">Khoa: </span>

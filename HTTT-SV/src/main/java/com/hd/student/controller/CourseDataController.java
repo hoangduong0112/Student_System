@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 @RestController
 @Tag(name = "12. CourseData", description = "Quản lý chi tiết môn học")
-@RequestMapping("/api/course-data/")
+@RequestMapping("/api/course-data")
 public class CourseDataController {
     @Autowired
     private CourseDataService courseDataService;
@@ -23,7 +23,7 @@ public class CourseDataController {
             summary = "Get All CourseData",
             description = "Lấy tất cả chi tiết môn học"
     )
-    @GetMapping("/getAll")
+    @GetMapping("")
     public ResponseEntity<?> getAllCourse(@RequestParam(required = false) String search){
         return new ResponseEntity<>(this.courseDataService.getAll(search), HttpStatus.OK);
     }
@@ -42,7 +42,7 @@ public class CourseDataController {
             description = "Thêm chi tiết môn học mới"
     )
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PostMapping("/add")
+    @PostMapping("")
     public ResponseEntity<?> addCourseData(@Valid @RequestBody CourseDataRequest rq){
         return new ResponseEntity<>(this.courseDataService.addNewCourseData(rq), HttpStatus.OK);
     }
@@ -52,7 +52,7 @@ public class CourseDataController {
             description = "Chỉnh sửa chi tiết môn học"
     )
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PutMapping ("/update/{id}")
+    @PutMapping ("/{id}")
     public ResponseEntity<?> updateCourseData(@Valid @RequestBody CourseDataRequest rq, @PathVariable int id){
         return new ResponseEntity<>(this.courseDataService.updateCourseData(rq, id), HttpStatus.OK);
     }
@@ -62,7 +62,7 @@ public class CourseDataController {
             description = "Xóa chi tiết môn học"
     )
     @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCourseData(@PathVariable int id){
         return new ResponseEntity<>(this.courseDataService.deleteCourseData(id), HttpStatus.OK);
     }

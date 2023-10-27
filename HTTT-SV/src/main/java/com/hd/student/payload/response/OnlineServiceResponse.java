@@ -17,5 +17,5 @@ public class OnlineServiceResponse {
     private Boolean isShipped;
     private double price;
     private String serviceCateName;
-//    private PaymentResponse payment;
+    private int paymentId;
 }

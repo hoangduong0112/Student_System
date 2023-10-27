@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import UnlockStudService from "../../services/User/UnlockStudService";
+import UnlockStudService from "../../services/UnlockStudService";
 import {useNavigate} from "react-router-dom";
 
 function AddUnlockStud() {

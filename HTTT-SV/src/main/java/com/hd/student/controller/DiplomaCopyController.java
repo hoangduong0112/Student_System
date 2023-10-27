@@ -28,7 +28,7 @@ public class DiplomaCopyController {
             description = "Thêm 1 yêu cầu về cấp bảng sao bằng tốt nghiệp - Role User"
     )
     @PreAuthorize("hasAuthority('USER')")
-    @PostMapping("/add")
+    @PostMapping("")
     public ResponseEntity<?> saveDiplomaCopy(Authentication auth, @Valid @RequestBody DiplomaCopyRequest rq){
         UserPrincipal u = (UserPrincipal) auth.getPrincipal();
         return new ResponseEntity<>(this.diplomaCopyService.addNewDiplomaCopy(rq, u.getId()), HttpStatus.OK);
@@ -40,13 +40,24 @@ public class DiplomaCopyController {
             description = "Chỉnh sửa 1 yêu cầu về cấp bảng sao bằng tốt nghiệp - Role User"
     )
     @PreAuthorize("hasAuthority('USER')")
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateDiplomaCopy(Authentication auth, @Valid @RequestBody DiplomaCopyRequest rq, @PathVariable int id){
         UserPrincipal u = (UserPrincipal) auth.getPrincipal();
         return new ResponseEntity<>(this.diplomaCopyService.updateMyDiplomaCopy(rq, id, u.getId())
                 ,HttpStatus.OK);
     }
 
+//    @Operation(
+//            summary = "Get DiplomaCopy By OnlineServiceId",
+//            description = "Lấy yêu cầu về cấp bảng sao bằng tốt nghiệp"
+//    )
+//    @GetMapping("")
+//    public ResponseEntity<?> getDiplomaByServiceId(Authentication auth, @RequestParam(name="serviceId", required = true) int serviceId){
+//        UserPrincipal u = (UserPrincipal) auth.getPrincipal();
+//        DiplomaCopyResponse rp = this.diplomaCopyService.findByOnlineServiceId(serviceId, u.getId());
+//
+//        return new ResponseEntity<>(rp, HttpStatus.OK);
+//    }
     @Operation(
             summary = "Get DiplomaCopy By OnlineServiceId",
             description = "Lấy yêu cầu về cấp bảng sao bằng tốt nghiệp"

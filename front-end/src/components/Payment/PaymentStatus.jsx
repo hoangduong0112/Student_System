@@ -1,59 +1,62 @@
 import React, { useState, useEffect } from 'react';
-import UserService from "../../services/User/UserService";
+import PaymentService from "../../services/PaymentService";
 import {Container, Table} from "reactstrap";
 import { format } from 'date-fns';
-
+import {useLocation} from "react-router-dom";
+import moment from 'moment';
 function PaymentStatus() {
+    const myParam = useLocation().search;
+    const vnp_Amount= new URLSearchParams(myParam).get("vnp_Amount");
+    const vnp_OrderInfo= new URLSearchParams(myParam).get("vnp_OrderInfo");
+    const vnp_TxnRef= new URLSearchParams(myParam).get("vnp_TxnRef");
+    const vnp_PayDate= new URLSearchParams(myParam).get("vnp_PayDate");
+    const vnp_TransactionStatus= new URLSearchParams(myParam).get("vnp_TransactionStatus");
     const [status, setStatus] = useState({});
 
-    useEffect(() => {
-        UserService.getPaymentStatus().then((res) => {
+    async function fetchData() {
+        try {
+            const res = await PaymentService.getResult(vnp_Amount, vnp_OrderInfo, vnp_TxnRef, vnp_PayDate, vnp_TransactionStatus);
             setStatus(res.data);
-        })
-            .catch((error) => {
-                console.error('Lỗi thanh toán:', error);
-            });
-    }, []);
-
-    const formatDate = (date) => {
-        let d = new Date(date);
-        return format(d, "HH:mm:ss - dd/MM/yyyy");
+        } catch (error) {
+            console.error('Lỗi thanh toán:', error);
+        }
     }
 
-    const verify = () => {
-
-    }
+    useEffect(() => {
+        fetchData();
+    }, []); // Chúng ta giữ dependency array rỗng, tương tự như trước
 
     return (
         <div>
             {status ? (
                 <Container fluid>
-                    <h3 className="App">Thanh toán</h3>
+                    <h3 className="App">Thông tin thanh toán</h3>
                     <div className="row">
                         <Table className="mt-5">
-                            <tr className="border-bottom" style={{height:'50px'}}>
+                            <tbody>
+                            <tr className="border-bottom" style={{ height: '50px' }}>
                                 <th>Tên</th>
                                 <td>{status.title}</td>
                             </tr>
-                            <tr className="border-bottom" style={{height:'50px'}}>
+                            <tr className="border-bottom" style={{ height: '50px' }}>
                                 <th>Trạng thái</th>
                                 <td>{status.status}</td>
                             </tr>
-                            <tr className="border-bottom" style={{height:'50px'}}>
+                            <tr className="border-bottom" style={{ height: '50px' }}>
                                 <th>Ngày lập</th>
-                                <td>{status.date ? formatDate(status.createdDate) : ''}</td>
+                                <td>{moment(status.date).format("DD-MM-YYYY HH:mm:ss")}</td>
                             </tr>
-                            <tr className="border-bottom" style={{height:'50px'}}>
+                            <tr className="border-bottom" style={{ height: '50px' }}>
                                 <th>Số tiền</th>
                                 <td>{status.amount}</td>
                             </tr>
-                            <tr className="border-bottom" style={{height:'50px'}}>
+                            <tr className="border-bottom" style={{ height: '50px' }}>
                                 <th>Nội dung</th>
                                 <td>{status.message}</td>
                             </tr>
+                            </tbody>
                         </Table>
                     </div>
-                    <button className="btn btn-primary" onClick={verify}>Xác nhận</button>
                 </Container>
             ) : (
                 <h3>Loading...</h3>

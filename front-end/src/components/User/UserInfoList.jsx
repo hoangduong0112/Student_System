@@ -28,32 +28,40 @@ function UserInfoList() {
                 <h3 className="App">Thông tin sinh viên</h3>
                 <div className="row">
                     <Table className="mt-5">
-                        <tr className="border-bottom" style={{height:'50px'}}>
+                        <tbody>
+                        <tr className="border-bottom" style={{ height: '50px' }}>
                             <th>Họ và tên</th>
                             <td>{user.fullName}</td>
                         </tr>
-                        <tr className="border-bottom" style={{height:'50px'}}>
+                        <tr className="border-bottom" style={{ height: '50px' }}>
                             <th>Ảnh đại diện</th>
-                            {user.avatar !== '' ? (<> {user.avatar}</>) : (
-                                <td dangerouslySetInnerHTML={{ __html: '&#x1F464;' }}></td>
-                            )}
+                            <td>
+                                {user.avatar !== '' ? (
+                                    <img src={user.avatar} alt="Ảnh đại diện" width="200" height="200"/>
+                                ) : (
+                                    <span role="img" aria-label="Ảnh đại diện">&#x1F464;</span>
+                                )}
+                            </td>
                         </tr>
-                        <tr className="border-bottom" style={{height:'50px'}}>
+                        <tr className="border-bottom" style={{ height: '50px' }}>
                             <th>Email</th>
                             <td>{user.email}</td>
                         </tr>
-                        <tr className="border-bottom" style={{height:'50px'}}>
+                        <tr className="border-bottom" style={{ height: '50px' }}>
                             <th>Khoa</th>
                             <td>{user.department_name}</td>
                         </tr>
-                        <tr className="border-bottom" style={{height:'50px'}}>
+                        <tr className="border-bottom" style={{ height: '50px' }}>
                             <th>Ngành</th>
                             <td>{user.major_name}</td>
                         </tr>
+                        </tbody>
                     </Table>
                 </div>
                 <div className="float-end row">
-                    <button className="btn-primary btn" onClick={() => nav('/home')}>Quay lại</button>
+                    <button className="btn-primary btn" onClick={() => nav('/home')}>
+                        Quay lại
+                    </button>
                 </div>
             </Container>
         </div>

@@ -13,5 +13,5 @@ public interface PaymentService {
 
     PaymentResponse getById(int id);
 
-    ApiResponse verifyPayment(int id);
+    boolean verifyPayment(int id);
 }

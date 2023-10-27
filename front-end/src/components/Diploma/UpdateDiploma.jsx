@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import DiplomaService from '../../services/User/DiplomaService';
+import DiplomaService from '../../services/DiplomaService';
 import {useLocation, useNavigate, useParams} from 'react-router-dom';
 
 function UpdateDiploma() {
@@ -7,8 +7,9 @@ function UpdateDiploma() {
     const loc = useLocation();
     const nav = useNavigate();
     const [err, setErr] = useState('');
-    
+
     const { copy, phoneContact, email, diplomaYear, diplomaCode } = loc.state || {};
+    const [diplomaId, setDiplomaId] = useState(0);
     const [copyInput, setCopyInput] = useState(copy || 0);
     const [phoneContactInput, setPhoneContactInput] = useState(phoneContact || '');
     const [emailInput, setEmailInput] = useState(email || '');
@@ -16,9 +17,10 @@ function UpdateDiploma() {
     const [diplomaCodeInput, setDiplomaCodeInput] = useState(diplomaCode || '');
 
     useEffect(() => {
-        DiplomaService.getDiploma(id).then((res) => {
+        DiplomaService.getDiploma(id).then(res => {
             let diploma = res.data;
             // Set cac gia tri cho diploma
+            setDiplomaId(diploma.id);
             setCopyInput(diploma.copy);
             setPhoneContactInput(diploma.phoneContact);
             setEmailInput(diploma.email);
@@ -29,8 +31,8 @@ function UpdateDiploma() {
 
     const updateDiploma = (e) => {
         e.preventDefault();
-        if (phoneContactInput === '' || copyInput === null || emailInput === ''
-                || diplomaYearInput === null || diplomaCodeInput === '')
+        if (phoneContactInput === undefined || copyInput === undefined || emailInput === undefined
+            || diplomaYearInput === undefined || diplomaCodeInput === undefined)
             setErr('Vui lòng nhập đầy đủ thông tin');
         else if (copyInput <= 0 || diplomaYearInput < 1970)
             setErr('Số không hợp lệ');
@@ -43,14 +45,14 @@ function UpdateDiploma() {
                 diplomaCode: diplomaCodeInput,
             };
 
-            DiplomaService.updateDiploma(diploma, id).then(() => {
-                nav(`/user/service/diploma/${id}`);
+            DiplomaService.updateDiploma(diploma, diplomaId).then(() => {
+                nav("/home")
             });
         }
     }
 
     const changeCopyHandler = (e) => {
-        setCopyInput(e.target.value);
+        setCopyInput(parseInt(e.target.value));
         setErr('');
     };
 
@@ -65,7 +67,7 @@ function UpdateDiploma() {
     };
 
     const changeYearHandler = (e) => {
-        setDiplomaYearInput(e.target.value);
+        setDiplomaYearInput(parseInt(e.target.value));
         setErr('');
     };
 
@@ -85,29 +87,29 @@ function UpdateDiploma() {
                         <div className="card-body">
                             <form>
                                 <div className="form-group">
-                                    <label>Số lượng bản sao: </label>
-                                    <input placeholder="Copy" name="copy" className="form-control"
+                                    <label>Số lượng bản sao</label>
+                                    <input placeholder="Copy" name="copy" type="number" min="1" className="form-control"
                                            value={copyInput} onChange={changeCopyHandler} />
                                 </div>
                                 <div className="form-group">
-                                    <label>Số điện thoại: </label>
+                                    <label>Số điện thoại</label>
                                     <input placeholder="0123456789" name="phoneContact" className="form-control"
-                                        value={phoneContactInput} onChange={changePhoneHandler} />
+                                           value={phoneContactInput} onChange={changePhoneHandler} />
                                 </div>
                                 <div className="form-group">
-                                    <label>Email: </label>
+                                    <label>Email</label>
                                     <input placeholder="Địa chỉ email" name="email" className="form-control"
-                                        value={emailInput} onChange={changeEmailHandler} />
+                                           value={emailInput} onChange={changeEmailHandler} />
                                 </div>
                                 <div className="form-group">
-                                    <label>Năm tốt nghiệp: </label>
-                                    <input placeholder="20xx" name="year" className="form-control"
-                                        value={diplomaYearInput} onChange={changeYearHandler} />
+                                    <label>Năm tốt nghiệp</label>
+                                    <input placeholder="20xx" name="year" type="number" min="1970" className="form-control"
+                                           value={diplomaYearInput} onChange={changeYearHandler} />
                                 </div>
                                 <div className="form-group">
-                                    <label>Mã bằng: </label>
+                                    <label>Mã bằng</label>
                                     <input placeholder="123..." name="code" className="form-control"
-                                        value={diplomaCodeInput} onChange={changeCodeHandler} />
+                                           value={diplomaCodeInput} onChange={changeCodeHandler} />
                                 </div>
                                 <div className="text-end mt-2">
                                     <button className="btn btn-primary me-1" onClick={updateDiploma} >Lưu</button>

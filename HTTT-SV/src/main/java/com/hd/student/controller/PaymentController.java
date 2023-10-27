@@ -28,8 +28,8 @@ public class PaymentController {
             description = "Tạo thanh toán cho yêu cầu"
     )
     @PreAuthorize("hasAuthority('USER')")
-    @PostMapping("/{onlineServiceId}/create")
-    public ResponseEntity<?> createPayment(@PathVariable int onlineServiceId, Authentication auth, HttpServletRequest rq){
+    @GetMapping("/create")
+    public ResponseEntity<?> createPayment(@RequestParam(name = "service", required = true) int onlineServiceId, Authentication auth, HttpServletRequest rq){
         UserPrincipal u = (UserPrincipal) auth.getPrincipal();
         PaymentResponse rp =  this.paymentService
                 .createPayment(onlineServiceId, u.getId(), "13.160.92.202");
@@ -68,7 +68,7 @@ public class PaymentController {
             description = "Xác minh Payment theo Id"
     )
     @GetMapping("/{id}/verify")
-    public ResponseEntity<?> verifyPaymentById(Principal principal, @PathVariable int id) {
-        return ResponseEntity.ok().body(paymentService.verifyPayment(id));
+    public ResponseEntity<?> verifyPaymentById(@PathVariable int id) {
+        return ResponseEntity.ok().body(this.paymentService.verifyPayment(id));
     }
 }

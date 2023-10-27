@@ -29,29 +29,29 @@ public class OnlineServiceController {
             description = "Lấy tất cả yêu cầu hiện có"
     )
     @PreAuthorize("hasAuthority('MODERATOR')")
-    @GetMapping("/get-request")
+    @GetMapping("")
     public ResponseEntity<?> getRequest() {
         List<OnlineServiceResponse> rp = this.onlineService.findAll();
         return new ResponseEntity<>(rp, HttpStatus.OK);
     }
 
-    @Operation(
-            summary = "Get All Request By Cate - Role Moderator",
-            description = "Lấy tất cả yêu cầu hiện có by ServiceCateId"
-    )
-    @PreAuthorize("hasAuthority('MODERATOR')")
-    @GetMapping("/get-request/{cateId}")
-    public ResponseEntity<?> getRequest(@PathVariable int cateId) {
-        List<OnlineServiceResponse> rp = this.onlineService.findByCateId(cateId);
-        return new ResponseEntity<>(rp, HttpStatus.OK);
-    }
+//    @Operation(
+//            summary = "Get All Request By Cate - Role Moderator",
+//            description = "Lấy tất cả yêu cầu hiện có by ServiceCateId"
+//    )
+//    @PreAuthorize("hasAuthority('MODERATOR')")
+//    @GetMapping("/get-request/{cateId}")
+//    public ResponseEntity<?> getRequest(@PathVariable int cateId) {
+//        List<OnlineServiceResponse> rp = this.onlineService.findByCateId(cateId);
+//        return new ResponseEntity<>(rp, HttpStatus.OK);
+//    }
 
     @Operation(
             summary = "Accept OnlineService - Role Moderator",
             description = "Xác nhận yêu cầu"
     )
     @PreAuthorize("hasAuthority('MODERATOR')")
-    @PutMapping("/{id}/accept")
+    @GetMapping("/{id}/accept")
     public ResponseEntity<?> acceptTheRequest(@PathVariable int id) {
         return new ResponseEntity<>(this.onlineService.acceptService(id), HttpStatus.OK);
     }
@@ -61,42 +61,30 @@ public class OnlineServiceController {
             description = "Xoá yêu cầu"
     )
     @PreAuthorize("hasAuthority('MODERATOR')")
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteRequest(@PathVariable int id) {
         return new ResponseEntity<>(this.onlineService.deleteRequest(id), HttpStatus.OK);
     }
 
-    @Operation(
-            summary = "Get OnlineService By CreatedDate- Role Moderator",
-            description = "Lấy yêu cầu theo CreatedDate"
-    )
-    @PreAuthorize("hasAuthority('MODERATOR')")
-    @GetMapping("/get-request/search")
-    public ResponseEntity<?> searchRequest(@DateTimeFormat(pattern = "dd/MM/yyyy") @RequestParam(value = "fromDate", required = false) LocalDate fromDate,
-                                           @DateTimeFormat(pattern = "dd/MM/yyyy") @RequestParam(value = "toDate", required = false) LocalDate toDate) {
-        return new ResponseEntity<>(this.onlineService.searchRequest(fromDate, toDate), HttpStatus.OK);
-    }
-
-    @Operation(
-            summary = "Get My OnlineService",
-            description = "Lấy yêu cầu của người dùng đăng nhập"
-    )
-    @PreAuthorize("hasAuthority('USER')")
-    @GetMapping("/my-request")
-    public ResponseEntity<?> getMyOnlineService(Authentication auth){
-        UserPrincipal u = (UserPrincipal) auth.getPrincipal();
-        List<OnlineServiceResponse> onlineServiceResponses = onlineService.findAllByUserId(u.getId());
-        return new ResponseEntity<>(onlineServiceResponses,HttpStatus.OK);
-    }
+//    @Operation(
+//            summary = "Get OnlineService By CreatedDate- Role Moderator",
+//            description = "Lấy yêu cầu theo CreatedDate"
+//    )
+//    @PreAuthorize("hasAuthority('MODERATOR')")
+//    @GetMapping("/get-request/search")
+//    public ResponseEntity<?> searchRequest(@DateTimeFormat(pattern = "dd/MM/yyyy") @RequestParam(value = "fromDate", required = false) LocalDate fromDate,
+//                                           @DateTimeFormat(pattern = "dd/MM/yyyy") @RequestParam(value = "toDate", required = false) LocalDate toDate) {
+//        return new ResponseEntity<>(this.onlineService.searchRequest(fromDate, toDate), HttpStatus.OK);
+//    }
 
     @Operation(
             summary = "Cancel OnlineService",
             description = "Hủy yêu cầu"
     )
     @PreAuthorize("hasAuthority('USER') || hasAuthority('MODERATOR')")
-    @PutMapping("/{onlineServiceId}/cancel")
-    public ResponseEntity<?> cancelMyRequest(Authentication auth, @PathVariable int onlineServiceId){
+    @GetMapping("/{id}/cancel")
+    public ResponseEntity<?> cancelMyRequest(Authentication auth, @PathVariable int id){
         UserPrincipal u = (UserPrincipal) auth.getPrincipal();
-        return new ResponseEntity<>(this.onlineService.cancelService(onlineServiceId,u.getId()), HttpStatus.OK);
+        return new ResponseEntity<>(this.onlineService.cancelService(id,u.getId()), HttpStatus.OK);
     }
 }

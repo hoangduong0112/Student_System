@@ -1,10 +1,12 @@
 package com.hd.student.controller;
 
+import com.hd.student.payload.response.OnlineServiceResponse;
 import com.hd.student.payload.response.SemesterDetailsResponse;
 import com.hd.student.payload.response.SemesterUserResponse;
 import com.hd.student.payload.response.UserInfoResponse;
 import com.hd.student.security.JwtUtils;
 import com.hd.student.security.UserPrincipal;
+import com.hd.student.service.IOnlineService;
 import com.hd.student.service.SemesterDetailService;
 import com.hd.student.service.SemesterUserService;
 import com.hd.student.service.UserService;
@@ -41,6 +43,9 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private IOnlineService onlineService;
+
 
     @Operation(
             summary = "User Info",
@@ -60,7 +65,7 @@ public class UserController {
             description = "Lấy thông tin các học kỳ của người dùng đang đăng nhập"
     )
     @PreAuthorize("hasAuthority('USER')")
-    @GetMapping("/semester")
+    @GetMapping("/my-semester")
     public ResponseEntity<?> getSemester(Authentication auth){
         UserPrincipal u = (UserPrincipal) auth.getPrincipal();
         List<SemesterUserResponse> smt = this.semesterUserService.getSemestersByUserId(u.getId());
@@ -72,7 +77,7 @@ public class UserController {
             description = "Môn học trong học kỳ của người dùng đang đăng nhập"
     )
     @PreAuthorize("hasAuthority('USER')")
-    @GetMapping("/semester/{id}/course")
+    @GetMapping("/my-semester/{id}/course")
     public ResponseEntity<?> getCourseBySemesterAndUser(Authentication auth, @PathVariable int id){
         UserPrincipal u =(UserPrincipal) auth.getPrincipal();
         List<SemesterDetailsResponse> rp = this.semesterDetailService.getDetails(id);
@@ -80,24 +85,35 @@ public class UserController {
     }
 
     @Operation(
+            summary = "Get My OnlineService",
+            description = "Lấy yêu cầu của người dùng đăng nhập"
+    )
+    @PreAuthorize("hasAuthority('USER')")
+    @GetMapping("/my-request")
+    public ResponseEntity<?> getMyOnlineService(Authentication auth){
+        UserPrincipal u = (UserPrincipal) auth.getPrincipal();
+        List<OnlineServiceResponse> onlineServiceResponses = onlineService.findAllByUserId(u.getId());
+        return new ResponseEntity<>(onlineServiceResponses,HttpStatus.OK);
+    }
+    @Operation(
             summary = "Get All User",
             description = "Lấy thông tin của tất cả người dùng"
     )
     @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/getall")
+    @GetMapping("")
     public ResponseEntity<?> getAllUser(){
         List<UserInfoResponse> rp = this.userService.findAll(0);
         return new ResponseEntity<>(rp, HttpStatus.OK);
     }
 
-    @Operation(
-            summary = "Get Users By MajorId",
-            description = "Lấy thông tin của tất cả người dùng theo ngành"
-    )
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/major/{majorId}")
-    public ResponseEntity<?> getAllUserByMajor(@PathVariable(required = false) int majorId){
-        List<UserInfoResponse> rp = this.userService.findAll(majorId);
-        return new ResponseEntity<>(rp, HttpStatus.OK);
-    }
+//    @Operation(
+//            summary = "Get Users By MajorId",
+//            description = "Lấy thông tin của tất cả người dùng theo ngành"
+//    )
+//    @PreAuthorize("hasAuthority('ADMIN')")
+//    @GetMapping("/major/{majorId}")
+//    public ResponseEntity<?> getAllUserByMajor(@PathVariable(required = false) int majorId){
+//        List<UserInfoResponse> rp = this.userService.findAll(majorId);
+//        return new ResponseEntity<>(rp, HttpStatus.OK);
+//    }
 }

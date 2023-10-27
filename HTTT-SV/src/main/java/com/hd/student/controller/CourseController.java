@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 @RestController
 @Tag(name = "10. Course", description = "Quản lý môn học")
-@RequestMapping("/api/course/")
+@RequestMapping("/api/course")
 public class CourseController {
     @Autowired
     private CourseService courseService;
@@ -24,7 +24,7 @@ public class CourseController {
             description = "Lấy tất cả môn học"
     )
     @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/getall")
+    @GetMapping("")
     public ResponseEntity<?> getAllCourse(@RequestParam(required = false) String search){
         return new ResponseEntity<>(this.courseService.getAllCourse(search), HttpStatus.OK);
     }
@@ -44,7 +44,7 @@ public class CourseController {
             description = "Thêm 1 môn học mới"
     )
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PostMapping("/add")
+    @PostMapping("")
     public ResponseEntity<?> addNewCourse(@Valid @RequestBody CourseRequest rq){
         return new ResponseEntity<>(this.courseService.addNewCourse(rq), HttpStatus.OK);
     }
@@ -54,7 +54,7 @@ public class CourseController {
             description = "Chỉnh sửa môn học hiện có"
     )
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?>  updateCourse(@Valid @RequestBody CourseRequest rq, @PathVariable int id){
         return new ResponseEntity<>(this.courseService.updateCourse(rq, id), HttpStatus.OK);
     }
@@ -64,7 +64,7 @@ public class CourseController {
             description = "Xóa môn học hiện có"
     )
     @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping ("/delete/{id}")
+    @DeleteMapping ("/{id}")
     public ResponseEntity<?>  deleteCourse(@PathVariable int id){
         return new ResponseEntity<>(this.courseService.deleteCourse(id), HttpStatus.OK);
     }

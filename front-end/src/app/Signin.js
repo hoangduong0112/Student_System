@@ -1,10 +1,12 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import logo from '../styles/image/ou.png';
 import {useNavigate} from 'react-router-dom';
 import {UserContext} from "./App";
 import {Form, Input, Label} from "reactstrap";
-import AuthService, {auth, endpoints} from "../services/Guest/AuthService";
+import AuthService, {auth, endpoints} from "../services/AuthService";
 import cookie from "react-cookies";
+import {useCookies} from "react-cookie";
+import UserService from "../services/User/UserService";
 
 function Signin() {
     const [user, setUser] = useContext(UserContext);
@@ -12,6 +14,7 @@ function Signin() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const nav = useNavigate();
+
 
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
@@ -22,6 +25,8 @@ function Signin() {
         setPassword(e.target.value);
         setError('');
     };
+    const [, removeTokenCookie] = useCookies(['token']);
+    const [, removeUserCookie] = useCookies(['user']);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -29,12 +34,16 @@ function Signin() {
             setError('Vui lòng nhập đầy đủ thông tin.');
         else {
             try {
+
                 const res = await AuthService.post(endpoints['signin'], {
                     'email': email,
                     'password': password
                 });
+                removeTokenCookie('token', {path:'/', domain: "localhost:3000"})
+                removeUserCookie('user', {path:'/', domain: "localhost:3000"})
+
                 cookie.save('token', res.data);
-                let { data } = await auth().get(endpoints['user']);
+                let { data } = await UserService.getUser();
                 cookie.save('user', data);
                 setUser({
                     'type': 'signin',

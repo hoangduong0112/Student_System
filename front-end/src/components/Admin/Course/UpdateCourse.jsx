@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {useLocation, useNavigate, useParams} from 'react-router-dom';
-import CourseService from "../../../services/Admin/CourseService";
+import CourseService from "../../../services/CourseService";
 
 function UpdateCourse() {
     const { id } = useParams();
@@ -14,7 +14,7 @@ function UpdateCourse() {
     const [noteInput, setNoteInput] = useState(note || '');
 
     useEffect(() => {
-        CourseService.getCourse().then((res) => {
+        CourseService.getById(id).then((res) => {
             let course = res.data;
             setCourseNameInput(course.courseName);
             setCreditsNumInput(course.creditsNum);
@@ -35,7 +35,7 @@ function UpdateCourse() {
             note: noteInput,
         };
 
-        CourseService.updateCourse(course, id).then(() => {
+        CourseService.updateCourse(id, course).then(() => {
             nav(`/admin/course/all`);
         });
         }

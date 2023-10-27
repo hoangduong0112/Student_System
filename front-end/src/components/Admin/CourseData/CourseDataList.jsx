@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {Alert, Container, Table} from 'reactstrap';
-import CourseDataService from "../../../services/Admin/CourseDataService";
+import CourseDataService from "../../../services/CourseDataService";
 import {useNavigate} from "react-router-dom";
+import { format, parse } from 'date-fns';
 
 function CourseDataList() {
     const [courseDatas, setCourseDatas] = useState([]);
@@ -9,7 +10,7 @@ function CourseDataList() {
     const [success, setSuccess] = useState('');
 
     useEffect(() => {
-        CourseDataService.getCourse().then((res) => {
+        CourseDataService.getAllCourse().then(res => {
             setCourseDatas(res.data);
         });
     }, []);
@@ -24,14 +25,7 @@ function CourseDataList() {
     }
 
     const updateCourseData = (courseData) => {
-        nav(`/admin/course-data/update/${courseData.id}`, {
-            state: {
-                startDate: (courseData.startDate).split('-').reverse().join('-'),
-                endDate: (courseData.endDate).split('-').reverse().join('-'),
-                courseId: courseData.course.id,
-                lectureId: courseData.lecture.id,
-            }
-        });
+        nav(`/admin/course-data/update/${courseData.id}`);
     }
 
     return (
@@ -51,8 +45,8 @@ function CourseDataList() {
                         { courseDatas.map( courseData => (
                             <tr key={courseData.id}>
                                 <td>{courseData.course.courseName}</td>
-                                <td>{courseData.startDate}</td>
-                                <td>{courseData.endDate}</td>
+                                <td>{new Date(courseData.startDate).toLocaleDateString('en-GB')}</td>
+                                <td>{new Date(courseData.endDate).toLocaleDateString('en-GB')}</td>
                                 <td>{courseData.lecture.lectureName}</td>
                                 <td className="text-center">
                                     <button className="btn-success btn"
@@ -73,8 +67,8 @@ function CourseDataList() {
                     </button>
                 </div>
                 {success && <Alert color="success" className="fixed-bottom"
-                   style={{marginBottom:'100px', marginLeft:'200px', marginRight:'200px'}}
-                   onMouseEnter={() => setSuccess('')}>{success}</Alert>}
+                                   style={{marginBottom:'5rem', marginLeft:'25%', marginRight:'25%'}}
+                                   onMouseEnter={() => setSuccess('')}>{success}</Alert>}
             </Container>
         </div>
     );

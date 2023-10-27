@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import {useLocation, useNavigate, useParams} from 'react-router-dom';
-import CourseDataService from "../../../services/Admin/CourseDataService";
+import CourseDataService from "../../../services/CourseDataService";
+import CourseService from "../../../services/CourseService";
+import LectureService from "../../../services/LectureService";
+import {Alert} from "reactstrap";
+import {format, parse} from "date-fns";
 
 function UpdateCourseData() {
     const { id } = useParams();
     const loc = useLocation();
     const nav = useNavigate();
-    const [err, setErr] = useState('');
+    const [resp, setResp] = useState('');
+    const [courses, setCourses] = useState([]);
+    const [lectures, setLectures] = useState([]);
 
     const { startDate, endDate, courseId, lectureId } = loc.state || {};
     const [startDateInput, setStartDateInput] = useState(startDate || '');
@@ -15,23 +21,43 @@ function UpdateCourseData() {
     const [lectureIdInput, setLectureIdInput] = useState(lectureId || 0);
 
     useEffect(() => {
-        CourseDataService.getCourse().then((res) => {
+        CourseDataService.getById(id).then(res => {
             let courseData = res.data;
             setStartDateInput(courseData.startDate);
             setEndDateInput(courseData.endDate);
-            setCourseIdInput(courseData.courseId);
-            setLectureIdInput(courseData.lectureId);
+            setCourseIdInput(courseData.course.id);
+            setLectureIdInput(courseData.lecture.id);
         })
-    }, []);
+        getCourses().then();
+        getLectures().then();
+    }, [])
+
+    const getCourses = async () => {
+        try {
+            const res = await CourseService.getAll();
+            setCourses(res.data);
+        } catch (error) {
+            console.error('Lỗi khi lấy danh sách môn học: ', error);
+        }
+    };
+
+    const getLectures = async () => {
+        try {
+            const res = await LectureService.getAllLecture();
+            setLectures(res.data);
+        } catch (error) {
+            console.error('Lỗi khi lấy danh sách giảng viên: ', error);
+        }
+    };
 
     const updateCourseData = (e) => {
         e.preventDefault();
         if (startDateInput === '' || endDateInput === '' || courseIdInput === '' || lectureIdInput === '')
-            setErr('Vui lòng nhập đầy đủ thông tin');
-        else if (courseIdInput <= 0 || courseIdInput > 10)
-            setErr('Không có mã môn học này trong dữ liệu');
-        else if (lectureIdInput > 10 || lectureIdInput <= 0)
-            setErr('Không có mã giảng viên này trong dữ liệu');
+            setResp('Vui lòng nhập đầy đủ thông tin');
+        else if (courseIdInput <= 0)
+            setResp('Không có mã môn học này trong dữ liệu');
+        else if (lectureIdInput <= 0)
+            setResp('Không có mã giảng viên này trong dữ liệu');
         else {
             const courseData = {
                 startDate: startDateInput,
@@ -40,30 +66,47 @@ function UpdateCourseData() {
                 lectureId: lectureIdInput,
             };
 
-            CourseDataService.updateCourse(courseData, id).then(() => {
-                nav(`/admin/course-data/all`);
+            CourseDataService.updateCourse(id, courseData).then(() => {
+                setResp('Chỉnh sửa lớp học thành công.');
             })
         }
     };
 
+    const alert = () => {
+        if (resp.includes('thành công'))
+            return (
+                <Alert color="success" className="fixed-bottom"
+                       style={{marginBottom:'5rem', marginLeft:'25%', marginRight:'25%'}}
+                       onMouseEnter={() => setResp('')}>{resp}
+                </Alert>
+            )
+        else if (resp)
+            return (
+                <Alert color="danger" className="fixed-bottom"
+                       style={{marginBottom:'5rem', marginLeft:'25%', marginRight:'25%'}}
+                       onMouseEnter={() => setResp('')}>{resp}
+                </Alert>
+            )
+    }
+
     const changeStartDateHandler = (e) => {
         setStartDateInput(e.target.value);
-        setErr('');
+        setResp('');
     }
 
     const changeEndDateHandler = (e) => {
         setEndDateInput(e.target.value);
-        setErr('');
+        setResp('');
     }
 
     const changeCourseHandler = (e) => {
-        setCourseIdInput(e.target.value);
-        setErr('');
+        setCourseIdInput(parseInt(e.target.value));
+        setResp('');
     }
 
     const changeLectureHandler = (e) => {
-        setLectureIdInput(e.target.value);
-        setErr('');
+        setLectureIdInput(parseInt(e.target.value));
+        setResp('');
     }
 
     const cancel = () => { nav(`/admin/course-data/all`); }
@@ -77,32 +120,42 @@ function UpdateCourseData() {
                         <div className = "card-body">
                             <form>
                                 <div className = "form-group">
-                                    <label>Ngày bắt đầu: </label>
-                                    <input name="startDate" className="form-control" min="2023-01-01" max="2024-12-31"
+                                    <label>Ngày bắt đầu</label>
+                                    <input name="startDate" className="form-control" min="2023-01-01"
                                            type="date" value={startDateInput} onChange={changeStartDateHandler}/>
                                 </div>
                                 <div className = "form-group">
-                                    <label>Ngày kết thúc: </label>
-                                    <input name="endDate" className="form-control" min="2023-01-01" max="2024-12-31"
+                                    <label>Ngày kết thúc</label>
+                                    <input name="endDate" className="form-control" min="2023-01-01"
                                            type="date" value={endDateInput} onChange={changeEndDateHandler}/>
                                 </div>
                                 <div className = "form-group">
-                                    <label>Mã môn: </label>
-                                    <input placeholder="Mã môn..." name="course" className="form-control"
-                                           value={courseIdInput} onChange={changeCourseHandler}/>
+                                    <label>Môn học</label>
+                                    <select name="course" className="form-control custom-select"
+                                            value={courseIdInput} onChange={changeCourseHandler}>
+                                        Chọn môn học
+                                        {courses.map((course) => (
+                                            <option key={course.id} value={course.id}>{course.courseName}</option>
+                                        ))}
+                                    </select>
                                 </div>
                                 <div className = "form-group">
-                                    <label>Mã giảng viên: </label>
-                                    <input placeholder="Mã giảng viên..." name="lecture" className="form-control"
-                                           value={lectureIdInput} onChange={changeLectureHandler}/>
+                                    <label>Giảng viên</label>
+                                    <select name="lecture" className="form-control custom-select"
+                                            value={lectureIdInput} onChange={changeLectureHandler}>
+                                        Chọn giảng viên
+                                        {lectures.map((lecture) => (
+                                            <option key={lecture.id} value={lecture.id}>{lecture.lectureName}</option>
+                                        ))}
+                                    </select>
                                 </div>
                                 <div className="text-end mt-2">
                                     <button className="btn btn-primary me-1" onClick={updateCourseData}>Lưu</button>
-                                    <button className="btn btn-secondary ms-1" onClick={cancel.bind(this)}>Hủy</button>
+                                    <button className="btn btn-secondary ms-1" onClick={cancel}>Hủy</button>
                                 </div>
                             </form>
                         </div>
-                        {err && <div className="alert alert-danger">{err}</div>}
+                        {alert()}
                     </div>
                 </div>
             </div>

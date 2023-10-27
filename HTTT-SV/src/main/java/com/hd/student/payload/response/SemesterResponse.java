@@ -14,4 +14,5 @@ public class SemesterResponse {
     private Integer id;
     private String semesterName;
     private String note;
+    private boolean isFinish;
 }

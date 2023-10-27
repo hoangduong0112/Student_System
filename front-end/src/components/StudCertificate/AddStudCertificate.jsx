@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import StudCertificateService from "../../services/User/StudCertificateService";
+import StudCertificateService from "../../services/StudCertificateService";
 import {useNavigate} from "react-router-dom";
 
 function AddStudCertificate() {
@@ -13,11 +13,11 @@ function AddStudCertificate() {
 
     const saveStudCertificate = (e) => {
         e.preventDefault();
-        if (phoneContact === '' || vietCopy === null || email === ''
-            || engCopy === null || content === '')
+        if (phoneContact === undefined || vietCopy === undefined || email === undefined
+            || engCopy === undefined || content === undefined)
             setErr('Vui lòng nhập đầy đủ thông tin');
-        else if (vietCopy.toString() < 0 || engCopy.toString() < 0
-            || (vietCopy.toString() === '0' && engCopy.toString() === '0'))
+        else if (vietCopy < 0 || engCopy < 0
+            || (vietCopy === 0 && engCopy === 0))
             setErr('Số nhập không hợp lệ');
         else {
             const studCertificate = {
@@ -28,14 +28,15 @@ function AddStudCertificate() {
                 content,
             };
 
-            StudCertificateService.addStudCertificate(studCertificate).then(() => {
-                nav(`/user/payment/create/${studCertificate.id}`);
+            StudCertificateService.addStudCertificate(studCertificate).then(res => {
+                const onlineServiceId = res.data.onlineServiceId;
+                nav(`/user/service/stud-cert/update/${onlineServiceId}`);
             });
         }
     }
 
     const changeVietCopyHandler = (e) => {
-        setVietCopy(e.target.value);
+        setVietCopy(parseInt(e.target.value));
         setErr('');
     }
 
@@ -50,7 +51,7 @@ function AddStudCertificate() {
     }
 
     const changeEngCopyHandler = (e) => {
-        setEngCopy(e.target.value);
+        setEngCopy(parseInt(e.target.value));
         setErr('');
     }
 
@@ -70,33 +71,33 @@ function AddStudCertificate() {
                         <div className = "card-body">
                             <form>
                                 <div className = "form-group">
-                                    <label>Bản sao tiếng Việt: </label>
-                                    <input placeholder="Bản Việt" name="vietCopy" className="form-control"
+                                    <label>Bản sao tiếng Việt</label>
+                                    <input placeholder="Bản Việt" name="vietCopy" type="number" min="0" className="form-control"
                                            value={vietCopy} onChange={changeVietCopyHandler}/>
                                 </div>
                                 <div className = "form-group">
-                                    <label>Bản sao tiếng Anh: </label>
-                                    <input placeholder="Bản Anh" name="engCopy" className="form-control"
+                                    <label>Bản sao tiếng Anh</label>
+                                    <input placeholder="Bản Anh" name="engCopy" type="number" min="0" className="form-control"
                                            value={engCopy} onChange={changeEngCopyHandler}/>
                                 </div>
                                 <div className = "form-group">
-                                    <label>Số điện thoại: </label>
+                                    <label>Số điện thoại</label>
                                     <input placeholder="Số điện thoại" name="phoneContact" className="form-control"
                                            value={phoneContact} onChange={changePhoneHandler}/>
                                 </div>
                                 <div className = "form-group">
-                                    <label>Email: </label>
+                                    <label>Email</label>
                                     <input placeholder="Địa chỉ email" name="email" className="form-control"
                                            value={email} onChange={changeEmailHandler}/>
                                 </div>
                                 <div className = "form-group">
-                                    <label>Nội dung: </label>
+                                    <label>Nội dung</label>
                                     <input placeholder="Nội dung" name="content" className="form-control"
                                            value={content} onChange={changeContentHandler}/>
                                 </div>
                                 <div className="text-end mt-2">
                                     <button className="btn btn-primary me-1" onClick={saveStudCertificate}>Lưu</button>
-                                    <button className="btn btn-secondary ms-1" onClick={cancel.bind(this)}>Hủy</button>
+                                    <button className="btn btn-secondary ms-1" onClick={cancel}>Hủy</button>
                                 </div>
                             </form>
                         </div>

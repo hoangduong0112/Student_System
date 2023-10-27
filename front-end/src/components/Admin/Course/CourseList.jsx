@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Alert, Container, Table} from 'reactstrap';
-import CourseService from "../../../services/Admin/CourseService";
+import CourseService from "../../../services/CourseService";
 import {useNavigate} from "react-router-dom";
 
 function CourseList() {
@@ -9,7 +9,7 @@ function CourseList() {
     const [success, setSuccess] = useState('');
 
     useEffect(() => {
-        CourseService.getCourse().then((res) => {
+        CourseService.getAll().then((res) => {
             setCourses(res.data);
         });
     }, []);
@@ -50,7 +50,7 @@ function CourseList() {
                             <tr key={course.id}>
                                 <td>{course.courseName}</td>
                                 <td>{course.creditsNum}</td>
-                                <td>{course.startDate}</td>
+                                <td>{course.note}</td>
                                 <td className="text-center">
                                     <button className="btn-success btn"
                                             onClick={() => {updateCourse(course)}}>Chỉnh sửa

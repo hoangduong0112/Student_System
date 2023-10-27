@@ -1,22 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import UserService from "../../services/User/UserService";
-import {useParams} from "react-router-dom";
+import {useLocation} from "react-router-dom";
 import {Container, Table} from "reactstrap";
 import { format } from 'date-fns';
+import PaymentService from "../../services/PaymentService";
+import { useNavigate } from 'react-router-dom';
 
 function CreatePayment() {
-    const { id } = useParams();
+    const myParam = useLocation().search;
+    const serviceId= new URLSearchParams(myParam).get("service");
     const [payment, setPayment] = useState({});
     const[color, setColor] = useState('');
 
     useEffect(() => {
-        UserService.createPayment(payment, id).then((res) => {
-                setPayment(res.data);
-            })
+
+        PaymentService.createPayment(serviceId).then(res => {
+            setPayment(res.data);
+        })
             .catch((error) => {
                 console.error('Lỗi thanh toán:', error);
             });
-    }, [payment, id]);
+    }, []);
 
     const formatDate = (date) => {
         let d = new Date(date);
@@ -47,14 +50,14 @@ function CreatePayment() {
                                 <td>{payment.vnpayTxnred}</td>
                             </tr>
                             <tr className="border-bottom" style={{height:'50px'}}>
-                                <th>Link VNPay</th>
-                                <td><a onMouseEnter={() => setColor('blue')}
-                                       onMouseLeave={() => setColor('gray')}
-                                       style={{color: color}} type="button" href={payment.url}>
+                                <th>Link thanh toán</th>
+                                <a onMouseEnter={() => setColor('blue')}
+                                   onMouseLeave={() => setColor('gray')}
+                                   target="_blank" style={{color: color}} type="button" href={payment.url}>
                                     Tại đây</a>
-                                </td>
                             </tr>
                         </Table>
+
                     </div>
                 </Container>
             ) : (

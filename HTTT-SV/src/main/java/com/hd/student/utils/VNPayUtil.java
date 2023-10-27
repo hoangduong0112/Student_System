@@ -4,6 +4,7 @@ import com.hd.student.configs.VNPayConfig;
 import com.hd.student.entity.Payment;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
@@ -144,18 +145,19 @@ public class VNPayUtil extends HttpServlet{
         in.close();
 
         JSONObject json = new JSONObject(response.toString());
+        try {
+            String res_TransactionStatus = (String) json.get("vnp_TransactionStatus");
+            if (res_TransactionStatus.equals("01")) // Giao dịch chưa hoàn tất
+                return 1;
 
-        String res_TransactionStatus = (String) json.get("vnp_TransactionStatus");
+            if (!res_TransactionStatus.equals("00")) // Giao dịch bị lỗi
+                return 2;
 
-
-
-        if (res_TransactionStatus.equals("01")) // Giao dịch chưa hoàn tất
-            return 1;
-
-        if (!res_TransactionStatus.equals("00")) // Giao dịch bị lỗi
+            return 0;
+        }
+        catch (JSONException ex) {
             return 2;
-
-        return 0;
+        }
     }
 
 

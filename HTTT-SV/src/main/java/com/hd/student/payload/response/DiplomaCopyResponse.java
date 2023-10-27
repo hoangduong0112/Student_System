@@ -20,5 +20,5 @@ public class DiplomaCopyResponse {
 
     private String diplomaCode;
 
-    private OnlineServiceResponse onlineService;
+    private int onlineServiceId;
 }

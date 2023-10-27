@@ -13,5 +13,5 @@ public class UnlockStudentResponse {
     private Integer id;
     private String content;
     private String image;
-    private OnlineServiceResponse onlineService;
+    private int onlineServiceId;
 }

@@ -142,12 +142,12 @@ public class CourseDataServiceImpl implements CourseDataService {
         CourseData courseData = this.courseDataRepository.findById(id).orElseThrow(
                 ()-> new ResourceNotFoundException("dữ liệu môn học không tìm thấy")
         );
-        if(courseData.getSemesterDetails() != null)
+        if(!courseData.getSemesterDetails().isEmpty())
             throw new ForeignKeyViolationException("Không thể xóa do dữ liệu đã được đăng ký");
         else{
             this.courseDataRepository.delete(courseData);
         }
 
-        return new ApiResponse("Gỡ thành công thông tin lịch học", true);
+        return new ApiResponse("Gỡ thành công thông tin môn học", true);
     }
 }

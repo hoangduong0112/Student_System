@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
 @RestController
-@Tag(name = "13. Lecture", description = "Quản lý giảng viên")
+@Tag(name = "11. Lecture", description = "Quản lý giảng viên")
 @RequestMapping("/api/lecture")
 public class LectureController {
     @Autowired
@@ -25,7 +25,7 @@ public class LectureController {
             description = "Lấy tất cả giảng viên"
     )
     @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/getAll")
+    @GetMapping("")
     public ResponseEntity<?> getAll(){
         return new ResponseEntity<>(this.lectureService.getAll(), HttpStatus.OK);
     }
@@ -45,7 +45,7 @@ public class LectureController {
             description = "Thêm giảng viên mới"
     )
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PostMapping("/add")
+    @PostMapping("")
     public ResponseEntity<?> addNewLecture(@Valid @RequestBody LectureRequest rq){
         return new ResponseEntity<>(this.lectureService.addNewLecture(rq), HttpStatus.OK);
     }
@@ -55,7 +55,7 @@ public class LectureController {
             description = "Chỉnh sửa 1 giảng viên"
     )
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?>  updateLecture(@Valid @RequestBody LectureRequest rq, @PathVariable int id){
         return new ResponseEntity<>(this.lectureService.updateLecture(rq, id), HttpStatus.OK);
     }
@@ -65,7 +65,7 @@ public class LectureController {
             description = "Xóa giảng viên by Id"
     )
     @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping ("/delete/{id}")
+    @DeleteMapping ("/{id}")
     public ResponseEntity<?>  deleteLecture(@PathVariable int id){
         return new ResponseEntity<>(this.lectureService.deleteLecture(id), HttpStatus.OK);
     }

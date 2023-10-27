@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Alert, Container, Table} from 'reactstrap';
-import SemesterService from "../../../services/Admin/SemesterService";
+import SemesterService from "../../../services/SemesterService";
 import {useNavigate} from "react-router-dom";
 
 function SemesterList() {
@@ -9,10 +9,14 @@ function SemesterList() {
     const [success, setSuccess] = useState('');
 
     useEffect(() => {
-        SemesterService.getAvailableSemester().then((res) => {
+        SemesterService.getAllSemester().then((res) => {
             setSemesters(res.data);
         });
     }, []);
+
+    const getStatusText = (isFinish) => {
+        return isFinish ? "Đã kết thúc" : "Chưa kết thúc";
+    }
 
     const addSemester = () => { nav('/admin/semester/add'); }
 
@@ -23,13 +27,27 @@ function SemesterList() {
         setSuccess(`Xóa ${semester.semesterName} thành công.`)
     }
 
+    const setFinish = (semester) => {
+        if (!semester.finished) { // Kiểm tra nếu isFinish là false
+            SemesterService.setFinish(semester.id).then(() => {
+                setSemesters((prevSemesters) => {
+                    return prevSemesters.map((s) => {
+                        if (s.id === semester.id) {
+                            return { ...s, finish: true };
+                        }
+                        return s;
+                    });
+                });
+            });
+            setSuccess(`Thay đổi trạng thái thành công`);
+        } else {
+            // Nếu isFinish đã true, không thực hiện gì cả
+            setSuccess(`Trạng thái đã được đánh dấu là đã kết thúc.`);
+        }
+    }
+
     const updateSemester = (semester) => {
-        nav(`/admin/semester/update/${semester.id}`, {
-            state: {
-                semesterName: semester.semesterName,
-                note: semester.note,
-            }
-        });
+        nav(`/admin/semester/update/${semester.id}`);
     }
 
     return (
@@ -41,6 +59,7 @@ function SemesterList() {
                         <thead className="text-center"><tr>
                             <th>Học kỳ</th>
                             <th>Ghi chú</th>
+                            <th>Tình trạng</th>
                             <th>Thao tác</th>
                         </tr></thead>
                         <tbody>
@@ -48,13 +67,18 @@ function SemesterList() {
                             <tr key={semester.id}>
                                 <td>{semester.semesterName}</td>
                                 <td>{semester.note}</td>
+                                <td>{getStatusText(semester.finish)}</td>
                                 <td className="text-center">
-                                    <button className="btn-success btn"
+                                    <button className="btn-primary btn"
+                                            onClick={() => {setFinish(semester)}}>Khóa học kỳ
+                                    </button>
+                                    <button className="ms-2 btn-success btn"
                                             onClick={() => {updateSemester(semester)}}>Chỉnh sửa
                                     </button>
                                     <button className="ms-2 btn-danger btn"
                                             onClick={() => {deleteSemester(semester)}}>Xóa
                                     </button>
+
                                 </td>
                             </tr>
                         ))}

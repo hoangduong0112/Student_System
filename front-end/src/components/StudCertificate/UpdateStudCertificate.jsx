@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {useLocation, useNavigate, useParams} from 'react-router-dom';
-import StudCertificateService from "../../services/User/StudCertificateService";
+import StudCertificateService from "../../services/StudCertificateService";
 
 function UpdateStudCertificate() {
     const { id } = useParams();
@@ -9,6 +9,7 @@ function UpdateStudCertificate() {
     const [err, setErr] = useState('');
 
     const { vietCopy, engCopy, email, phoneContact, content } = loc.state || {};
+    const [studCertificateId, setStudCertificateId] = useState(0);
     const [vietCopyInput, setVietCopyInput] = useState(vietCopy || 0);
     const [engCopyInput, setEngCopyInput] = useState(engCopy || 0);
     const [emailInput, setEmailInput] = useState(email || '');
@@ -18,6 +19,7 @@ function UpdateStudCertificate() {
     useEffect(() => {
         StudCertificateService.getStudCertificate(id).then((res) => {
             let studCertificate = res.data;
+            setStudCertificateId(studCertificate.id)
             setVietCopyInput(studCertificate.vietCopy);
             setPhoneContactInput(studCertificate.phoneContact);
             setEmailInput(studCertificate.email);
@@ -36,14 +38,14 @@ function UpdateStudCertificate() {
             setErr('Số nhập không hợp lệ');
         else {
             const studCertificate = {
-            vietCopy: setVietCopyInput,
-            engCopy: setEngCopyInput,
-            email: setEngCopyInput,
-            phoneContact: setPhoneContactInput,
-            content: setContentInput,
+                vietCopy: vietCopyInput,
+                engCopy: engCopyInput,
+                email: emailInput,
+                phoneContact: phoneContactInput,
+                content: contentInput,
         };
-        StudCertificateService.updateStudCertificate(studCertificate, id).then(() => {
-            nav(`/user/service/stud-cert/${id}`);
+        StudCertificateService.updateStudCertificate(studCertificate, studCertificateId).then(() => {
+            nav(`/home`);
         });
     }
     }

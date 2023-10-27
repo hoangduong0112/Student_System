@@ -27,7 +27,7 @@ public class TranscriptController {
             description = "Thêm 1 yêu cầu về bảng điểm - Role User"
     )
     @PreAuthorize("hasAuthority('USER')")
-    @PostMapping("/add")
+    @PostMapping("")
     public ResponseEntity<?> saveTranscript(Authentication auth, @Valid @RequestBody TranscriptRequest rq){
         UserPrincipal u = (UserPrincipal) auth.getPrincipal();
         return new ResponseEntity<>(this.transcriptService.addNewTranscript(rq, u.getId()), HttpStatus.OK);
@@ -38,7 +38,7 @@ public class TranscriptController {
             description = "Chỉnh sửa 1 yêu cầu về bảng điểm - Role User"
     )
     @PreAuthorize("hasAuthority('USER')")
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateTranscript(Authentication auth, @Valid @RequestBody TranscriptRequest rq, @PathVariable int id) {
         UserPrincipal u = (UserPrincipal) auth.getPrincipal();
         return new ResponseEntity<>( this.transcriptService.updateMyTranscript(rq, id, u.getId()), HttpStatus.OK);

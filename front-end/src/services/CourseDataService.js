@@ -1,16 +1,17 @@
 import axios from "axios";
-import config from "../config";
+import config from "./config";
 
-const COURSE_API_ADMIN_URL = 'http://localhost:8080/api/admin/course-data';
+const COURSE_API_ADMIN_URL = 'http://localhost:8080/api/course-data';
 
 class CourseService {
-    getCourse() { return axios.get(COURSE_API_ADMIN_URL + '/getAll'); }
+    getAllCourse() { return axios.get(COURSE_API_ADMIN_URL, config); }
+    getById(id) { return axios.get(COURSE_API_ADMIN_URL + "/"+ id, config); }
 
-    addCourse(course) { return axios.post(COURSE_API_ADMIN_URL + '/add', course, config); }
+    addCourse(courseData) { return axios.post(COURSE_API_ADMIN_URL, courseData, config); }
 
-    updateCourse(course, id) { return axios.put(COURSE_API_ADMIN_URL + '/update/' + id, course, config); }
+    updateCourse(id, courseData) { return axios.put(COURSE_API_ADMIN_URL + '/' + id, courseData, config); }
 
-    deleteCourse(id) { return axios.delete(COURSE_API_ADMIN_URL + '/delete/' + id, config); }
+    deleteCourse(id) { return axios.delete(COURSE_API_ADMIN_URL + '/' + id, config); }
 }
 
 export default new CourseService()
