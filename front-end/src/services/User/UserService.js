@@ -2,8 +2,8 @@ import axios from "axios";
 import config from "../config";
 
 const USER_API_BASE_URL = 'http://localhost:8080/api/user';
-const USER_API_SERVICE_URL = 'http://localhost:8080/api/user/service';
-const USER_API_PAYMENT_URL = 'http://localhost:8080/api/user/payment';
+const USER_API_SERVICE_URL = 'http://localhost:8080/api/online-service';
+const USER_API_PAYMENT_URL = 'http://localhost:8080/api/payment';
 
 class UserService {
 
