@@ -64,6 +64,15 @@ public class PaymentController {
     }
 
     @Operation(
+            summary = "Get Payment By OnlineServiceId",
+            description = "Lấy Payment theo OnlineServiceId"
+    )
+    @GetMapping("")
+    public ResponseEntity<?> getPaymentByOnlineServiceId(Authentication auth, @RequestParam(name = "service_id") int serviceId){
+        return ResponseEntity.ok(this.paymentService.getByOnlineServiceId(serviceId));
+    }
+
+    @Operation(
             summary = "Verify Payment By Id",
             description = "Xác minh Payment theo Id"
     )

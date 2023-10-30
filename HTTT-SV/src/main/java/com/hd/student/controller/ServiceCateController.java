@@ -26,7 +26,7 @@ public class ServiceCateController {
             summary = "Get All ServiceCate",
             description = "Lấy toàn bộ loại dịch vụ"
     )
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<?> getAllServiceCate() {
         return new ResponseEntity<>(this.serviceCateService.getAllDV(), HttpStatus.OK);
     }
@@ -55,7 +55,7 @@ public class ServiceCateController {
             description = "Thay đổi trạng thái đóng mở của Loại dịch vụ"
     )
     @PreAuthorize("hasAuthority('MODERATOR')")
-    @PutMapping("/{id}/change")
+    @GetMapping("/{id}/change")
     public ResponseEntity<?> setAvailable(@PathVariable int id) {
         return new ResponseEntity<>(this.serviceCateService.changeAvailableService(id), HttpStatus.OK);
     }

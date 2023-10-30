@@ -1,10 +1,12 @@
 package com.hd.student.controller;
 
+import com.hd.student.entity.OnlineService;
 import com.hd.student.payload.response.OnlineServiceResponse;
 import com.hd.student.security.UserPrincipal;
 import com.hd.student.service.IOnlineService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -19,10 +21,13 @@ import java.util.List;
 @CrossOrigin
 @RestController
 @Tag(name = "07. OnlineService", description = "Quản lý các yêu cầu")
-@RequestMapping("/api/online-service/")
+@RequestMapping("/api/online-service")
 public class OnlineServiceController {
     @Autowired
     private IOnlineService onlineService;
+    @Autowired
+    private ModelMapper modelMapper;
+
 
     @Operation(
             summary = "Get All Request - Role Moderator",
@@ -31,20 +36,21 @@ public class OnlineServiceController {
     @PreAuthorize("hasAuthority('MODERATOR')")
     @GetMapping("")
     public ResponseEntity<?> getRequest() {
-        List<OnlineServiceResponse> rp = this.onlineService.findAll();
+        List<OnlineServiceResponse> rp;
+            rp = this.onlineService.findAll();
         return new ResponseEntity<>(rp, HttpStatus.OK);
     }
+    @Operation(
+            summary = "Get Request By ID",
+            description = "Lấy yêu cầu theo ID"
+    )
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getRequestById(@PathVariable int id, Authentication auth) {
+        UserPrincipal u = (UserPrincipal) auth.getPrincipal();
+        OnlineService rp = this.onlineService.findByIdWithAccess(id, u.getId());
+        return new ResponseEntity<>(modelMapper.map(rp, OnlineServiceResponse.class), HttpStatus.OK);
+    }
 
-//    @Operation(
-//            summary = "Get All Request By Cate - Role Moderator",
-//            description = "Lấy tất cả yêu cầu hiện có by ServiceCateId"
-//    )
-//    @PreAuthorize("hasAuthority('MODERATOR')")
-//    @GetMapping("/get-request/{cateId}")
-//    public ResponseEntity<?> getRequest(@PathVariable int cateId) {
-//        List<OnlineServiceResponse> rp = this.onlineService.findByCateId(cateId);
-//        return new ResponseEntity<>(rp, HttpStatus.OK);
-//    }
 
     @Operation(
             summary = "Accept OnlineService - Role Moderator",

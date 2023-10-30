@@ -13,5 +13,7 @@ public interface PaymentService {
 
     PaymentResponse getById(int id);
 
-    boolean verifyPayment(int id);
+    PaymentResponse verifyPayment(int id);
+
+    PaymentResponse getByOnlineServiceId(int serviceId);
 }

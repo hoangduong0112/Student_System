@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService {
         if(majorId != 0)
             users = this.userRepository.findByMajor_Id(majorId);
         else
-            users = this.userRepository.findAll();
+            users = userRepository.findByUserRole(Role.USER);
 
         modelMapper.typeMap(User.class, UserInfoResponse.class).addMapping(
                 User-> User.getMajor().getMajorName(), UserInfoResponse::setMajor_name

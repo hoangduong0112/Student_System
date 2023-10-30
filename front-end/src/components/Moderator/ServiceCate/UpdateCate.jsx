@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {useLocation, useNavigate, useParams} from 'react-router-dom';
-import HomeService from "../../services/Guest/HomeService";
-import ModerateService from "../../services/Mod/ModerateService";
+import ServiceCate from "../../services/ServiceCate";
 
 function UpdateCate() {
     const { id } = useParams();
@@ -17,7 +16,7 @@ function UpdateCate() {
     const [numOfDateInput, setNumOfDateInput] = useState(numOfDate || 0);
 
     useEffect(() => {
-        HomeService.getCate(id).then((res) => {
+        ServiceCate.getById(id).then((res) => {
             let cate = res.data;
             setServiceCateNameInput(cate.serviceCateName);
             setPriceInput(cate.price);
@@ -42,7 +41,7 @@ function UpdateCate() {
                 numOfDate: numOfDateInput,
             };
 
-            ModerateService.updateCate(cate, id).then(() => {
+            ServiceCate.updateCate(cate, id).then(() => {
                 nav(`/moderator/service-cate/update/${id}`);
             })
         }

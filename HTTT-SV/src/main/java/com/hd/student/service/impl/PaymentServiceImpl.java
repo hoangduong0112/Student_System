@@ -114,7 +114,6 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentResponse getById(int id) {
         Payment payment = paymentRepository.findById(id).orElseThrow(()
                 -> new ResourceNotFoundException("Không tìm thấy thanh toán của yêu cầu này, mã yêu cầu"+ id));
-        String userOfPayment = payment.getServiceOnline().getUser().getEmail();
         return modelMapper.map(payment, PaymentResponse.class);
     }
 
@@ -147,28 +146,33 @@ public class PaymentServiceImpl implements PaymentService {
 //        return new ApiResponse("Hệ thống bị lỗi", true);
 //    }
     @Override
-    public boolean verifyPayment(int id) {
+    public PaymentResponse verifyPayment(int id) {
         Payment payment = paymentRepository.findById(id).orElseThrow(()
                 -> new ResourceNotFoundException("Không tìm thấy thanh toán của yêu cầu này, mã yêu cầu"+ id));
         if (payment.getPaymentStatus() != PaymentStatus.PENDING)
-            return false;
+            return modelMapper.map(payment, PaymentResponse.class);
         else {
             try {
                 Integer paid = VNPayUtil.querydrPayment(payment);
 
                 if (paid == 0) {
                     payment.setPaymentStatus(PaymentStatus.PAID);
-                    this.paymentRepository.save(payment);
-                    return true;
+                    return modelMapper.map(this.paymentRepository.save(payment), PaymentResponse.class);
                 } else if (paid == 2) {
                     payment.setPaymentStatus(PaymentStatus.CANCEL);
-                    this.paymentRepository.save(payment);
-                    return true;
+                    return modelMapper.map(this.paymentRepository.save(payment), PaymentResponse.class);
                 }
             } catch (RuntimeException | ServletException | IOException e) {
                 e.printStackTrace();
             }
         }
-        return false;
+        return modelMapper.map(this.paymentRepository.save(payment), PaymentResponse.class);
+    }
+
+    @Override
+    public PaymentResponse getByOnlineServiceId(int serviceId) {
+        Payment payment = paymentRepository.findByServiceOnline_Id(serviceId).orElseThrow(()
+                -> new ResourceNotFoundException("Không tìm thấy thanh toán của yêu cầu này, mã yêu cầu"+ serviceId));
+        return modelMapper.map(payment, PaymentResponse.class);
     }
 }
