@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Table } from 'reactstrap';
-import UserService from "../../services/User/UserService";
+import UserService from "../../services/UserService";
 import { useNavigate } from "react-router-dom";
 
 function UserInfoList() {

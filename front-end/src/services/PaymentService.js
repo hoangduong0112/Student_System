@@ -17,6 +17,10 @@ class PaymentService{
         return axios.get(PAYMENT_API_URL+"/"+id, config);
     }
 
+    getByServiceId(serviceId){
+        return axios.get(PAYMENT_API_URL+"?service_id="+serviceId, config);
+    }
+
     verifyPayment(id){
         return axios.get(PAYMENT_API_URL+"/" + id + "/verify", config);
     }

@@ -28,7 +28,7 @@ function SemesterList() {
     }
 
     const setFinish = (semester) => {
-        if (!semester.finished) { // Kiểm tra nếu isFinish là false
+        if (!semester.finished) {
             SemesterService.setFinish(semester.id).then(() => {
                 setSemesters((prevSemesters) => {
                     return prevSemesters.map((s) => {
@@ -41,7 +41,6 @@ function SemesterList() {
             });
             setSuccess(`Thay đổi trạng thái thành công`);
         } else {
-            // Nếu isFinish đã true, không thực hiện gì cả
             setSuccess(`Trạng thái đã được đánh dấu là đã kết thúc.`);
         }
     }

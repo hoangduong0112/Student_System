@@ -3,30 +3,30 @@ import PaymentService from "../../services/PaymentService";
 import {Container, Table} from "reactstrap";
 import moment from "moment/moment";
 import {useParams} from "react-router-dom";
-import { useNavigate } from 'react-router-dom';
 function PaymentDetails() {
     const { id } = useParams();
     const [result, setResult] = useState({});
     const verifyPayment = async () => {
         try {
-            await PaymentService.verifyPayment(id);
-        } catch (error) {
-            console.error('Lỗi dữ liệu:', error);
-        }
-    };
-    const getPaymentById = async () => {
-        try {
-            const res = await PaymentService.getByPaymentId(id);
+            const res = await PaymentService.verifyPayment(id);
             setResult(res.data);
         } catch (error) {
             console.error('Lỗi dữ liệu:', error);
         }
     };
+    // const getPaymentById = async () => {
+    //     try {
+    //         const res = await PaymentService.getByPaymentId(id);
+    //         setResult(res.data);
+    //     } catch (error) {
+    //         console.error('Lỗi dữ liệu:', error);
+    //     }
+    // };
 
     useEffect(() => {
         const runEffects = async () => {
             await verifyPayment();
-            await getPaymentById();
+            // await getPaymentById();
         };
 
         runEffects();

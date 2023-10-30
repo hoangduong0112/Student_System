@@ -1,18 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { Container, Table, Button } from 'reactstrap';
-import UserService from '../services/User/UserService';
+import React, {useContext, useEffect, useState} from 'react';
+import {Container, Table, Button, ButtonGroup} from 'reactstrap';
+import UserService from '../services/UserService';
 import { useNavigate } from 'react-router-dom';
+import moment from "moment/moment";
+import OnlineService from "../services/OnlineService";
+import {UserContext} from "./App";
 
 const Home = () => {
     const [loading, setLoading] = useState(false);
-    const [user, setUser] = useState({});
+    const [user, setUser] = useContext(UserContext);
     const nav = useNavigate();
     const [semesters, setSemesters] = useState([]);
     const [requests, setRequests] = useState([]);
     const [hoveredText, setHoveredText] = useState('');
 
     const signin = () => {
-        setUser({});
+        setUser({'type':'signout'});
         if (user !== null) nav('/guest/auth/signin');
     };
 
@@ -28,13 +31,13 @@ const Home = () => {
     const viewDepts = () => { nav('/admin/department'); }
     const updateRequest = (request) => {
         if ((request.serviceCateName).includes('bảng điểm'))
-            nav(`/user/service/transcript/update/${request.id}`);
+            nav(`/service/transcript/update/${request.id}`);
         else if ((request.serviceCateName).includes('CNSV'))
-            nav(`/user/service/stud-cert/update/${request.id}`);
+            nav(`/service/stud-cert/update/${request.id}`);
         else if ((request.serviceCateName).includes('BTN'))
-            nav(`/user/service/diploma/update/${request.id}`);
+            nav(`/service/diploma/update/${request.id}`);
         else if ((request.serviceCateName).includes('Mở khóa'))
-            nav(`/user/service/unlock-stud/update/${request.id}`);
+            nav(`/service/unlock-stud/update/${request.id}`);
     }
 
     const createPayment = (request) => {
@@ -47,27 +50,11 @@ const Home = () => {
 
 
     useEffect(() => {
-        const getUser = async () => {
-            try {
-                setLoading(true);
-                const res = await UserService.getUser();
-                setUser(res.data);
-            } catch (error) {
-                console.error('Lỗi lấy thông tin người dùng: ', error);
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        getUser();
-    }, []);
-
-    useEffect(() => {
         const getUserSemester = async () => {
             try {
                 setLoading(true);
-                const res = await UserService.getSemester();
-                setSemesters(res.data);
+                const res = await UserService.getMySemester();
+                await setSemesters(res.data);
             } catch (error) {
                 console.error('Lỗi lấy thông tin học kỳ: ', error);
             } finally {
@@ -83,7 +70,7 @@ const Home = () => {
             try {
                 setLoading(true);
                 const res = await UserService.getRequest();
-                setRequests(res.data);
+                await setRequests(res.data);
             } catch (error) {
                 console.error('Lỗi lấy thông tin yêu cầu: ', error);
             } finally {
@@ -102,11 +89,11 @@ const Home = () => {
                     <p className="display-6 m-2">Loading...</p>
                 ) : (
                     <div>
-                        {user.role === "MODERATOR" || user.role === "ADMIN" ? <>
-                            <span className="me-5 btn-group border border-secondary rounded-pill p-1">
+                        {user.role === "MODERATOR" ? <>
+                            <ButtonGroup className="me-5 btn-group border border-secondary rounded-pill p-1">
                                 <button className="btn btn-success rounded-pill"
                                         onClick={viewServices}>Quản lý dịch vụ</button>
-                            </span>
+                            </ButtonGroup>
                         </> : <></>}
                         {user.role === "ADMIN" ? <>
                             <span className="btn-group border border-secondary rounded-pill p-1">
@@ -177,7 +164,7 @@ const Home = () => {
                                         {requests.map((request) => (
                                             <tr key={request.id}>
                                                 <td>{request.serviceCateName}</td>
-                                                <td>{request.createdDate}</td>
+                                                <td>{moment(request.createdDate, "YYYY-MM-DD").format("DD-MM-YYYY")}</td>
                                                 <td>{request.status}</td>
                                                 <td>{request.price}</td>
                                                 <td>
@@ -196,7 +183,7 @@ const Home = () => {
                                                         updateRequest(request)}}>Chỉnh sửa
                                                     </button>
                                                     <button className="ms-2 btn-danger btn" onClick={() => {
-                                                        UserService.cancelRequest(request.id)}}>Hủy
+                                                        OnlineService.cancelRequest(request.id)}}>Hủy
                                                     </button>
                                                 </td> : <td className="text-center fw-bold">Đã được duyệt</td>}
                                             </tr>

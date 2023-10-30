@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { Container, Table } from 'reactstrap';
-import UserService from "../../services/User/UserService";
+import UserService from "../../services/UserService";
 import {useNavigate, useParams} from "react-router-dom";
 
 function UserDetailsList() {
@@ -9,7 +9,7 @@ function UserDetailsList() {
     const { id } = useParams();
 
     useEffect(() => {
-        UserService.getDetails(id).then((res) => {
+        UserService.getDetailSemester(id).then((res) => {
             setDetails(res.data);
             //console.log(res.data)
         });

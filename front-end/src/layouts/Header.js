@@ -10,7 +10,6 @@ const Header = () => {
     const nav = useNavigate();
 
     const signout = () => {
-        setUser({'type': 'signout'});
         return nav('/');
     }
 
@@ -33,17 +32,17 @@ const Header = () => {
                                 <Nav className="d-block dropdown-menu bg-primary" aria-labelledby="navbarDropdown">
                                     <NavItem>
                                         <NavLink className="text-black dropdown-item text-hover"
-                                                 href="/user/service/transcript/add">Đăng ký cấp bảng điểm
+                                                 href="/service/transcript/add">Đăng ký cấp bảng điểm
                                         </NavLink>
                                     </NavItem>
                                     <NavItem>
                                         <NavLink className="text-black dropdown-item"
-                                                 href="/user/service/stud-cert/add">Đăng ký chứng nhận sinh viên
+                                                 href="/service/stud-cert/add">Đăng ký chứng nhận sinh viên
                                         </NavLink>
                                     </NavItem>
                                     <NavItem>
                                         <NavLink className="text-black dropdown-item"
-                                                 href="/user/service/diploma/add">Đăng ký bản sao bằng tốt nghiệp
+                                                 href="/service/diploma/add">Đăng ký bản sao bằng tốt nghiệp
                                         </NavLink>
                                     </NavItem>
                                     <NavItem>
@@ -56,7 +55,7 @@ const Header = () => {
                                     </NavItem>
                                     <NavItem>
                                         <NavLink className="text-black dropdown-item"
-                                                      href="/user/service/unlock-stud/add">Mở khóa sinh viên
+                                                      href="/service/unlock-stud/add">Mở khóa sinh viên
                                         </NavLink>
                                     </NavItem>
                                 </Nav>

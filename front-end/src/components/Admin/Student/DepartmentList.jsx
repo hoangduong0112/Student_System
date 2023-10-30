@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Container, Table} from 'reactstrap';
-import StudentService from "../../../services/Admin/StudentService";
+import DepartmentService from "../../../services/DepartmentService";
 import {useNavigate} from "react-router-dom";
 
 function DepartmentList() {
@@ -8,7 +8,7 @@ function DepartmentList() {
     const nav = useNavigate();
 
     useEffect(() => {
-        StudentService.getDepartment().then((res) => {
+        DepartmentService.getDepartment().then((res) => {
             setDepartments(res.data);
         });
     }, []);

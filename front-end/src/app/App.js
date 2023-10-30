@@ -8,10 +8,12 @@ import cookie from "react-cookies";
 import Header from "../layouts/Header";
 import Footer from "../layouts/Footer";
 import * as Comp from '../components';
+import MyUserReducer from "./Reducer";
 
 export const UserContext = createContext(null);
+
 const App = () => {
-    const [user, setUser] = useReducer(Reducer,cookie.load('user') || null);
+    const [user, setUser] = useReducer(MyUserReducer,cookie.load('user') || null);
 
 
     return (
@@ -22,8 +24,6 @@ const App = () => {
                     <Route path="/" element={<Navigate to="/guest/auth/signin" />} />
                     <Route path="/guest/auth/signin" element={<Signin />} />
                     <Route path="/home" element={<Home />} />
-                    <Route path="/guest/service-cate" element={<Comp.CateList />} />
-                    <Route path="/guest/service-cate/:id" element={<Comp.CateList />} />
 
                     <Route path="/user/info" element={<Comp.UserInfoList />} />
                     <Route path="/user/semester" element={<Comp.UserSemesterList />} />
@@ -32,20 +32,19 @@ const App = () => {
                     <Route path="/user/payment/result/" element={<Comp.PaymentStatus />} />
                     <Route path="/user/payment/detail/:id" element={<Comp.PaymentDetails />} />
 
-                    <Route path="/user/service/transcript/add" element={<Comp.AddTranscript />} />
-                    <Route path="/user/service/diploma/add" element={<Comp.AddDiploma />} />
-                    <Route path="/user/service/stud-cert/add" element={<Comp.AddStudCertificate />} />
-                    <Route path="/user/service/unlock-stud/add" element={<Comp.AddUnlockStud />} />
+                    <Route path="/service/transcript/add" element={<Comp.AddTranscript />} />
+                    <Route path="/service/diploma/add" element={<Comp.AddDiploma />} />
+                    <Route path="/service/stud-cert/add" element={<Comp.AddStudCertificate />} />
+                    <Route path="/service/unlock-stud/add" element={<Comp.AddUnlockStud />} />
 
-                    <Route path="/user/service/transcript/update/:id" element={<Comp.UpdateTranscript />} />
-                    <Route path="/user/service/diploma/update/:id" element={<Comp.UpdateDiploma />} />
-                    <Route path="/user/service/stud-cert/update/:id" element={<Comp.UpdateStudCertificate />} />
-                    <Route path="/user/service/unlock-stud/update/:id" element={<Comp.UpdateUnlockStud />} />
+                    <Route path="/service/transcript/update/:id" element={<Comp.UpdateTranscript />} />
+                    <Route path="/service/diploma/update/:id" element={<Comp.UpdateDiploma />} />
+                    <Route path="/service/stud-cert/update/:id" element={<Comp.UpdateStudCertificate />} />
+                    <Route path="/service/unlock-stud/update/:id" element={<Comp.UpdateUnlockStud />} />
 
-                    <Route path="/admin/student" element={<Comp.StudentList />} />
-                    <Route path="/admin/student/:id" element={<Comp.StudentList />} />
-                    <Route path="/admin/department" element={<Comp.DepartmentList />} />
-                    <Route path="/admin/department/:id" element={<Comp.DepartmentList />} />
+                    <Route path="/service/diploma/:id" element={<Comp.DiplomaDetail />} />
+                    <Route path="/service/stud-cert/:id" element={<Comp.StudCertificateDetail/>} />
+                    <Route path="/service/transcript/:id" element={<Comp.TranscriptDetail/>} />
 
                     <Route path="/admin/course-data/all" element={<Comp.CourseDataList />} />
                     <Route path="/admin/course-data/add" element={<Comp.AddCourseData />} />
@@ -64,9 +63,11 @@ const App = () => {
                     <Route path="/admin/semester/add" element={<Comp.AddSemester />} />
                     <Route path="/admin/semester/update/:id" element={<Comp.UpdateSemester />} />
 
+                    <Route path="/admin/student" element={<Comp.UserList />} />
+
+                    <Route path="/moderator/service-cate" element={<Comp.CateList />} />
                     <Route path="/moderator/service-cate/update/:id" element={<Comp.UpdateCate />} />
-                    <Route path="/moderator/service-cate/change/:id" element={<Comp.ChangeCate />} />
-                    <Route path="/moderator/get-request" element={<Comp.GetRequest />} />
+                    <Route path="/moderator/get-request" element={<Comp.RequestList />} />
                 </Routes>
             </div>
             <Footer />

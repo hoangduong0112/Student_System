@@ -1,16 +1,17 @@
 import cookie from 'react-cookies';
 
-const Reducer = (currentState, action) => {
+const MyUserReducer = (currentState, action) => {
     switch (action.type) {
-        case 'signin': return action.payload;
+        case 'signin':
+            return action.payload;
 
-        case 'signout':
-            cookie.remove('token');
-            cookie.remove('user');
-            localStorage.removeItem('user');
+        case 'signout': {
+            cookie.remove('token', {path: '/'});
+            cookie.remove('user', {path: '/'});
             return null;
+        }
     }
     return currentState;
 }
 
-export default Reducer;
+export default MyUserReducer;
