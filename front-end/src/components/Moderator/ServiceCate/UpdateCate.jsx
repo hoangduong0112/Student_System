@@ -2,14 +2,19 @@ import React, { useState, useEffect } from 'react';
 import {useLocation, useNavigate, useParams} from 'react-router-dom';
 import ServiceCate from "../../../services/ServiceCate";
 import {Alert, Button, Card, CardBody, Container, Form, FormGroup, Input, Label, Row} from "reactstrap";
+import MyAlert from "../../../layouts/MyAlert";
 
 function UpdateCate() {
     const { id } = useParams();
     const loc = useLocation();
     const nav = useNavigate();
-    const [resp, setResp] = useState('');
 
-    const {serviceCateName, price, description, isAvailable, numOfDate} = loc.state || {};
+    const [alert, setAlert] = useState(null);
+    const showAlert = (message, color) => {
+        setAlert({ message, color });
+    };
+
+    const {serviceCateName, price, description, isAvailable, numOfDate} = {};
     const [serviceCateNameInput, setServiceCateNameInput] = useState(serviceCateName || '');
     const [priceInput, setPriceInput] = useState(price || 0);
     const [descriptionInput, setDescriptionInput] = useState(description || '');
@@ -27,29 +32,12 @@ function UpdateCate() {
         })
     }, [id]);
 
-    const alert = () => {
-        if (resp.includes('thành công'))
-            return (
-                <Alert color="success" className="fixed-bottom"
-                       style={{marginBottom:'5rem', marginLeft:'25%', marginRight:'25%'}}
-                       onMouseEnter={() => setResp('')}>{resp}
-                </Alert>
-            )
-        else if (resp)
-            return (
-                <Alert color="danger" className="fixed-bottom"
-                       style={{marginBottom:'5rem', marginLeft:'25%', marginRight:'25%'}}
-                       onMouseEnter={() => setResp('')}>{resp}
-                </Alert>
-            )
-    }
-
     const saveCate = (e) => {
         e.preventDefault();
         if (serviceCateNameInput === '' || priceInput === '' || descriptionInput === '' || numOfDateInput === '')
-            setResp('Vui lòng nhập đầy đủ thông tin');
+            showAlert('Vui lòng nhập đầy đủ thông tin', 'danger');
         else if (priceInput.toString() <= 0 || numOfDateInput.toString() <= 0)
-            setResp('Số nhập không hợp lệ');
+            showAlert('Số nhập không hợp lệ', 'danger');
         else {
             const cate = {
                 serviceCateName: serviceCateNameInput,
@@ -60,7 +48,7 @@ function UpdateCate() {
             };
 
             ServiceCate.updateCate(cate, id).then(() => {
-                setResp('Chỉnh sửa loại dịch vụ thành công.');
+                showAlert('Chỉnh sửa loại dịch vụ thành công.');
             })
         }
     }
@@ -80,6 +68,12 @@ function UpdateCate() {
         <Container fluid>
             <Row className="mt-3">
                 <Card className="col-md-6 offset-md-3">
+                    {alert && (
+                        <MyAlert
+                            message={alert.message}
+                            color={alert.color}
+                        />
+                    )}
                     <Row className="justify-content-center pb-2 mt-2 border-bottom h3">Chỉnh sửa dịch vụ</Row>
                     <CardBody>
                         <Form>

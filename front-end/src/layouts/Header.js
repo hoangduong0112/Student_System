@@ -10,6 +10,9 @@ const Header = () => {
     const nav = useNavigate();
 
     const signout = () => {
+        setUser({
+            'type': 'signout',
+        });
         return nav('/');
     }
 

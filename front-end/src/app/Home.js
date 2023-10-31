@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import moment from "moment/moment";
 import OnlineService from "../services/OnlineService";
 import {UserContext} from "./App";
+import SemesterService from "../services/SemesterService";
+import MyAlert from "../layouts/MyAlert";
 
 const Home = () => {
     const [loading, setLoading] = useState(false);
@@ -14,8 +16,13 @@ const Home = () => {
     const [requests, setRequests] = useState([]);
     const [hoveredText, setHoveredText] = useState('');
 
-    const signin = () => {
-        setUser({'type':'signout'});
+    const [alert, setAlert] = useState(null);
+    const showAlert = (message, color) => {
+        setAlert({ message, color });
+    };
+
+    const signin = async () => {
+        await setUser({'type':'signout'});
         if (user !== null) nav('/guest/auth/signin');
     };
 
@@ -46,6 +53,34 @@ const Home = () => {
 
     const viewPayment = (request) => {
         nav(`/user/payment/detail/${request.paymentId}`);
+    }
+    const requestDetail = (request) => {
+        if ((request.serviceCateName).includes('bảng điểm'))
+            nav(`/service/transcript/${request.id}`);
+        else if ((request.serviceCateName).includes('CNSV'))
+            nav(`/service/stud-cert/${request.id}`);
+        else if ((request.serviceCateName).includes('BTN'))
+            nav(`/service/diploma/${request.id}`);
+        else if ((request.serviceCateName).includes('Mở khóa'))
+            nav(`/service/unlock-stud/${request.id}`);
+    }
+    const cancelRequest = (request) => {
+        if (request.paymentId === 0) {
+            OnlineService.cancelRequest(request.id).then((res) => {
+                const updatedRequest = res.data;
+                setRequests((prev) => {
+                    return prev.map((s) => {
+                        if (s.id === request.id) {
+                            return updatedRequest;
+                        }
+                        return s;
+                    });
+                });
+            });
+            showAlert(`Thay đổi trạng thái thành công`, null);
+        } else {
+            showAlert(`Thay đổi trạng thái thất bại.`, 'danger');
+        }
     }
 
 
@@ -89,12 +124,12 @@ const Home = () => {
                     <p className="display-6 m-2">Loading...</p>
                 ) : (
                     <div>
-                        {user.role === "MODERATOR" ? <>
+                        {user.role === "MODERATOR" && <>
                             <ButtonGroup className="me-5 btn-group border border-secondary rounded-pill p-1">
                                 <button className="btn btn-success rounded-pill"
                                         onClick={viewServices}>Quản lý dịch vụ</button>
                             </ButtonGroup>
-                        </> : <></>}
+                        </>}
                         {user.role === "ADMIN" ? <>
                             <span className="btn-group border border-secondary rounded-pill p-1">
                                 <button className="me-1 btn btn-success rounded-pill rounded-end-0"
@@ -147,6 +182,12 @@ const Home = () => {
                                     onClick={viewCates} style={{ color: hoveredText }}>Các dịch vụ
                             </button>
                             </h5>
+                                {alert && (
+                                    <MyAlert
+                                        message={alert.message}
+                                        color={alert.color}
+                                    />
+                                )}
                             {requests.length ? (
                                 <div className="row">
                                     <Table className="mt-3 table table-striped table-bordered">
@@ -177,15 +218,23 @@ const Home = () => {
                                                         </button>
                                                     }
                                                 </td>
-                                                {request.status === 'PENDING' ?
-                                                <td className="text-center">
-                                                    <button className="btn-success btn" onClick={() => {
-                                                        updateRequest(request)}}>Chỉnh sửa
-                                                    </button>
-                                                    <button className="ms-2 btn-danger btn" onClick={() => {
-                                                        OnlineService.cancelRequest(request.id)}}>Hủy
-                                                    </button>
-                                                </td> : <td className="text-center fw-bold">Đã được duyệt</td>}
+                                                {request.status === 'PENDING' && (
+                                                    <td className="text-center">
+                                                        <button className="btn-success btn" onClick={() => updateRequest(request)}>
+                                                            Chỉnh sửa
+                                                        </button>
+                                                        <button className="ms-2 btn-danger btn" onClick={() => cancelRequest(request)}>
+                                                            Hủy
+                                                        </button>
+                                                    </td>
+                                                )}
+                                                {(request.status === 'ACCEPT' || request.status === 'CANCEL') && (
+                                                    <td className="text-center">
+                                                        <button className="btn-info btn" onClick={() => requestDetail(request)}>
+                                                            Thông tin
+                                                        </button>
+                                                    </td>
+                                                )}
                                             </tr>
                                         ))}
                                         </tbody>

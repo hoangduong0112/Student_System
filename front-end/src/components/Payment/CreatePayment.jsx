@@ -4,12 +4,17 @@ import {Container, Table} from "reactstrap";
 import { format } from 'date-fns';
 import PaymentService from "../../services/PaymentService";
 import { useNavigate } from 'react-router-dom';
+import MyAlert from "../../layouts/MyAlert";
 
 function CreatePayment() {
     const myParam = useLocation().search;
     const serviceId= new URLSearchParams(myParam).get("service");
     const [payment, setPayment] = useState({});
     const[color, setColor] = useState('');
+    const [alert, setAlert] = useState(null);
+    const showAlert = (message, color) => {
+        setAlert({ message, color });
+    };
 
     useEffect(() => {
 
@@ -17,7 +22,7 @@ function CreatePayment() {
             setPayment(res.data);
         })
             .catch((error) => {
-                console.error('Lỗi thanh toán:', error);
+                showAlert('Lỗi khi tạo thanh toán cho yêu cầu', 'danger');
             });
     }, []);
 
@@ -30,6 +35,12 @@ function CreatePayment() {
         <div>
             {payment ? (
                 <Container fluid>
+                    {alert && (
+                        <MyAlert
+                            message={alert.message}
+                            color={alert.color}
+                        />
+                    )}
                     <h3 className="App">Thanh toán</h3>
                     <div className="row">
                         <Table className="mt-5">

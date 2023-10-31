@@ -3,15 +3,21 @@ import PaymentService from "../../services/PaymentService";
 import {Container, Table} from "reactstrap";
 import moment from "moment/moment";
 import {useParams} from "react-router-dom";
+import MyAlert from "../../layouts/MyAlert";
 function PaymentDetails() {
     const { id } = useParams();
     const [result, setResult] = useState({});
+
+    const [alert, setAlert] = useState(null);
+    const showAlert = (message, color) => {
+        setAlert({ message, color });
+    };
     const verifyPayment = async () => {
         try {
             const res = await PaymentService.verifyPayment(id);
             setResult(res.data);
         } catch (error) {
-            console.error('Lỗi dữ liệu:', error);
+            showAlert('Lỗi dữ liệu:', 'danger');
         }
     };
     // const getPaymentById = async () => {
@@ -35,6 +41,12 @@ function PaymentDetails() {
 
     return (
         <div>
+            {alert && (
+                <MyAlert
+                    message={alert.message}
+                    color={alert.color}
+                />
+            )}
             {result ? (
                 <Container fluid>
                     <h3 className="App">Thông tin thanh toán</h3>

@@ -1,11 +1,13 @@
 import {useLocation, useNavigate, useParams} from "react-router-dom";
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import DiplomaService from "../../services/DiplomaService";
-import {Alert, Container, Table} from "reactstrap";
+import {Alert, ButtonGroup, Container, Table} from "reactstrap";
 import PaymentService from "../../services/PaymentService";
 import moment from "moment";
 import OnlineService from "../../services/OnlineService";
 import MySpinner from "../../layouts/Spinner";
+import {UserContext} from "../../app/App";
+import MyAlert from "../../layouts/MyAlert";
 function DiplomaDetail() {
     const { id } = useParams();
     const nav = useNavigate();
@@ -13,7 +15,11 @@ function DiplomaDetail() {
     const [payment, setPayment] = useState({});
     const [service, setService] = useState({});
     const [isLoading, setIsLoading] = useState(false);
-
+    const [user, setUser] = useContext(UserContext);
+    const [alert, setAlert] = useState(null);
+    const showAlert = (message, color) => {
+        setAlert({ message, color });
+    };
 
     const getResult = async () => {
         try {
@@ -21,32 +27,44 @@ function DiplomaDetail() {
             setResult(res.data);
             return res.data;
         } catch (error) {
-            console.error('Lỗi dữ liệu:', error);
+            showAlert('Lỗi khi lấy chi tiết yêu cầu', 'danger')
             return null;
         }
     };
     const getPayment = async (id) => {
         try {
             const res = await PaymentService.getByServiceId(id);
-            setPayment(res.data);
+
+            if (res.status === 200) {
+                setPayment(res.data);
+            } else {
+                if (res.status === 404) {
+                    showAlert('Không tìm thấy thanh toán', 'danger');
+                } else {
+                    showAlert('Lỗi không xác định', 'danger');
+                }
+            }
         } catch (error) {
-            console.error('Lỗi dữ liệu:', error);
+            showAlert('Lỗi khi lấy thông tin thanh toán', 'danger');
         }
     };
+
+
     const getService = async (id) => {
         try {
             const res = await OnlineService.getRequestById(id);
             setService(res.data);
         } catch (error) {
-            console.error('Lỗi dữ liệu:', error);
+            showAlert('Lỗi khi lấy thông tin yêu cầu', 'danger');
         }
     };
     useEffect(() => {
         const runEffects = async () => {
             const resultData = await getResult();
-            console.log(resultData)
-            await getPayment(resultData.onlineServiceId);
-            await getService(resultData.onlineServiceId);
+            if(resultData !== null) {
+                await getPayment(resultData.onlineServiceId);
+                await getService(resultData.onlineServiceId);
+            }
         };
 
         runEffects();
@@ -54,17 +72,15 @@ function DiplomaDetail() {
 
     const handleConfirmRequest = async () => {
         setIsLoading(true);
-
-        // Sử dụng setTimeout để đảm bảo Spinner được hiển thị trước khi gọi API
         setTimeout(async () => {
             try {
                 const res = await OnlineService.acceptRequest(service.id);
 
-                // Cập nhật state với dữ liệu mới trả về từ API
                 setService(res.data);
                 setIsLoading(false);
+                showAlert('Xác nhận yêu cầu thành công', '');
             } catch (error) {
-                console.error('Lỗi khi cập nhật tình trạng:', error);
+                showAlert('Lỗi khi xác nhận yêu cầu', 'danger');
                 setIsLoading(false);
             }
         }, 0);
@@ -77,6 +93,12 @@ function DiplomaDetail() {
                 <Container fluid>
                     {isLoading && <MySpinner />}
                     <h3 className ="App">Tình trạng yêu cầu</h3>
+                    {alert && (
+                        <MyAlert
+                            message={alert.message}
+                            color={alert.color}
+                        />
+                    )}
                     <div className="row">
                         <Table className="mt-3 table table-striped table-bordered">
                             <thead className="text-center"><tr>
@@ -92,10 +114,17 @@ function DiplomaDetail() {
                                 <td>{moment(service.createdDate, "YYYY-MM-DD").format("DD-MM-YYYY")}</td>
                                 <td>{service.serviceCateName}</td>
                                 <td>{service.status}</td>
-                                <td><button className="mx-5 btn-primary btn" onClick={handleConfirmRequest}>
-                                    Xác nhận yêu cầu
-                                </button>
-                                        </td>
+                                <td>
+                                {user.role === "MODERATOR" && <>
+                                        <button className="btn btn-success rounded-pill"
+                                                onClick={handleConfirmRequest}>Quản lý dịch vụ</button>
+                                </>}
+                                {user.role === "USER" && <>
+                                        <td><button className="mx-5 btn-primary btn">
+                                            Hủy yêu cầu - hoàn tiền (Chưa phát triển)
+                                        </button></td>
+                                </>}
+                                </td>
                             </tr>
                             </tbody>
                         </Table>

@@ -2,6 +2,7 @@ import axios from "axios";
 import cookie from "react-cookies";
 
 export const AUTHORIZATION_API = '/api/auth';
+export const USER_API = '/api/user';
 
 export const endpoints = {
     'signin': `${AUTHORIZATION_API}/signin`,
@@ -9,6 +10,8 @@ export const endpoints = {
     'signup': `${AUTHORIZATION_API}/signup`,
 
     'signout': `${AUTHORIZATION_API}/signout`,
+
+    'user': `${USER_API}/info`
 
 }
 

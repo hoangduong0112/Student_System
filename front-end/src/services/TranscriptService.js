@@ -1,12 +1,14 @@
 import axios from "axios";
-import config from "./config";
+import cookie from "react-cookies";
+import {createHeaders} from "./header";
 
 const TRANSCRIPT_API_BASE_URL = 'http://localhost:8080/api/transcript';
 
 class TranscriptService {
-    getTranscript(serviceId) { return axios.get(TRANSCRIPT_API_BASE_URL + '/' + serviceId, config); }
-    addTranscript(transcript) { return axios.post(TRANSCRIPT_API_BASE_URL, transcript, config); }
-    updateTranscript(transcript, transcriptId) { return axios.put(TRANSCRIPT_API_BASE_URL + '/' + transcriptId, transcript, config); }
+    getTranscript(serviceId) { return axios.get(TRANSCRIPT_API_BASE_URL + '/' + serviceId, createHeaders()); }
+    addTranscript(transcript) { return axios.post(TRANSCRIPT_API_BASE_URL, transcript, createHeaders()); }
+    updateTranscript(transcript, transcriptId) { return axios.put(TRANSCRIPT_API_BASE_URL + '/' +
+        transcriptId, transcript, createHeaders()); }
 
 }
 

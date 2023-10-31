@@ -4,6 +4,7 @@ import {Container, Table} from "reactstrap";
 import { format } from 'date-fns';
 import {useLocation} from "react-router-dom";
 import moment from 'moment';
+import MyAlert from "../../layouts/MyAlert";
 function PaymentStatus() {
     const myParam = useLocation().search;
     const vnp_Amount= new URLSearchParams(myParam).get("vnp_Amount");
@@ -13,21 +14,31 @@ function PaymentStatus() {
     const vnp_TransactionStatus= new URLSearchParams(myParam).get("vnp_TransactionStatus");
     const [status, setStatus] = useState({});
 
+    const [alert, setAlert] = useState(null);
+    const showAlert = (message, color) => {
+        setAlert({ message, color });
+    };
     async function fetchData() {
         try {
             const res = await PaymentService.getResult(vnp_Amount, vnp_OrderInfo, vnp_TxnRef, vnp_PayDate, vnp_TransactionStatus);
             setStatus(res.data);
         } catch (error) {
-            console.error('Lỗi thanh toán:', error);
+            showAlert('Gặp sự cố không rõ', 'danger')
         }
     }
 
     useEffect(() => {
         fetchData();
-    }, []); // Chúng ta giữ dependency array rỗng, tương tự như trước
+    }, []);
 
     return (
         <div>
+            {alert && (
+                <MyAlert
+                    message={alert.message}
+                    color={alert.color}
+                />
+            )}
             {status ? (
                 <Container fluid>
                     <h3 className="App">Thông tin thanh toán</h3>

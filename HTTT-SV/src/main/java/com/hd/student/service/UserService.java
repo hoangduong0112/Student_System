@@ -8,10 +8,10 @@ import java.util.List;
 
 public interface UserService extends UserDetailsService {
 
-    public void saveUser(User user);
+    void saveUser(User user);
 
-    public UserInfoResponse getCurrentUserInfo(String email);
+    UserInfoResponse getCurrentUserInfo(String email);
 
-    public List<UserInfoResponse> findAll(int majorId);
+    List<UserInfoResponse> findAll(int majorId);
 
 }

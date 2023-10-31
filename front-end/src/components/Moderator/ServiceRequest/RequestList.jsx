@@ -7,24 +7,40 @@ import moment from "moment/moment";
 import PaymentService from "../../../services/PaymentService";
 import ServiceCate from "../../../services/ServiceCate";
 import ModerateService from "../../../services/ServiceCate";
+import MyAlert from "../../../layouts/MyAlert";
 
 function RequestList(){
     const [allRequests, setAllRequests] = useState([]);
     const [requests, setRequests] = useState([]);
-    const [success, setSuccess] = useState('');
     const [cates, setCates] = useState([]);
     const nav = useNavigate();
     const [selectedCate, setSelectedCate] = useState({});
 
+    const [alert, setAlert] = useState(null);
+    const showAlert = (message, color) => {
+        setAlert({ message, color });
+    };
+
     useEffect(() => {
-        // Gọi API để lấy danh sách requests và cates
         OnlineService.getAllRequest().then((res) => {
             const allRequestsData = res.data;
             setAllRequests(allRequestsData);
-            setRequests(allRequestsData); // Đặt danh sách requests ban đầu
+            setRequests(allRequestsData);
+        }).catch((error) => {
+            if (error.response && error.response.status === 403) {
+                showAlert('Bạn không có quyền làm điều này', 'danger')
+            } else {
+                showAlert('Có lỗi xảy ra', 'danger')
+            }
         });
         ServiceCate.getAllServiceCate().then(res => {
             setCates(res.data);
+        }).catch((error) => {
+            if (error.response && error.response.status === 403) {
+                showAlert('Bạn không có quyền làm điều này', 'danger')
+            } else {
+                showAlert('Có lỗi xảy ra', 'danger')
+            }
         });
     }, []);
 
@@ -32,7 +48,6 @@ function RequestList(){
         const selectedValue = e.target.value;
         setSelectedCate(selectedValue);
 
-        // Lọc danh sách requests dựa trên selectedValue
         const filteredRequests = allRequests.filter(request => request.serviceCateName === selectedValue);
         setRequests(filteredRequests);
     }
@@ -51,10 +66,16 @@ function RequestList(){
         OnlineService.deleteRequest(request.id).then(() => {
             setRequests(requests.filter(r => r.id !== request.id));
         })
-        setSuccess(`Xóa yêu cầu thành công.`)
+        setAlert(`Xóa yêu cầu thành công.`)
     }
     return (
         <div className='mb-5'>
+            {alert && (
+                <MyAlert
+                    message={alert.message}
+                    color={alert.color}
+                />
+            )}
             <Container fluid>
                 <h3 className="App mt-2">Quản lý dịch vụ</h3>
                 <FormGroup>

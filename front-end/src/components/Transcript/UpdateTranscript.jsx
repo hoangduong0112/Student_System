@@ -2,14 +2,26 @@ import React, {useEffect, useState} from 'react'
 import TranscriptService from "../../services/TranscriptService";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import SemesterService from "../../services/SemesterService";
+import {Table} from "reactstrap";
+import moment from "moment/moment";
+import MyAlert from "../../layouts/MyAlert";
+import OnlineService from "../../services/OnlineService";
 
 function UpdateTranscript() {
     const { id } = useParams();
     const loc = useLocation();
     const nav = useNavigate();
-    const [err, setErr] = useState('');
+    const [alert, setAlert] = useState(null);
+    const [service, setService] = useState({});
+    const [lever, setLever] = useState(false);
 
-    const {language, contactPhone, fromSemester, toSemester, quantity, isSealed} = loc.state || {};
+    const showAlert = (message, color) => {
+        setAlert({ message, color });
+    };
+
+    const { success } = loc.state || false;
+
+    const {language, contactPhone, fromSemester, toSemester, quantity, isSealed} = {};
     const [transcriptId, setTranscriptId] = useState(0);
     const [semesters, setSemesters] = useState([]);
     const [languageInput, setLanguageInput] = useState(language || '');
@@ -47,11 +59,11 @@ function UpdateTranscript() {
         e.preventDefault();
         if (contactPhoneInput === undefined || fromSemesterInput === undefined || languageInput === undefined
             || toSemesterInput === undefined || quantityInput === undefined)
-            setErr('Vui lòng nhập đầy đủ thông tin');
+            showAlert('Vui lòng nhập đầy đủ thông tin', 'danger');
         else if (quantityInput <= 0)
-            setErr('Số bản nhập không hợp lệ');
+            showAlert('Số bản nhập không hợp lệ', 'danger');
         else if (toSemesterInput < fromSemesterInput)
-            setErr('Học kỳ chọn không hợp lệ');
+            showAlert('Học kỳ chọn không hợp lệ', 'danger');
         else {
             const transcript = {
                 language: languageInput,
@@ -63,39 +75,52 @@ function UpdateTranscript() {
             };
 
             TranscriptService.updateTranscript(transcript, transcriptId).then(() => {
-
+                setLever(!lever)
+                showAlert('Chỉnh sửa thành công');
             })
         }
     };
+    useEffect(() => {
+        if (success) {
+            showAlert('Gửi yêu cầu thành công');
+        }
+    }, [success]);
+    useEffect(() => {
+
+        const getOnlineService = async () => {
+            try {
+                const res = await OnlineService.getRequestById(id);
+                setService(res.data)
+            } catch (error) {
+                showAlert('Lỗi khi lấy thông tin yêu cầu', 'danger');
+            }
+        };
+
+        getOnlineService();
+    }, [lever]);
 
     const changeLanguageHandler = (e) => {
         setLanguageInput(e.target.value);
-        setErr('');
     }
 
     const changePhoneHandler = (e) => {
         setContactPhoneInput(e.target.value);
-        setErr('');
     }
 
     const changeFromSemesterHandler = (e) => {
         setFromSemesterInput(parseInt(e.target.value));
-        setErr('');
     }
 
     const changeToSemesterHandler = (e) => {
         setToSemesterInput(parseInt(e.target.value));
-        setErr('');
     }
 
     const changeQuantityHandler = (e) => {
         setQuantityInput(parseInt(e.target.value));
-        setErr('');
     }
 
     const changeSealedHandler = (e) => {
         setIsSealedInput(e.target.value);
-        setErr('');
     }
 
     const cancel = () => { nav(`/home`); }
@@ -103,9 +128,34 @@ function UpdateTranscript() {
     return (
         <div>
             <div className = "container">
+                <div className="row">
+                    <Table className="mt-3 table table-striped table-bordered">
+                        <thead className="text-center"><tr>
+                            <th>Giá tiền</th>
+                            <th>Ngày yêu cầu</th>
+                            <th>Trạng thái</th>
+                            <th>Tình trạng</th>
+                        </tr></thead>
+                        <tbody>
+                        <tr key={service.id}>
+                            <td>{service.price}</td>
+                            <td>{moment(service.createdDate, "YYYY-MM-DD").format("DD-MM-YYYY")}</td>
+                            <td>{service.serviceCateName}</td>
+                            <td>{service.status}</td>
+                        </tr>
+                        </tbody>
+                    </Table>
+                </div>
+
                 <div className = "row">
                     <div className = "card col-md-6 offset-md-3">
                         <h3 className="mt-2 text-center">Chỉnh sửa bảng điểm</h3>
+                        {alert && (
+                            <MyAlert
+                                message={alert.message}
+                                color={alert.color}
+                            />
+                        )}
                         <div className = "card-body">
                             <form>
                                 <div className = "form-group">
@@ -154,7 +204,6 @@ function UpdateTranscript() {
                                 </div>
                             </form>
                         </div>
-                        {err && <div onMouseEnter={() => setErr('')} className="alert alert-danger">{err}</div>}
                     </div>
                 </div>
             </div>

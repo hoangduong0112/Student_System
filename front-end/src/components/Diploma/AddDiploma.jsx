@@ -1,22 +1,27 @@
 import React, {useState} from 'react'
 import DiplomaService from "../../services/DiplomaService";
 import {useNavigate} from "react-router-dom";
+import MyAlert from "../../layouts/MyAlert";
 
 function AddDiploma() {
     const nav = useNavigate();
-    const [err, setErr] = useState('');
     const [copy, setCopy] = useState(0);
     const [phoneContact, setPhoneContact] = useState('');
     const [email, setEmail] = useState('');
     const [diplomaYear, setDiplomaYear] = useState(1970);
     const [diplomaCode, setDiplomaCode] = useState('');
-
+    const [alert, setAlert] = useState(null);
+    const showAlert = (message, color) => {
+        setAlert({ message, color });
+    };
     const saveDiploma = (e) => {
         e.preventDefault();
         if (copy === null || phoneContact === '' || email === '' || diplomaYear === null || diplomaCode === '')
-            setErr('Vui lòng nhập đầy đủ thông tin');
-        else if (copy <= 0 || diplomaYear < 1970)
-            setErr('Số nhập không hợp lệ');
+            showAlert('Vui lòng nhập đầy đủ thông tin', 'danger');
+        else if (copy <= 0)
+            showAlert('Số lượng phải lớn hơn 0', 'danger');
+        else if(diplomaYear < 1970)
+            showAlert('Năm tốt nghiệp không hợp lệ', 'danger');
         else {
             const diploma = {
                 copy,
@@ -28,33 +33,31 @@ function AddDiploma() {
 
             DiplomaService.addDiploma(diploma).then((res) => {
                 const onlineServiceId = res.data.onlineServiceId;
-                nav(`/user/service/diploma/update/${onlineServiceId}`);
+                nav(`/service/diploma/update/${onlineServiceId}`, {
+                    state: {
+                        'success': "true"
+                    }})
             });
         }
     }
 
     const changeCopyHandler = (e) => {
         setCopy(e.target.value);
-        setErr('');
     }
 
     const changePhoneHandler = (e) => {
         setPhoneContact(e.target.value);
-        setErr('');
     }
 
     const changeEmailHandler = (e) => {
         setEmail(e.target.value);
-        setErr('');
     }
 
     const changeYearHandler = (e) => {
         setDiplomaYear(e.target.value);
-        setErr('');
     }
 
     const changeCodeHandler = (e) => {
-        setErr('');
         setDiplomaCode(e.target.value);
     }
     
@@ -63,6 +66,12 @@ function AddDiploma() {
     return (
         <div>
             <div className = "container">
+                {alert && (
+                    <MyAlert
+                        message={alert.message}
+                        color={alert.color}
+                    />
+                )}
                 <div className = "row">
                     <div className = "card col-md-6 offset-md-3">
                         <h3 className="text-center mt-2">Cấp bản sao bằng tốt nghiệp</h3>
@@ -99,8 +108,6 @@ function AddDiploma() {
                                 </div>
                             </form>
                         </div>
-                        {err && <div className="alert alert-danger"
-                                     onMouseEnter={() => setErr('')}>{err}</div>}
                     </div>
                 </div>
             </div>

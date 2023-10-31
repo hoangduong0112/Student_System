@@ -73,7 +73,7 @@ public class OnlineServiceImpl implements IOnlineService {
     public boolean checkAccess(int id, int userId){
         OnlineService on = this.onlineServiceRepository.findById(id).orElseThrow(
                 ()-> new ResourceNotFoundException("Không tìm thấy dịch vụ"));
-        if(on.getUser().getId() != userId)
+        if(on.getUser().getId() != userId || on.getUser().getUserRole() == Role.MODERATOR)
             throw new AccessDeniedException("Bạn không có quyền làm điều này");
 
         return true;
@@ -170,7 +170,7 @@ public class OnlineServiceImpl implements IOnlineService {
         OnlineService on = this.onlineServiceRepository.findById(serviceId).orElseThrow(
                 ()-> new ResourceNotFoundException("Không tìm thấy yêu cầu")
         );
-        if(!on.getUser().getId().equals(userId)) {
+        if(this.checkAccess(on.getId(), userId)) {
             on.setStatus(ServiceStatus.CANCEL);
             this.onlineServiceRepository.save(on);
             modelMapper.typeMap(OnlineService.class, OnlineServiceResponse.class).addMapping(OnlineService

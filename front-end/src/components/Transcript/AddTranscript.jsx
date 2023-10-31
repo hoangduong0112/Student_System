@@ -3,6 +3,7 @@ import TranscriptService from "../../services/TranscriptService";
 import {useNavigate} from "react-router-dom";
 import {Container} from "reactstrap";
 import SemesterService from "../../services/SemesterService";
+import MyAlert from "../../layouts/MyAlert";
 
 function AddTranscript() {
     const [language, setLanguage] = useState('');
@@ -13,17 +14,21 @@ function AddTranscript() {
     const [isSealed, setIsSealed] = useState(false);
     const [semesters, setSemesters] = useState([]);
     const nav = useNavigate();
-    const [err, setErr] = useState('');
+    const [alert, setAlert] = useState(null);
+    const showAlert = (message, color) => {
+        setAlert({ message, color });
+    };
+
 
     const saveTranscript = (e) => {
         e.preventDefault();
         if (contactPhone === undefined || fromSemester === undefined || language === undefined
             || toSemester === undefined || quantity === undefined)
-            setErr('Vui lòng nhập đầy đủ thông tin');
+            showAlert('Vui lòng nhập đầy đủ thông tin', 'danger');
         else if (quantity <= 0)
-            setErr('Số bản nhập không hợp lệ');
+            showAlert('Số bản nhập không hợp lệ', 'danger');
         else if (toSemester < fromSemester)
-            setErr('Học kỳ chọn không hợp lệ');
+            showAlert('Học kỳ chọn không hợp lệ', 'danger');
         else {
             const transcript = {
                 language,
@@ -36,42 +41,39 @@ function AddTranscript() {
 
             TranscriptService.addTranscript(transcript).then(res => {
                 const onlineServiceId = res.data.onlineServiceId;
-                nav(`/user/service/transcript/update/${onlineServiceId}`);
+                nav(`/service/transcript/update/${onlineServiceId}`, {
+                    state: {
+                        'success': "true"
+                    }});
             });
         }
     };
 
     const changeLanguageHandler = (e) => {
         setLanguage(e.target.value);
-        setErr('');
     }
 
     const changePhoneHandler = (e) => {
         setContactPhone(e.target.value);
-        setErr('');
     }
 
     const changeFromSemesterHandler = (e) => {
         setFromSemester(parseInt(e.target.value));
-        setErr('');
     }
 
     const changeToSemesterHandler = (e) => {
         setToSemester(parseInt(e.target.value));
-        setErr('');
     }
 
     const changeQuantityHandler = (e) => {
         setQuantity(parseInt(e.target.value));
-        setErr('');
     }
 
     const changeSealedHandler = (e) => {
         setIsSealed(e.target.checked);
-        setErr('');
     }
 
-    const cancel = () => { nav(`/guest/service-cate`); }
+    const cancel = () => { nav(`/home`); }
 
     useEffect(() => {
         const getSemesters = async () => {
@@ -88,6 +90,12 @@ function AddTranscript() {
 
     return (
         <Container>
+            {alert && (
+                <MyAlert
+                    message={alert.message}
+                    color={alert.color}
+                />
+            )}
             <div className = "row">
                 <div className = "card col-md-6 offset-md-3">
                     <h3 className="mt-2 text-center">Cấp bảng điểm</h3>
@@ -139,7 +147,6 @@ function AddTranscript() {
                             </div>
                         </form>
                     </div>
-                    {err && <div className="alert alert-danger">{err}</div>}
                 </div>
             </div>
         </Container>

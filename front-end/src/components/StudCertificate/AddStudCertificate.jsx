@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import StudCertificateService from "../../services/StudCertificateService";
 import {useNavigate} from "react-router-dom";
+import MyAlert from "../../layouts/MyAlert";
 
 function AddStudCertificate() {
     const [vietCopy, setVietCopy] = useState(0);
@@ -9,16 +10,20 @@ function AddStudCertificate() {
     const [engCopy, setEngCopy] = useState(0);
     const [content, setContent] = useState('');
     const nav = useNavigate();
-    const [err, setErr] = useState('');
+
+    const [alert, setAlert] = useState(null);
+    const showAlert = (message, color) => {
+        setAlert({ message, color });
+    };
 
     const saveStudCertificate = (e) => {
         e.preventDefault();
         if (phoneContact === undefined || vietCopy === undefined || email === undefined
             || engCopy === undefined || content === undefined)
-            setErr('Vui lòng nhập đầy đủ thông tin');
+            showAlert('Vui lòng nhập đầy đủ thông tin', 'danger');
         else if (vietCopy < 0 || engCopy < 0
             || (vietCopy === 0 && engCopy === 0))
-            setErr('Số nhập không hợp lệ');
+            showAlert('Số nhập không hợp lệ', 'danger');
         else {
             const studCertificate = {
                 vietCopy,
@@ -30,41 +35,45 @@ function AddStudCertificate() {
 
             StudCertificateService.addStudCertificate(studCertificate).then(res => {
                 const onlineServiceId = res.data.onlineServiceId;
-                nav(`/user/service/stud-cert/update/${onlineServiceId}`);
+                nav(`/service/stud-cert/update/${onlineServiceId}`,{
+                    state: {
+                        'success': "true"
+                    }});
             });
         }
     }
 
     const changeVietCopyHandler = (e) => {
         setVietCopy(parseInt(e.target.value));
-        setErr('');
     }
 
     const changePhoneHandler = (e) => {
         setPhoneContact(e.target.value);
-        setErr('');
     }
 
     const changeEmailHandler = (e) => {
         setEmail(e.target.value);
-        setErr('');
     }
 
     const changeEngCopyHandler = (e) => {
         setEngCopy(parseInt(e.target.value));
-        setErr('');
     }
 
     const changeContentHandler = (e) => {
         setContent(e.target.value);
-        setErr('');
     }
 
-    const cancel = () => { nav(`/guest/service-cate`); }
+    const cancel = () => { nav(`/home`); }
 
     return (
         <div>
             <div className = "container">
+                {alert && (
+                    <MyAlert
+                        message={alert.message}
+                        color={alert.color}
+                    />
+                )}
                 <div className = "row">
                     <div className = "card col-md-6 offset-md-3">
                         <h3 className="text-center mt-2">Cấp chứng nhận sinh viên</h3>
@@ -101,7 +110,6 @@ function AddStudCertificate() {
                                 </div>
                             </form>
                         </div>
-                        {err && <div className="alert alert-danger">{err}</div>}
                     </div>
                 </div>
             </div>
