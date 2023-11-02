@@ -3,6 +3,7 @@ package com.hd.student.controller;
 import com.hd.student.payload.request.SemesterDetailRequest;
 import com.hd.student.payload.request.SemesterRequest;
 import com.hd.student.payload.request.SemesterUserRequest;
+import com.hd.student.security.UserPrincipal;
 import com.hd.student.service.SemesterDetailService;
 import com.hd.student.service.SemesterService;
 import com.hd.student.service.SemesterUserService;
@@ -12,7 +13,10 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 @CrossOrigin
 @RestController
@@ -40,7 +44,7 @@ public class SemesterController {
             summary = "Get Available Semester",
             description = "Lấy học kỳ đang khả dụng"
     )
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('USER')")
     @GetMapping("/available")
     public ResponseEntity<?> getAvailableSemester(){
         return ResponseEntity.ok().body(this.semesterService.getAvailable());
@@ -100,13 +104,14 @@ public class SemesterController {
     //2 chuc nang chua phat trien: Dang ky mon hoc va them user vao hoc ky
     @Operation(
             summary = "Add User into Semester",
-            description = "Thêm sinh viên vào học kỳ - chưa phát triển"
+            description = "Thêm học kỳ - sinh viên"
     )
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @PutMapping("/semester-user")
-    public ResponseEntity<?> addSemesterUser(@Valid @RequestBody SemesterUserRequest rq){
+    @PreAuthorize("hasAuthority('USER')")
+    @GetMapping("/semester-user/{id}")
+    public ResponseEntity<?> addSemesterUser(@PathVariable int id, Authentication auth){
+        UserPrincipal u = (UserPrincipal) auth.getPrincipal();
         return ResponseEntity.ok().body(
-                this.semesterUserService.addSemesterForUser(rq)
+                this.semesterUserService.addSemester(id, u.getId())
         );
     }
 

@@ -11,7 +11,6 @@ function UserDetailsList() {
     useEffect(() => {
         UserService.getDetailSemester(id).then((res) => {
             setDetails(res.data);
-            //console.log(res.data)
         });
     }, [id]);
 

@@ -16,11 +16,11 @@ function AddStudCertificate() {
         setAlert({ message, color });
     };
 
-    const saveStudCertificate = (e) => {
+    const saveStudCertificate = async (e) => {
         e.preventDefault();
         if (phoneContact === undefined || vietCopy === undefined || email === undefined
             || engCopy === undefined || content === undefined)
-            showAlert('Vui lòng nhập đầy đủ thông tin', 'danger');
+            showAlert('Vui lòng nhập đầy đủ thông tin', 'warning');
         else if (vietCopy < 0 || engCopy < 0
             || (vietCopy === 0 && engCopy === 0))
             showAlert('Số nhập không hợp lệ', 'danger');
@@ -32,14 +32,17 @@ function AddStudCertificate() {
                 phoneContact,
                 content,
             };
-
-            StudCertificateService.addStudCertificate(studCertificate).then(res => {
+            try {
+                const res = await StudCertificateService.addStudCertificate(studCertificate)
                 const onlineServiceId = res.data.onlineServiceId;
+
                 nav(`/service/stud-cert/update/${onlineServiceId}`,{
                     state: {
                         'success': "true"
                     }});
-            });
+            } catch (error) {
+                showAlert('Lỗi không xác định', 'danger');
+            }
         }
     }
 

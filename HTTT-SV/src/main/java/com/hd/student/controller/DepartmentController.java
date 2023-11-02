@@ -14,7 +14,7 @@ import java.util.List;
 @CrossOrigin
 @RestController
 @Tag(name = "14. Department", description = "Quản lý Khoa - Chưa phát triển")
-@RequestMapping("/api/department/")
+@RequestMapping("/api/department")
 public class DepartmentController {
     @Autowired
     private DepartmentService departmentService;

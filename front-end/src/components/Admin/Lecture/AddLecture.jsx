@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react'
 import LectureService from "../../../services/LectureService";
 import {useNavigate, useParams} from "react-router-dom";
 import '../../../styles/App.css';
-import {Alert} from "reactstrap";
+import MyAlert from "../../../layouts/MyAlert";
 
 function AddLecture() {
     const nav = useNavigate();
@@ -11,47 +11,36 @@ function AddLecture() {
     const [lectureName, setLectureName] = useState('');
     const [lecturePhone, setLecturePhone] = useState('');
 
-    const saveLecture = (e) => {
+    const [alert, setAlert] = useState(null);
+    const showAlert = (message, color) => {
+        setAlert({ message, color });
+    };
+    const saveLecture = async (e) => {
         e.preventDefault();
         if (lectureName === '' || lecturePhone === '')
-            setResp('Vui lòng nhập đầy đủ thông tin');
+            showAlert('Vui lòng nhập đầy đủ thông tin', 'warning');
         else {
             const lecture = {
                 lectureName: lectureName,
                 lecturePhone: lecturePhone,
             };
 
-            LectureService.addLecture(lecture).then(() => {
-                setResp('Thêm giảng viên thành công.');
-            });
+            try{
+                await LectureService.addLecture(lecture)
+                showAlert('Thêm giảng viên thành công.');
+            }catch (e) {
+                showAlert('Có lỗi xảy ra.', 'danger')
+            }
         }
     };
 
-    const alert = () => {
-        if (resp.includes('thành công'))
-            return (
-                <Alert color="success" className="fixed-bottom"
-                       style={{marginBottom:'5rem', marginLeft:'25%', marginRight:'25%'}}
-                       onMouseEnter={() => setResp('')}>{resp}
-                </Alert>
-            )
-        else if (resp)
-            return (
-                <Alert color="danger" className="fixed-bottom"
-                       style={{marginBottom:'5rem', marginLeft:'25%', marginRight:'25%'}}
-                       onMouseEnter={() => setResp('')}>{resp}
-                </Alert>
-            )
-    }
 
     const changeLectureNameHandler = (e) => {
         setLectureName(e.target.value);
-        setResp('');
     }
 
     const changeLecturePhoneHandler = (e) => {
         setLecturePhone(e.target.value);
-        setResp('');
     }
 
     const cancel = () => { nav(`/admin/lecture/all`); }
@@ -59,6 +48,12 @@ function AddLecture() {
     return (
         <div>
             <div className = "container">
+                {alert && (
+                    <MyAlert
+                        message={alert.message}
+                        color={alert.color}
+                    />
+                )}
                 <div className = "row">
                     <div className = "card col-md-6 offset-md-3">
                         <h3 className="App mt-2">Thêm môn học</h3>
@@ -77,11 +72,10 @@ function AddLecture() {
 
                                 <div className="text-end mt-2">
                                     <button className="btn btn-primary me-1" onClick={saveLecture}>Lưu</button>
-                                    <button className="btn btn-secondary ms-1" onClick={cancel.bind(this)}>Hủy</button>
+                                    <button className="btn btn-secondary ms-1" onClick={cancel.bind(this)}>Trở về</button>
                                 </div>
                             </form>
                         </div>
-                        {alert()}
                     </div>
                 </div>
             </div>

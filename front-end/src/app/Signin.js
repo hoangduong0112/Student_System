@@ -48,11 +48,8 @@ function Signin() {
                     'type': 'signin',
                     'payload': info.data
                 });
+                nav('/home');
 
-                if (user !== null) {
-                    showAlert('Đăng nhập thành công.', null);
-                    nav('/home');
-                }
             } catch (error) {
                 // Xử lý lỗi ở đây
                 showAlert('Đăng nhập thất bại.', 'danger');

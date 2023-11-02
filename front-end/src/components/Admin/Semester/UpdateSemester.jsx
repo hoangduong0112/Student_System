@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import {useLocation, useNavigate, useParams} from 'react-router-dom';
 import SemesterService from "../../../services/SemesterService";
 import {Alert, Button, Form, FormGroup, Input, Label} from "reactstrap";
+import MyAlert from "../../../layouts/MyAlert";
+import LectureService from "../../../services/LectureService";
 
 function UpdateSemester() {
     const { id } = useParams();
@@ -9,72 +11,62 @@ function UpdateSemester() {
     const nav = useNavigate();
     const [resp, setResp] = useState('');
 
-    const { semesterName, note } = loc.state || {};
-    const [semesterNameInput, setSemesterNameInput] = useState(semesterName || '');
-    const [noteInput, setNoteInput] = useState(note || '');
+    const [alert, setAlert] = useState(null);
+    const showAlert = (message, color) => {
+        setAlert({ message, color });
+    };
+
+    const [semesterName, setSemesterName] = useState( '');
+    const [note, setNote] = useState('');
 
     useEffect(() => {
-        SemesterService.getSemesterById(id)
-            .then(res => {
+        const getSemesterById = async () => {
+            try {
+                const res = await SemesterService.getSemesterById(id);
                 let semester = res.data;
-                setSemesterNameInput(semester.semesterName);
-                setNoteInput(semester.note);
-            })
-            .catch((error) => {
-                if (error.response && error.response.status === 404)
-                    setResp('404');
-                else console.error("Lỗi không xác định: ", error);
-            });
-    }, [id]);
-    const updateSemester = (e) => {
+                setSemesterName(semester.semesterName);
+                setNote(semester.note);
+            } catch (error) {
+                if (error.response.status === 404)
+                    showAlert('Không tìm thấy thông tin học kỳ', 'danger');
+                else
+                    showAlert('Lỗi không xác định', 'danger');
+            }
+        }
+        getSemesterById()
+    }, []);
+    const updateSemester = async (e) => {
         e.preventDefault();
-        if (semesterNameInput === '') setResp('Vui lòng nhập đầy đủ thông tin');
+        if (semesterName === '') showAlert('Vui lòng nhập đầy đủ thông tin', 'warning');
         else {
             const semester = {
-                semesterName: semesterNameInput,
-                note: noteInput,
+                semesterName: semesterName,
+                note: note,
             };
-
-            SemesterService.updateSemester(id, semester).then(() => {
-                setResp('Chỉnh sửa học kỳ thành công.');
-            })
+            try {
+                const res = await SemesterService.updateSemester(id, semester)
+                showAlert('Chỉnh sửa học kỳ thành công.');
+            } catch (error) {
+                if(error.response.status === 404)
+                    showAlert(`Không tim thấy học kỳ`, 'danger');
+                else
+                    showAlert(`Có lỗi xảy ra`, 'danger');
+            }
         }
     };
 
     const changeSemesterNameHandler = (e) => {
-        setSemesterNameInput(e.target.value);
+        setSemesterName(e.target.value);
     }
 
     const changeNoteHandler = (e) => {
-        setNoteInput(e.target.value);
+        setNote(e.target.value);
     }
 
     const cancel = () => { nav(`/admin/semester/available`); }
-    const alert = () => {
-        if (resp.includes('thành công'))
-            return (
-                <Alert color="success" className="fixed-bottom"
-                       style={{marginBottom:'5rem', marginLeft:'25%', marginRight:'25%'}}
-                       onMouseEnter={() => setResp('')}>{resp}
-                </Alert>
-            )
-        else if (resp)
-            return (
-                <Alert color="danger" className="fixed-bottom"
-                       style={{marginBottom:'5rem', marginLeft:'25%', marginRight:'25%'}}
-                       onMouseEnter={() => setResp('')}>{resp}
-                </Alert>
-            )
-    }
 
-
-    return ( <>
-            {resp === '404' ? ( <>
-                    <h1>Không tìm thấy học kỳ.</h1>
-                    <Button color="primary" onClick={cancel}>Quay lại</Button>
-                </>
-            ) : (
-                <div className = "container">
+    return (
+        <div className = "container">
                     <div className = "row">
                         <div className = "card col-md-6 offset-md-3">
                             <h3 className="App mt-2">Chỉnh sửa học kỳ</h3>
@@ -83,12 +75,12 @@ function UpdateSemester() {
                                     <FormGroup>
                                         <Label>Tên học kỳ</Label>
                                         <Input placeholder="học kỳ... khóa..." name="name" className="form-control"
-                                               value={semesterNameInput} onChange={changeSemesterNameHandler}/>
+                                               value={semesterName} onChange={changeSemesterNameHandler}/>
                                     </FormGroup>
                                     <FormGroup>
                                         <Label>Ghi chú</Label>
                                         <Input placeholder="ghi chú..." name="note" className="form-control"
-                                               value={noteInput} onChange={changeNoteHandler}/>
+                                               value={note} onChange={changeNoteHandler}/>
                                     </FormGroup>
                                     <div className="text-end mt-2">
                                         <Button color="primary" className="me-1" onClick={updateSemester}>Lưu</Button>
@@ -96,12 +88,15 @@ function UpdateSemester() {
                                     </div>
                                 </Form>
                             </div>
-                            {alert()}
+                            {alert && (
+                                <MyAlert
+                                    message={alert.message}
+                                    color={alert.color}
+                                />
+                            )}
                         </div>
                     </div>
-                </div>
-            )}
-        </>
+        </div>
     )
 }
 

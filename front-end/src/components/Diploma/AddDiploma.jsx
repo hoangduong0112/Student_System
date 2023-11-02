@@ -14,10 +14,10 @@ function AddDiploma() {
     const showAlert = (message, color) => {
         setAlert({ message, color });
     };
-    const saveDiploma = (e) => {
+    const saveDiploma = async (e) => {
         e.preventDefault();
         if (copy === null || phoneContact === '' || email === '' || diplomaYear === null || diplomaCode === '')
-            showAlert('Vui lòng nhập đầy đủ thông tin', 'danger');
+            showAlert('Vui lòng nhập đầy đủ thông tin', 'warning');
         else if (copy <= 0)
             showAlert('Số lượng phải lớn hơn 0', 'danger');
         else if(diplomaYear < 1970)
@@ -31,13 +31,18 @@ function AddDiploma() {
                 diplomaCode,
             };
 
-            DiplomaService.addDiploma(diploma).then((res) => {
+            try {
+                const res = await DiplomaService.addDiploma(diploma);
                 const onlineServiceId = res.data.onlineServiceId;
+
                 nav(`/service/diploma/update/${onlineServiceId}`, {
                     state: {
                         'success': "true"
-                    }})
-            });
+                    }
+                });
+            } catch (error) {
+                showAlert('Lỗi không xác định', 'danger');
+            }
         }
     }
 
@@ -61,7 +66,7 @@ function AddDiploma() {
         setDiplomaCode(e.target.value);
     }
     
-    const cancel = () => { nav(`/guest/service-cate`); }
+    const cancel = () => { nav(`/service-cate`); }
 
     return (
         <div>

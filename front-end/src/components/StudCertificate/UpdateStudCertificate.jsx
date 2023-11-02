@@ -36,18 +36,23 @@ function UpdateStudCertificate() {
     }, [success]);
 
     useEffect(() => {
-        StudCertificateService.getStudCertificate(id).then((res) => {
-            let studCertificate = res.data;
-            setStudCertificateId(studCertificate.id)
-            setVietCopyInput(studCertificate.vietCopy);
-            setPhoneContactInput(studCertificate.phoneContact);
-            setEmailInput(studCertificate.email);
-            setEngCopyInput(studCertificate.engCopy);
-            setContentInput(studCertificate.content);
-        })
+        const getStudCertiById = async () => {
+            try {
+                let studCertificate = await StudCertificateService.getStudCertificate(id);
+                setStudCertificateId(studCertificate.data.id)
+                setVietCopyInput(studCertificate.data.vietCopy);
+                setPhoneContactInput(studCertificate.data.phoneContact);
+                setEmailInput(studCertificate.data.email);
+                setEngCopyInput(studCertificate.data.engCopy);
+                setContentInput(studCertificate.data.content);
+            }catch (error){
+                showAlert('Lỗi khi lấy dữ liệu', 'danger');
+            }
+        }
+        getStudCertiById()
     }, [id]);
 
-    const updateStudCertificate = (e) => {
+    const updateStudCertificate = async (e) => {
         e.preventDefault();
         if (phoneContactInput === '' || vietCopyInput === null || emailInput === ''
                 || engCopyInput === null || contentInput === '')
@@ -63,10 +68,20 @@ function UpdateStudCertificate() {
                 phoneContact: phoneContactInput,
                 content: contentInput,
         };
-            StudCertificateService.updateStudCertificate(studCertificate, studCertificateId).then(() => {
+            try{
+                const res = await StudCertificateService.updateStudCertificate(studCertificate, studCertificateId)
                 setLever(!lever)
                 showAlert('Chỉnh sửa thành công')
-            });
+            }catch (error) {
+                if(error.response.status === 404)
+                    showAlert('Không tìm thấy yêu cầu', 'danger')
+                else if(error.response.status === 403)
+                    showAlert('Bạn không có quyền làm điều này', 'danger')
+                else if(error.response.status === 409)
+                    showAlert('Yêu cầu đã được xử lý hoặc hủy', 'danger')
+                else
+                    showAlert('Lỗi hệ thống', 'danger')
+            }
         }
     }
     useEffect(() => {

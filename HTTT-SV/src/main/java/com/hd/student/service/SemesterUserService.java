@@ -9,4 +9,6 @@ import java.util.List;
 public interface SemesterUserService {
     public List<SemesterUserResponse> getSemestersByUserId(Integer userId);
     ApiResponse addSemesterForUser(SemesterUserRequest rq);
+
+    ApiResponse addSemester(int id, int userId);
 }

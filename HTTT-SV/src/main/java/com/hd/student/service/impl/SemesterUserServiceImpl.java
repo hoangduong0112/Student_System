@@ -81,5 +81,32 @@ public class SemesterUserServiceImpl implements SemesterUserService {
         }
         return new ApiResponse("Thêm thành công ", true);
     }
+
+    @Override
+    public ApiResponse addSemester(int id, int userId){
+        Semester semester = this.semesterRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Không tìm thấy học kỳ" + id)
+        );
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new ResourceNotFoundException("Không tìm thấy user" + userId)
+        );
+        try {
+            if (!semester.getIsFinish()) {
+                if (!semesterUserRepository.existsBySemester_IdAndUser_Id(id, userId)) {
+                    SemesterUser su = new SemesterUser();
+                    su.setUser(user);
+                    su.setSemester(semester);
+                    su.setStatus(SemesterStatusEnum.WAITING);
+                    this.semesterUserRepository.save(su);
+                    }
+                }
+                else throw new ResourceExistException("Hoc kỳ đã kết thúc");
+            }catch (ResourceExistException e) {
+            throw e;
+        }catch (RuntimeException e) {
+            throw new RuntimeException("Lỗi không xác định");
+        }
+        return new ApiResponse("Thêm thành công ", true);
+    }
 }
 

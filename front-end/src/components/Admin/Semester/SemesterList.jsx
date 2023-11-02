@@ -2,16 +2,29 @@ import React, {useEffect, useState} from 'react';
 import {Alert, Container, Table} from 'reactstrap';
 import SemesterService from "../../../services/SemesterService";
 import {useNavigate} from "react-router-dom";
+import MyAlert from "../../../layouts/MyAlert";
+import LectureService from "../../../services/LectureService";
 
 function SemesterList() {
     const [semesters, setSemesters] = useState([]);
     const nav = useNavigate();
     const [success, setSuccess] = useState('');
 
+    const [alert, setAlert] = useState(null);
+    const showAlert = (message, color) => {
+        setAlert({ message, color });
+    };
+
     useEffect(() => {
-        SemesterService.getAllSemester().then((res) => {
-            setSemesters(res.data);
-        });
+        const getAllSemester = async () => {
+            try {
+                const res = await SemesterService.getAllSemester();
+                setSemesters(res.data);
+            } catch (error) {
+                showAlert('Có lỗi xảy ra', 'danger');
+            }
+        }
+        getAllSemester();
     }, []);
 
     const getStatusText = (isFinish) => {
@@ -20,15 +33,29 @@ function SemesterList() {
 
     const addSemester = () => { nav('/admin/semester/add'); }
 
-    const deleteSemester = (semester) => {
-        SemesterService.deleteSemester(semester.id).then(() => {
-            setSemesters(semesters.filter(s => s.id !== semester.id));
-        })
-        setSuccess(`Xóa ${semester.semesterName} thành công.`)
+    const deleteSemester = async (semester) => {
+        try {
+            if(!semester.finish) {
+                const res = await SemesterService.deleteSemester(semester.id)
+                if (res.data.success) {
+                    setSemesters(semesters.filter(s => s.id !== semester.id));
+                    showAlert(`Xóa thành công.`);
+                }
+            }
+            else
+                showAlert(`Học kỳ đã kết thúc.`, 'danger')
+        } catch (error) {
+            if(error.response.status === 404)
+                showAlert(`Không tìm thấy học kỳ.`, 'danger');
+            else if(error.response.status === 409)
+                showAlert(`Học kỳ đã có dữ liệu.`, 'danger');
+            else
+                showAlert(`Lỗi không xác định`, 'danger');
+        }
     }
 
     const setFinish = (semester) => {
-        if (!semester.finished) {
+        if (!semester.finish) {
             SemesterService.setFinish(semester.id).then(() => {
                 setSemesters((prevSemesters) => {
                     return prevSemesters.map((s) => {
@@ -39,9 +66,9 @@ function SemesterList() {
                     });
                 });
             });
-            setSuccess(`Thay đổi trạng thái thành công`);
+            showAlert(`Thay đổi trạng thái thành công`);
         } else {
-            setSuccess(`Trạng thái đã được đánh dấu là đã kết thúc.`);
+            showAlert(`Trạng thái đã được đánh dấu là đã kết thúc.`, 'warning');
         }
     }
 
@@ -52,6 +79,12 @@ function SemesterList() {
     return (
         <div className='mb-5'>
             <Container fluid>
+                {alert && (
+                    <MyAlert
+                        message={alert.message}
+                        color={alert.color}
+                    />
+                )}
                 <h3 className ="App">Danh sách các học kỳ đang hoạt động</h3>
                 <div className="row">
                     <Table className="mt-3 table table-striped table-bordered">
@@ -89,9 +122,6 @@ function SemesterList() {
                             onClick={addSemester}>Thêm
                     </button>
                 </div>
-                {success && <Alert color="success" className="fixed-bottom"
-                   style={{marginBottom:'100px', marginLeft:'200px', marginRight:'200px'}}
-                   onMouseEnter={() => setSuccess('')}>{success}</Alert>}
             </Container>
         </div>
     );

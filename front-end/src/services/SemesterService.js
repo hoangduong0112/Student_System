@@ -17,7 +17,7 @@ class SemesterService {
     getAvailableSemester() { return axios.get(SEMESTER_API_ADMIN_URL + '/available', createHeaders()); }
     setFinish(id) { return axios.get(SEMESTER_API_ADMIN_URL + "/"+ id +'/setFinish', createHeaders()); }
 
-    addSemesterUser(request) { return axios.put(SEMESTER_API_ADMIN_URL + '/semester-user', request, createHeaders()); }
+    addSemesterUser(id) { return axios.get(SEMESTER_API_ADMIN_URL + '/semester-user/' + id, createHeaders()); }
     addSemesterDetail(request) { return axios.post(SEMESTER_API_ADMIN_URL + '/semester-detail', request, createHeaders()); }
 }
 

@@ -6,10 +6,10 @@ import CourseService from "../../../services/CourseService";
 import {Alert} from "reactstrap";
 import {format, parse} from "date-fns";
 import LectureService from "../../../services/LectureService";
+import MyAlert from "../../../layouts/MyAlert";
 
 function AddCourseData() {
     const nav = useNavigate();
-    const [resp, setResp] = useState('');
     const [courses, setCourses] = useState([]);
     const [lectures, setLectures] = useState([]);
 
@@ -17,6 +17,11 @@ function AddCourseData() {
     const [endDate, setEndDate] = useState('');
     const [courseId, setCourseId] = useState(0);
     const [lectureId, setLectureId] = useState(0);
+
+    const [alert, setAlert] = useState(null);
+    const showAlert = (message, color) => {
+        setAlert({ message, color });
+    };
 
     useEffect(() => {
         getCourses().then();
@@ -28,7 +33,10 @@ function AddCourseData() {
             const res = await CourseService.getAll();
             setCourses(res.data);
         } catch (err) {
-            console.error('Lỗi khi lấy danh sách môn học: ', err);
+            if(err.response.status === 404)
+                showAlert('Không tìm thấy môn học: ', 'danger');
+            else
+                showAlert('Lỗi khi lấy danh sách môn học: ', 'danger');
         }
     };
 
@@ -36,15 +44,18 @@ function AddCourseData() {
         try {
             const res = await LectureService.getAllLecture();
             setLectures(res.data);
-        } catch (resp) {
-            console.error('Lỗi khi lấy danh sách giảng viên: ', resp);
+        } catch (err) {
+            if(err.response.status === 404)
+                showAlert('Không tìm thấy giảng viên ', 'danger');
+            else
+                showAlert('Lỗi khi lấy danh sách giảng viên ', 'danger');
         }
     };
 
-    const saveCourseData = (e) => {
+    const saveCourseData = async (e) => {
         e.preventDefault();
         if (startDate === '' || endDate === '' || courseId === null || lectureId === null)
-            setResp('Vui lòng nhập đầy đủ thông tin');
+            showAlert('Vui lòng nhập đầy đủ thông tin', 'warning');
         else {
             const courseData = {
                 startDate,//: format(parse(startDate, 'yyyyMMdd', new Date()), 'dd-MM-yyyy'),
@@ -52,51 +63,34 @@ function AddCourseData() {
                 courseId: courseId,
                 lectureId: lectureId,
             }
+            try{
+                await CourseDataService.addCourse(courseData)
+                showAlert('Thêm lớp học thành công.');
+            }catch (e) {
+                showAlert('Có lỗi xảy ra.', 'danger')
 
-            CourseDataService.addCourse(courseData).then(() => {
-                setResp('Thêm lớp học thành công.');
-            })
+            }
         }
     };
 
     const changeStartDateHandler = (e) => {
         setStartDate(e.target.value);
-        setResp('');
     }
 
     const changeEndDateHandler = (e) => {
         setEndDate(e.target.value);
-        setResp('');
     }
 
     const changeCourseHandler = (e) => {
         setCourseId(parseInt(e.target.value));
-        setResp('');
     }
 
     const changeLectureHandler = (e) => {
         setLectureId(parseInt(e.target.value));
-        setResp('');
     }
 
     const cancel = () => { nav(`/admin/course-data/all`); }
 
-    const alert = () => {
-        if (resp.includes('thành công'))
-            return (
-                <Alert color="success" className="fixed-bottom"
-                       style={{marginBottom:'5rem', marginLeft:'25%', marginRight:'25%'}}
-                       onMouseEnter={() => setResp('')}>{resp}
-                </Alert>
-            )
-        else if (resp)
-            return (
-                <Alert color="danger" className="fixed-bottom"
-                       style={{marginBottom:'5rem', marginLeft:'25%', marginRight:'25%'}}
-                       onMouseEnter={() => setResp('')}>{resp}
-                </Alert>
-            )
-    }
 
     return (
         <div>
@@ -138,11 +132,16 @@ function AddCourseData() {
                                 </div>
                                 <div className="text-end mt-2">
                                     <button className="btn btn-primary me-1" onClick={saveCourseData}>Lưu</button>
-                                    <button className="btn btn-secondary ms-1" onClick={cancel}>Hủy</button>
+                                    <button className="btn btn-secondary ms-1" onClick={cancel}>Trở về</button>
                                 </div>
                             </form>
                         </div>
-                        {alert()}
+                        {alert && (
+                            <MyAlert
+                                message={alert.message}
+                                color={alert.color}
+                            />
+                        )}
                     </div>
                 </div>
             </div>

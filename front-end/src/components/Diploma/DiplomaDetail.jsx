@@ -5,7 +5,6 @@ import {Alert, ButtonGroup, Container, Table} from "reactstrap";
 import PaymentService from "../../services/PaymentService";
 import moment from "moment";
 import OnlineService from "../../services/OnlineService";
-import MySpinner from "../../layouts/Spinner";
 import {UserContext} from "../../app/App";
 import MyAlert from "../../layouts/MyAlert";
 function DiplomaDetail() {
@@ -14,7 +13,6 @@ function DiplomaDetail() {
     const [result, setResult] = useState({});
     const [payment, setPayment] = useState({});
     const [service, setService] = useState({});
-    const [isLoading, setIsLoading] = useState(false);
     const [user, setUser] = useContext(UserContext);
     const [alert, setAlert] = useState(null);
     const showAlert = (message, color) => {
@@ -34,18 +32,10 @@ function DiplomaDetail() {
     const getPayment = async (id) => {
         try {
             const res = await PaymentService.getByServiceId(id);
+            setPayment(res.data);
 
-            if (res.status === 200) {
-                setPayment(res.data);
-            } else {
-                if (res.status === 404) {
-                    showAlert('Không tìm thấy thanh toán', 'danger');
-                } else {
-                    showAlert('Lỗi không xác định', 'danger');
-                }
-            }
         } catch (error) {
-            showAlert('Lỗi khi lấy thông tin thanh toán', 'danger');
+            setPayment(null)
         }
     };
 
@@ -71,17 +61,14 @@ function DiplomaDetail() {
     }, []);
 
     const handleConfirmRequest = async () => {
-        setIsLoading(true);
         setTimeout(async () => {
             try {
                 const res = await OnlineService.acceptRequest(service.id);
 
                 setService(res.data);
-                setIsLoading(false);
                 showAlert('Xác nhận yêu cầu thành công', '');
             } catch (error) {
                 showAlert('Lỗi khi xác nhận yêu cầu', 'danger');
-                setIsLoading(false);
             }
         }, 0);
     };
@@ -91,7 +78,6 @@ function DiplomaDetail() {
         <div>
             { result ? (
                 <Container fluid>
-                    {isLoading && <MySpinner />}
                     <h3 className ="App">Tình trạng yêu cầu</h3>
                     {alert && (
                         <MyAlert
@@ -164,6 +150,7 @@ function DiplomaDetail() {
                         </Table>
                         <h3 className ="App">Chi tiết thanh toán</h3>
                         <div className="row">
+                            {payment ? (
                             <Table className="mt-3 table table-striped table-bordered">
                                 <thead className="text-center"><tr>
                                     <th>Giá tiền</th>
@@ -180,7 +167,9 @@ function DiplomaDetail() {
                                         <td>{payment.vnpayTxnred}</td>
                                     </tr>
                                 </tbody>
-                            </Table>
+                            </Table>): (
+                                <p>Không có hóa đơn</p>
+                            )}
                         </div>
                     </div>
                 </Container>

@@ -2,54 +2,62 @@ import React, {useEffect, useState} from 'react';
 import {Alert, Container, Table} from 'reactstrap';
 import LectureService from "../../../services/LectureService";
 import {useNavigate} from "react-router-dom";
+import MyAlert from "../../../layouts/MyAlert";
 
 function LectureList() {
     const [lectures, setLectures] = useState([]);
     const nav = useNavigate();
-    const [success, setSuccess] = useState('');
+
+    const [alert, setAlert] = useState(null);
+    const showAlert = (message, color) => {
+        setAlert({ message, color });
+    };
 
     useEffect(() => {
-        LectureService.getAllLecture().then((res) => {
-            setLectures(res.data);
-        });
+        const getAllLectures = async () => {
+            try {
+                const res = await LectureService.getAllLecture();
+                setLectures(res.data);
+            } catch (error) {
+                showAlert('Có lỗi xảy ra', 'danger');
+            }
+        }
+        getAllLectures();
+
     }, []);
 
     const addLecture = () => { nav('/admin/lecture/add'); }
 
-    const deleteLecture = (lecture) => {
-        LectureService.deleteLecture(lecture.id)
-            .then(() => {
+    const deleteLecture = async (lecture) => {
+        try {
+            const res = await LectureService.deleteLecture(lecture.id)
+            if(res.data.success) {
                 setLectures(lectures.filter(l => l.id !== lecture.id));
-                setSuccess(`Xóa ${lecture.lectureName} thành công.`);
-            })
-            .catch((error) => {
-                if (error.response) {
-                    if (error.response.status === 409) {
-                        setSuccess("Xảy ra xung đột. Không thể thực hiện thao tác này.");
-                    } else if (error.response.data) {
-                        const errorMessage = error.response.data.message;
-                        setSuccess(errorMessage);
-                    } else {
-                        setSuccess("Xảy ra lỗi không xác định.");
-                    }
-                } else {
-                    setSuccess("Không thể kết nối đến máy chủ.");
-                }
-            });
+                showAlert(`Xóa ${lecture.lectureName} thành công.`);
+            }
+        } catch (error) {
+            if(error.response.status === 404)
+                showAlert(`Không tìm thấy giảng viên.`, 'danger');
+            else if(error.response.status === 409)
+                showAlert(`Xóa thất bại vì giảng viên đã giảng dạy.`, 'danger');
+            else
+                showAlert(`Lỗi không xác định`, 'danger');
+        }
     }
 
     const updateLecture = (lecture) => {
-        nav(`/admin/lecture/update/${lecture.id}`, {
-            state: {
-                lectureName: lecture.lectureName,
-                lecturePhone: lecture.lecturePhone,
-            }
-        });
+        nav(`/admin/lecture/update/${lecture.id}`);
     }
 
     return (
         <div className='mb-5'>
             <Container fluid>
+                {alert && (
+                    <MyAlert
+                        message={alert.message}
+                        color={alert.color}
+                    />
+                )}
                 <h3 className ="App">Danh sách giảng viên</h3>
                 <div className="row">
                     <Table className="mt-3 table table-striped table-bordered">
@@ -80,10 +88,6 @@ function LectureList() {
                             onClick={addLecture}>Thêm
                     </button>
                 </div>
-                {success && <Alert color="success" className="fixed-bottom"
-                                   style={{marginBottom:'100px', marginLeft:'200px', marginRight:'200px'}}
-                                   onMouseEnter={() => setSuccess('')}>{success}</Alert>}
-
             </Container>
         </div>
     );

@@ -3,64 +3,46 @@ import SemesterService from "../../../services/SemesterService";
 import {useNavigate} from "react-router-dom";
 import '../../../styles/App.css';
 import {Alert, Button, Form, FormGroup, Input, Label} from "reactstrap";
+import LectureService from "../../../services/LectureService";
+import MyAlert from "../../../layouts/MyAlert";
 
 function AddSemester() {
     const nav = useNavigate();
-    const [resp, setResp] = useState('');
     const [semesterName, setSemesterName] = useState('');
     const [note, setNote] = useState('');
 
-    useEffect(() => {
-        SemesterService.getAvailableSemester().then(res => {
-            let semester = res.data;
-            setSemesterName(semester.semesterName);
-            setNote(semester.note);
-        })
-    }, []);
+    const [alert, setAlert] = useState(null);
+    const showAlert = (message, color) => {
+        setAlert({ message, color });
+    };
 
-    const saveSemester = (e) => {
+    const saveSemester = async (e) => {
         e.preventDefault();
-        if (semesterName === '') setResp('Vui lòng nhập đầy đủ thông tin');
+        if (semesterName === '') showAlert('Vui lòng nhập đầy đủ thông tin', 'warning');
         else {
             const semester = {
                 semesterName,
                 note,
             };
 
-            SemesterService.addSemester(semester).then(() => {
-                setResp('Thêm học kỳ thành công.');
-            });
+            try{
+                await SemesterService.addSemester(semester)
+                showAlert('Thêm giảng viên thành công.');
+            }catch (e) {
+                showAlert('Có lỗi xảy ra.', 'danger')
+            }
         }
     };
 
     const changeSemesterNameHandler = (e) => {
         setSemesterName(e.target.value);
-        setResp('');
     }
 
     const changeNoteHandler = (e) => {
         setNote(e.target.value);
-        setResp('');
     }
 
     const cancel = () => { nav(`/admin/semester/available`); }
-
-    const alert = () => {
-        if (resp.includes('thành công'))
-            return (
-                <Alert color="success" className="fixed-bottom"
-                       style={{marginBottom:'5rem', marginLeft:'25%', marginRight:'25%'}}
-                       onMouseEnter={() => setResp('')}>{resp}
-                </Alert>
-            )
-        else if (resp)
-            return (
-                <Alert color="danger" className="fixed-bottom"
-                       style={{marginBottom:'5rem', marginLeft:'25%', marginRight:'25%'}}
-                       onMouseEnter={() => setResp('')}>{resp}
-                </Alert>
-            )
-    }
 
     return (
         <div>
@@ -86,7 +68,12 @@ function AddSemester() {
                                 </div>
                             </Form>
                         </div>
-                        {alert()}
+                        {alert && (
+                            <MyAlert
+                                message={alert.message}
+                                color={alert.color}
+                            />
+                        )}
                     </div>
                 </div>
             </div>

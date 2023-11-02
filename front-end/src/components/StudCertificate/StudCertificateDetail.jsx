@@ -34,17 +34,9 @@ function StudCertificateDetail() {
         try {
             const res = await PaymentService.getByServiceId(id);
 
-            if (res.status === 200) {
-                setPayment(res.data);
-            } else {
-                if (res.status === 404) {
-                    showAlert('Không tìm thấy thanh toán', 'danger');
-                } else {
-                    showAlert('Lỗi không xác định', 'danger');
-                }
-            }
+            setPayment(res.data);
         } catch (error) {
-            showAlert('Lỗi khi lấy thông tin thanh toán', 'danger');
+            setPayment(null)
         }
     };
 

@@ -17,7 +17,12 @@ function PaymentDetails() {
             const res = await PaymentService.verifyPayment(id);
             setResult(res.data);
         } catch (error) {
-            showAlert('Lỗi dữ liệu:', 'danger');
+            if(error.response.status === 404) {
+                showAlert('Không tìm thấy hóa đơn' , 'danger');
+                return setResult(null);
+            }
+            else
+                showAlert('Có lỗi xảy ra', 'danger');
         }
     };
     // const getPaymentById = async () => {
@@ -74,7 +79,7 @@ function PaymentDetails() {
                     </div>
                 </Container>
             ) : (
-                <h3>Loading...</h3>
+                <h3>Không có hóa đơn</h3>
             )}
         </div>
     );

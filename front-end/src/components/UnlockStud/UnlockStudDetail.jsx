@@ -1,14 +1,14 @@
-import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import React, {useContext, useEffect, useState} from "react";
-import TranscriptService from "../../services/TranscriptService";
-import {Alert, ButtonGroup, Container, Table} from "reactstrap";
+import UnlockStudService from "../../services/UnlockStudService";
+import {Alert, ButtonGroup, Card, Container, Table} from "reactstrap";
 import PaymentService from "../../services/PaymentService";
 import moment from "moment";
 import OnlineService from "../../services/OnlineService";
 import {UserContext} from "../../app/App";
 import MyAlert from "../../layouts/MyAlert";
 
-function TranscriptDetail() {
+function UnlockStudDetail() {
     const { id } = useParams();
     const nav = useNavigate();
     const [result, setResult] = useState('');
@@ -23,7 +23,7 @@ function TranscriptDetail() {
 
     const getResult = async () => {
         try {
-            const res = await TranscriptService.getTranscript(id);
+            const res = await UnlockStudService.getUnlockStud(id);
             setResult(res.data);
             return res.data;
         } catch (error) {
@@ -33,9 +33,9 @@ function TranscriptDetail() {
     };
     const getPayment = async (id) => {
         try {
-            const res = await PaymentService.getByServiceId(id);
-            setPayment(res.data);
+            const res = await PaymentService.verifyPayment(id);
 
+            setPayment(res.data);
         } catch (error) {
             setPayment(null)
         }
@@ -99,13 +99,13 @@ function TranscriptDetail() {
                                 <td>{service.status}</td>
                                 <td>
                                     {user.role === "MODERATOR" && <>
-                                            <button className="btn btn-success rounded-pill"
-                                                    onClick={handleConfirmRequest}>Quản lý dịch vụ</button>
+                                        <button className="btn btn-success rounded-pill"
+                                                onClick={handleConfirmRequest}>Quản lý dịch vụ</button>
                                     </>}
                                     {user.role === "USER" && <>
-                                            <td><button className="mx-5 btn-primary btn">
-                                                Hủy yêu cầu - hoàn tiền (Chưa phát triển)
-                                            </button></td>
+                                        <button className="mx-5 btn-primary btn">
+                                            Hủy yêu cầu - hoàn tiền (Chưa phát triển)
+                                        </button>
                                     </>}
                                 </td>
                             </tr>
@@ -121,29 +121,14 @@ function TranscriptDetail() {
                                 <td>{result.onlineServiceId}</td>
                             </tr>
                             <tr className="border-bottom" style={{ height: '50px' }}>
-                                <th>Ngôn ngữ:</th>
-                                <td>{result.language}</td>
+                                <th>Nội dung:</th>
+                                <td>{result.content}</td>
                             </tr>
                             <tr className="border-bottom" style={{ height: '50px' }}>
                                 <th>Học kỳ bắt đầu:</th>
-                                <td>{result.fromSemester.semesterName}</td>
-                            </tr>
-                            <tr className="border-bottom" style={{ height: '50px' }}>
-                                <th>Học kỳ kết thúc</th>
-                                <td>{result.toSemester.semesterName}</td>
-                            </tr>
-                            <tr className="border-bottom" style={{ height: '50px' }}>
-                                <th>Số lượng cần cấp:</th>
-                                <td>{result.quantity}</td>
-                            </tr>
-                            <tr className="border-bottom" style={{ height: '50px' }}>
-                                <th>Số điện thoại liên lạc</th>
-                                <td>{result.contactPhone}</td>
-                            </tr>
-
-                            <tr className="border-bottom" style={{ height: '50px' }}>
-                                <th>Niêm phong</th>
-                                <td>{ result.isSealed ? "Có" : "Không"}</td>
+                                <td className="flex justify-center items-center mt-5 mx-3">
+                                    <img src={result.image} alt="preview" className="w-full" />
+                                </td>
                             </tr>
                             </tbody>
                         </Table>
@@ -183,4 +168,4 @@ function TranscriptDetail() {
     );
 }
 
-export default TranscriptDetail;
+export default UnlockStudDetail;

@@ -3,7 +3,6 @@ import {useLocation} from "react-router-dom";
 import {Container, Table} from "reactstrap";
 import { format } from 'date-fns';
 import PaymentService from "../../services/PaymentService";
-import { useNavigate } from 'react-router-dom';
 import MyAlert from "../../layouts/MyAlert";
 
 function CreatePayment() {
@@ -17,13 +16,18 @@ function CreatePayment() {
     };
 
     useEffect(() => {
-
-        PaymentService.createPayment(serviceId).then(res => {
-            setPayment(res.data);
-        })
-            .catch((error) => {
-                showAlert('Lỗi khi tạo thanh toán cho yêu cầu', 'danger');
-            });
+        const createPayment = async () => {
+            try {
+                const res = await PaymentService.createPayment(serviceId)
+                setPayment(res.data);
+            } catch(error) {
+                if(error.response.status === 409)
+                    showAlert('Yêu cầu đã có hóa đơn', 'danger');
+                else
+                    showAlert('Lỗi hệ thống', 'danger');
+            }
+        }
+        createPayment();
     }, []);
 
     const formatDate = (date) => {
@@ -33,7 +37,7 @@ function CreatePayment() {
 
     return (
         <div>
-            {payment ? (
+            {payment && (
                 <Container fluid>
                     {alert && (
                         <MyAlert
@@ -71,8 +75,6 @@ function CreatePayment() {
 
                     </div>
                 </Container>
-            ) : (
-                <h3>Loading...</h3>
             )}
         </div>
     );

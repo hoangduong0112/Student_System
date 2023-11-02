@@ -8,13 +8,15 @@ function StudentList() {
     const nav = useNavigate();
 
     useEffect(() => {
-        UserService.getAllUser().then(res => {
-            setStudents(res.data);
-        });
+            UserService.getAllUser().then(res => {
+                setStudents(res.data);
+            });
+
     }, []);
+
     return (
         <Container fluid className='mb-5 pd-5'>
-            <h3 className ="App">Danh sách các khoa</h3>
+            <h3 className ="App">Danh sách các sinh viên</h3>
             <Row>
                 <Table className="mt-3 table-striped table-bordered">
                     <thead className="App"><tr>

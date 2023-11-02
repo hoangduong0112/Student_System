@@ -3,64 +3,56 @@ import CourseService from "../../../services/CourseService";
 import {useNavigate, useParams} from "react-router-dom";
 import '../../../styles/App.css';
 import {Alert} from "reactstrap";
+import MyAlert from "../../../layouts/MyAlert";
 
 function AddCourse() {
     const nav = useNavigate();
-    const [resp, setResp] = useState('');
 
     const [courseName, setCourseName] = useState('');
     const [creditsNum, setCreditsNum] = useState(0);
     const [note, setNote] = useState('');
 
-    const saveCourse = (e) => {
+    const [alert, setAlert] = useState(null);
+    const showAlert = (message, color) => {
+        setAlert({ message, color });
+    };
+
+    const saveCourse = async (e) => {
         e.preventDefault();
         if (courseName === '' || note === '' || creditsNum === null)
-            setResp('Vui lòng nhập đầy đủ thông tin');
+            showAlert('Vui lòng nhập đầy đủ thông tin', 'danger');
         else if (creditsNum <= 0 || creditsNum > 5)
-            setResp('Vượt quá tín chỉ cho phép');
+            showAlert('Vượt quá tín chỉ cho phép', 'danger');
         else {
             const course = {
                 courseName: courseName,
                 creditsNum: creditsNum,
                 note: note,
             };
+            try{
+                await CourseService.addCourse(course)
+                showAlert('Thêm môn học thành công.');
+            }catch (e) {
+                if(e.response.status === 409)
+                    showAlert('Tên môn học trùng.', 'danger')
+                else
+                    showAlert('Có lỗi xảy ra.', 'danger')
 
-            CourseService.addCourse(course).then(() => {
-                setResp('Thêm môn học thành công.');
-            });
+            }
+
         }
     };
 
-    const alert = () => {
-        if (resp.includes('thành công'))
-            return (
-                <Alert color="success" className="fixed-bottom"
-                       style={{marginBottom:'5rem', marginLeft:'25%', marginRight:'25%'}}
-                       onMouseEnter={() => setResp('')}>{resp}
-                </Alert>
-            )
-        else if (resp)
-            return (
-                <Alert color="danger" className="fixed-bottom"
-                       style={{marginBottom:'5rem', marginLeft:'25%', marginRight:'25%'}}
-                       onMouseEnter={() => setResp('')}>{resp}
-                </Alert>
-            )
-    }
-
     const changeCourseNameHandler = (e) => {
         setCourseName(e.target.value);
-        setResp('');
     }
 
     const changeCreditsNumHandler = (e) => {
         setCreditsNum(e.target.value);
-        setResp('');
     }
 
     const changeNoteHandler = (e) => {
         setNote(e.target.value);
-        setResp('');
     }
 
     const cancel = () => { nav(`/admin/course/all`); }
@@ -90,11 +82,16 @@ function AddCourse() {
                                 </div>
                                 <div className="text-end mt-2">
                                     <button className="btn btn-primary me-1" onClick={saveCourse}>Lưu</button>
-                                    <button className="btn btn-secondary ms-1" onClick={cancel.bind(this)}>Hủy</button>
+                                    <button className="btn btn-secondary ms-1" onClick={cancel.bind(this)}>Trở về</button>
                                 </div>
                             </form>
                         </div>
-                        {alert()}
+                        {alert && (
+                            <MyAlert
+                                message={alert.message}
+                                color={alert.color}
+                            />
+                        )}
                     </div>
                 </div>
             </div>

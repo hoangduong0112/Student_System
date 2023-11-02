@@ -22,22 +22,30 @@ function UpdateCate() {
     const [numOfDateInput, setNumOfDateInput] = useState(numOfDate || 0);
 
     useEffect(() => {
-        ServiceCate.getById(id).then(res => {
-            let cate = res.data;
-            setServiceCateNameInput(cate.serviceCateName);
-            setPriceInput(cate.price);
-            setDescriptionInput(cate.description);
-            setIsAvailableInput(cate.isAvailable);
-            setNumOfDateInput(cate.numOfDate);
-        })
-    }, [id]);
+        const getById = async () => {
+            try {
+                const res = await ServiceCate.getById(id);
+                let cate = res.data;
+                setServiceCateNameInput(cate.serviceCateName);
+                setPriceInput(cate.price);
+                setDescriptionInput(cate.description);
+                setIsAvailableInput(cate.isAvailable);
+                setNumOfDateInput(cate.numOfDate);
+            } catch (error) {
+                showAlert('Lỗi khi lấy dữ liệu', 'danger');
+            }
+        };
 
-    const saveCate = (e) => {
+        getById();
+    }, []);
+
+
+    const saveCate = async (e) => {
         e.preventDefault();
         if (serviceCateNameInput === '' || priceInput === '' || descriptionInput === '' || numOfDateInput === '')
-            showAlert('Vui lòng nhập đầy đủ thông tin', 'danger');
+            showAlert('Vui lòng nhập đầy đủ thông tin', 'warning');
         else if (priceInput.toString() <= 0 || numOfDateInput.toString() <= 0)
-            showAlert('Số nhập không hợp lệ', 'danger');
+            showAlert('Số nhập không hợp lệ', 'warning');
         else {
             const cate = {
                 serviceCateName: serviceCateNameInput,
@@ -46,10 +54,16 @@ function UpdateCate() {
                 isAvailable: isAvailableInput,
                 numOfDate: numOfDateInput,
             };
-
-            ServiceCate.updateCate(cate, id).then(() => {
+            try{
+                await  ServiceCate.updateCate(cate, id)
                 showAlert('Chỉnh sửa loại dịch vụ thành công.');
-            })
+            }catch (error){
+                if(error.response.status === 404)
+                    showAlert('Không tìm thấy dữ liệu');
+                else
+                    showAlert('Lỗi hệ thống');
+            }
+
         }
     }
     const changeServiceCateNameHandler = (e) => { setServiceCateNameInput(e.target.value); }

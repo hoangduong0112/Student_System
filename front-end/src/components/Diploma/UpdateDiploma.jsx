@@ -27,16 +27,20 @@ function UpdateDiploma() {
     const [diplomaCodeInput, setDiplomaCodeInput] = useState('');
 
     useEffect(() => {
-        DiplomaService.getDiploma(id).then(res => {
-            let diploma = res.data;
-            // Set cac gia tri cho diploma
-            setDiplomaId(diploma.id);
-            setCopyInput(diploma.copy);
-            setPhoneContactInput(diploma.phoneContact);
-            setEmailInput(diploma.email);
-            setDiplomaYearInput(diploma.diplomaYear);
-            setDiplomaCodeInput(diploma.diplomaCode);
-        });
+        const getDiplomaById = async () => {
+            try {
+                let diploma = await DiplomaService.getDiploma(id)
+                setDiplomaId(diploma.data.id);
+                setCopyInput(diploma.data.copy);
+                setPhoneContactInput(diploma.data.phoneContact);
+                setEmailInput(diploma.data.email);
+                setDiplomaYearInput(diploma.data.diplomaYear);
+                setDiplomaCodeInput(diploma.data.diplomaCode);
+            }catch (error){
+                showAlert('Lỗi khi lấy dữ liệu', 'danger');
+            }
+        }
+        getDiplomaById()
     }, [id]);
 
 
@@ -47,7 +51,7 @@ function UpdateDiploma() {
     }, [success]);
 
 
-    const updateDiploma = (e) => {
+    const updateDiploma = async (e) => {
         e.preventDefault();
         if (phoneContactInput === undefined || copyInput === undefined || emailInput === undefined
             || diplomaYearInput === undefined || diplomaCodeInput === undefined)
@@ -62,11 +66,20 @@ function UpdateDiploma() {
                 diplomaYear: diplomaYearInput,
                 diplomaCode: diplomaCodeInput,
             };
-
-            DiplomaService.updateDiploma(diploma, diplomaId).then(() => {
+            try{
+                const res = await DiplomaService.updateDiploma(diploma, diplomaId)
                 setLever(!lever)
                 showAlert('Chỉnh sửa thành công')
-            });
+            }catch (error) {
+                if(error.response.status === 404)
+                    showAlert('Không tìm thấy yêu cầu', 'danger')
+                else if(error.response.status === 403)
+                    showAlert('Bạn không có quyền làm điều này', 'danger')
+                else if(error.response.status === 409)
+                    showAlert('Yêu cầu đã được xử lý hoặc hủy', 'danger')
+                else
+                    showAlert('Lỗi hệ thống', 'danger')
+            }
         }
     }
     useEffect(() => {

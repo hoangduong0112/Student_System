@@ -18,7 +18,7 @@ function PaymentStatus() {
     const showAlert = (message, color) => {
         setAlert({ message, color });
     };
-    async function fetchData() {
+    const getStatusAfterPay = async () =>{
         try {
             const res = await PaymentService.getResult(vnp_Amount, vnp_OrderInfo, vnp_TxnRef, vnp_PayDate, vnp_TransactionStatus);
             setStatus(res.data);
@@ -28,7 +28,7 @@ function PaymentStatus() {
     }
 
     useEffect(() => {
-        fetchData();
+        getStatusAfterPay();
     }, []);
 
     return (

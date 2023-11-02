@@ -1,82 +1,185 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useRef} from 'react'
 import UnlockStudService from "../../services/UnlockStudService";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {Button, Card, CardBody, Container, Form, FormGroup, Input, Label, Row, Table} from "reactstrap";
+import MyAlert from "../../layouts/MyAlert";
+import moment from "moment";
+import OnlineService from "../../services/OnlineService";
 
 function UpdateUnlockStud() {
     const { id } = useParams();
     const loc = useLocation();
     const nav = useNavigate();
-    const [err, setErr] = useState('');
+    const [alert, setAlert] = useState(null);
+    const [service, setService] = useState({});
+    const [lever, setLever] = useState(false);
+    const [preview, setPreview] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const showAlert = (message, color) => {
+        setAlert({ message, color });
+    };
 
-    const {image, content} = loc.state || {};
-    const [imageInput, setImageInput] = useState(image || '');
-    const [contentInput, setContentInput] = useState(content || '');
+    const { success } = loc.state || false;
+
+    const [unlockId, setUnlockId] = useState(0);
+    const [image, setImage] = useState('');
+    const [content, setContent] = useState( '');
 
     useEffect(() => {
-            UnlockStudService.getUnlockStud(id).then((res) => {
-                let unlockStud = res.data;
-                setImageInput(unlockStud.image);
-                setContentInput(unlockStud.content);
-            })
+        if (success) {
+            showAlert('Gửi yêu cầu thành công');
+        }
+    }, []);
+
+    const uploadImage = async () => {
+        setLoading(true);
+        const data = new FormData();
+        data.append("file", image);
+        data.append(
+            "upload_preset",
+            'asrj3wth'
+        );
+        data.append("cloud_name", 'dmfr3gngl');
+        try {
+            const response = await fetch(
+                `https://api.cloudinary.com/v1_1/dmfr3gngl/image/upload`,
+                {
+                    method: "POST",
+                    body: data,
+                }
+            );
+            const res = await response.json();
+            setLoading(false);
+            return res.url;
+        } catch (error) {
+            setLoading(false);
+        }
+    }
+    useEffect(() => {
+        const getUnlockById = async () => {
+            try{
+                let unlockStud = UnlockStudService.getUnlockStud(id)
+                setUnlockId(unlockStud.data.id)
+                setPreview(unlockStud.data.image);
+                setContent(unlockStud.data.content);
+            }catch(e){
+                showAlert('Có lổi xảy ra', 'danger');
+            }
+        }
+
     }, [id]);
 
-    const saveUnlockStud = (e) => {
+    const saveUnlockStud = async (e) => {
         e.preventDefault();
         if (image === '' || content === '')
-            setErr('Vui lòng nhập đầy đủ thông tin');
+            showAlert('Vui lòng nhập đầy đủ thông tin', 'warning');
         else {
             const unlockStud = {
-                image: setImageInput,
-                content: setContentInput,
+                image: await uploadImage(),
+                content: content,
             };
-            UnlockStudService.updateUnlockStud(unlockStud, id).then(() => {
-                nav(`/user/service/unlock-stud/${id}`);
-            })
+            try{
+                const res = await UnlockStudService.updateUnlockStud(unlockStud, unlockId)
+                setLever(!lever)
+                showAlert('Chỉnh sửa thành công')
+            }catch (error) {
+                if(error.response.status === 404)
+                    showAlert('Không tìm thấy yêu cầu', 'danger')
+                else if(error.response.status === 403)
+                    showAlert('Bạn không có quyền làm điều này', 'danger')
+                else if(error.response.status === 409)
+                    showAlert('Yêu cầu đã được xử lý hoặc hủy', 'danger')
+                else
+                    showAlert('Lỗi hệ thống', 'danger')
+            }
+
+
         }
     };
 
     const changeImageHandler = (e) => {
-        setImageInput(e.target.value);
-        setErr('');
+        const file = e.target.files[0];
+        setImage(file);
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+
+        reader.onload = () => {
+            setPreview(reader.result);
+        };
     }
+    useEffect(() => {
+
+        const getOnlineService = async () => {
+            try {
+                const res = await OnlineService.getRequestById(id);
+                setService(res.data)
+            } catch (error) {
+                showAlert('Lỗi khi lấy thông tin yêu cầu', 'danger');
+            }
+        };
+
+        getOnlineService();
+    }, []);
 
     const changeContentHandler = (e) => {
-        setContentInput(e.target.value);
-        setErr('');
+        setContent(e.target.value);
     }
 
-    const cancel = () => { nav(`/guest/service-cate`); }
+    const cancel = () => { nav(`/home`); }
 
     return (
-        <div>
-            <div className = "container">
-                <div className = "row">
-                    <div className = "card col-md-6 offset-md-3">
-                        <h3 className="text-center mt-2">Chỉnh sửa mở khóa</h3>
-                        <div className = "card-body">
-                            <form>
-                                <div className="form-group">
-                                    <label>Ảnh đại diện</label>
-                                    <br/>
-                                    <input type="file" className="form-control-file"
-                                           value={imageInput} onChange={changeImageHandler} />
-                                </div>
-                                <div className = "form-group">
-                                    <label>Nội dung: </label>
-                                    <input placeholder="Nội dung" name="content" className="form-control"
-                                           value={contentInput} onChange={changeContentHandler}/>
-                                </div>
-                                <div className="text-end mt-2">
-                                    <button className="btn btn-primary me-1" onClick={saveUnlockStud}>Lưu</button>
-                                    <button className="btn btn-secondary ms-1" onClick={cancel.bind(this)}>Hủy</button>
-                                </div>
-                            </form>
-                        </div>
-                        {err && <div className="alert alert-danger">{err}</div>}
-                    </div>
-                </div>
-            </div>
-        </div>
+        <Container fluid>
+            {alert && (
+                <MyAlert
+                    message={alert.message}
+                    color={alert.color}
+                />
+            )}
+            <Row>
+                <Table className="mt-3 table table-striped table-bordered">
+                    <thead className="text-center"><tr>
+                        <th>Giá tiền</th>
+                        <th>Ngày yêu cầu</th>
+                        <th>Trạng thái</th>
+                        <th>Tình trạng</th>
+                    </tr></thead>
+                    <tbody>
+                    <tr key={service.id}>
+                        <td>{service.price}</td>
+                        <td>{moment(service.createdDate, "YYYY-MM-DD").format("DD-MM-YYYY")}</td>
+                        <td>{service.serviceCateName}</td>
+                        <td>{service.status}</td>
+                    </tr>
+                    </tbody>
+                </Table>
+            </Row>
+            <Row className="mt-3">
+                <Card className = "col-md-6 offset-md-3">
+                    <Row className="justify-content-center pb-2 mt-2 border-bottom h3">Đăng ký mở khóa sinh viên</Row>
+                    <CardBody>
+                        <Form>
+                            <FormGroup>
+                                <Label>Ảnh xác thực:</Label>
+                                <Input type="file" className="form-control-file" accept="image/*"
+                                       onChange={changeImageHandler} multiple={false}   />
+                            </FormGroup>
+                            <Card className="flex justify-center items-center mt-5 mx-3 max-w-xs">
+                                {preview && <img src={preview} alt="preview" className="w-full" />}
+                            </Card>
+                            <FormGroup>
+                                <Label>Nội dung</Label>
+                                <Input placeholder="Nội dung" name="content" className="form-control"
+                                       value={content} onChange={changeContentHandler}/>
+                            </FormGroup>
+                            <div className="text-end mt-2">
+                                <Button color="primary" className="m-1" onClick={saveUnlockStud}>Lưu</Button>
+                                <Button color="secondary" className="m-1" onClick={cancel}>Hủy</Button>
+                            </div>
+                        </Form>
+                    </CardBody>
+                </Card>
+            </Row>
+        </Container>
     )
 }
 

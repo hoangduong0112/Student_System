@@ -18,24 +18,52 @@ const Home = () => {
 
     const [alert, setAlert] = useState(null);
     const showAlert = (message, color) => {
-        setAlert({ message, color });
+        setAlert({message, color});
     };
 
     const signin = async () => {
-        await setUser({'type':'signout'});
-        if (user !== null) nav('/guest/auth/signin');
+        await setUser({'type': 'signout'});
+        nav('/guest/auth/signin');
     };
 
-    const viewDetails = (id) => { nav('/user/semester/' + id + '/course'); }
-    const viewCates = () => { nav('/guest/service-cate'); }
-    const viewInfo = () => { nav('/user/info'); }
-    const viewServices = () => { nav('/moderator/get-request'); }
-    const viewCourses = () => { nav('/admin/course/all'); }
-    const viewCourseDatas = () => { nav('/admin/course-data/all'); }
-    const viewLecture = () => { nav('/admin/lecture/all'); }
-    const viewSemesters = () => { nav('/admin/semester/available'); }
-    const viewStuds = () => { nav('/admin/student'); }
-    const viewDepts = () => { nav('/admin/department'); }
+    const viewDetails = (id) => {
+        nav('/user/semester/' + id + '/course');
+    }
+
+    const mySemester = () => {
+        nav('/user/semester/')
+    }
+    const viewCates = () => {
+        nav('/service-cate');
+    }
+    const viewInfo = () => {
+        nav('/user/info');
+    }
+    const viewServices = () => {
+        nav('/moderator/get-request');
+    }
+
+    const viewCate = () => {
+        nav('/moderator/service-cate');
+    }
+    const viewCourses = () => {
+        nav('/admin/course/all');
+    }
+    const viewCourseDatas = () => {
+        nav('/admin/course-data/all');
+    }
+    const viewLecture = () => {
+        nav('/admin/lecture/all');
+    }
+    const viewSemesters = () => {
+        nav('/admin/semester/available');
+    }
+    const viewStuds = () => {
+        nav('/admin/student');
+    }
+    const viewDepts = () => {
+        nav('/admin/department');
+    }
     const updateRequest = (request) => {
         if ((request.serviceCateName).includes('bảng điểm'))
             nav(`/service/transcript/update/${request.id}`);
@@ -117,20 +145,25 @@ const Home = () => {
     }, []);
 
 
-    return (
-        <div className="pb-5">
-            <Container fluid>
-                {loading ? (
-                    <p className="display-6 m-2">Loading...</p>
-                ) : (
-                    <div>
-                        {user.role === "MODERATOR" && <>
-                            <ButtonGroup className="me-5 btn-group border border-secondary rounded-pill p-1">
-                                <button className="btn btn-success rounded-pill"
-                                        onClick={viewServices}>Quản lý dịch vụ</button>
-                            </ButtonGroup>
-                        </>}
-                        {user.role === "ADMIN" ? <>
+    if (user) {
+        return (
+            <div className="pb-5">
+                <Container fluid>
+                    {loading ? (
+                        <p className="display-6 m-2">Loading...</p>
+                    ) : (
+                        <div>
+                            {user.role === "MODERATOR" && <>
+                                <ButtonGroup className="me-5 btn-group border border-secondary rounded-pill p-1">
+                                    <button className="btn btn-success rounded-pill"
+                                            onClick={viewServices}>Quản lý yêu cầu
+                                    </button>
+                                    <button className="btn btn-success rounded-pill"
+                                            onClick={viewCate}>Quản lý dịch vụ
+                                    </button>
+                                </ButtonGroup>
+                            </>}
+                            {user.role === "ADMIN" ? <>
                             <span className="btn-group border border-secondary rounded-pill p-1">
                                 <button className="me-1 btn btn-success rounded-pill rounded-end-0"
                                         onClick={viewStuds}>Quản lý sinh viên</button>
@@ -145,20 +178,23 @@ const Home = () => {
                                 <button className="btn btn-success rounded-pill rounded-start-0"
                                         onClick={viewCourseDatas}>Quản lý lớp học</button>
                             </span>
-                        </> : <></>}
-                        {user.fullName ? (<>
+                            </> : <></>}
+
                             <h2 className='App'>
                                 Xin chào, {user.fullName}
                             </h2>
-                                <h5 className="my-3 pb-2 border-bottom">Các học kỳ</h5>
+                            <h5 className="my-3 pb-2 border-bottom">
+                                Các học kỳ</h5>
+                            <p className="btn btn-success rounded-pill rounded-start-0"
+                                    onClick={mySemester}>xem chi tiết</p>
 
-                                {
-                                    semesters.length ? (<>
+                            {semesters.length ? (<>
                                     {semesters.map((semester) => (
-                                        <span className="list-group-horizontal row-cols-4" key={semester.id}>
+                                        <span className="list-group-horizontal row-cols-4"
+                                              key={semester.id}>
                                             <div className="list-inline-item mx-1">
                                                 <div className="btn fw-bold"
-                                                     style={{ color: hoveredText === semester.semesterName ? 'cyan' : ''}}
+                                                     style={{color: hoveredText === semester.semesterName ? 'cyan' : ''}}
                                                      data-toggle="tooltip" title="Nhấn vào để xem chi tiết"
                                                      onMouseEnter={() => setHoveredText(semester.semesterName)}
                                                      onMouseLeave={() => setHoveredText('')}
@@ -169,25 +205,26 @@ const Home = () => {
                                         </span>
                                     ))}
                                 </>
-                                ) : (
-                                    <div className="App row">
-                                        <span className="bg-warning fw-bold text-black p-2">Chưa mở học kỳ</span>
-                                    </div>
-                                )}
+                            ) : (
+                                <div className="App row">
+                                                <span
+                                                    className="bg-warning fw-bold text-black p-2">Chưa mở học kỳ</span>
+                                </div>
+                            )}
                             <h5 className="my-3 pb-2 border-bottom">Lịch sử đăng ký dịch vụ
-                            <button className="float-end h5 border-0 bg-white"
-                                    onMouseEnter={() => setHoveredText('cyan')}
-                                    onMouseLeave={() => setHoveredText('')}
-                                    data-toggle="tooltip" title="Xem danh sách dịch vụ trực tuyến"
-                                    onClick={viewCates} style={{ color: hoveredText }}>Các dịch vụ
-                            </button>
+                                <button className="float-end h5 border-0 bg-white"
+                                        onMouseEnter={() => setHoveredText('cyan')}
+                                        onMouseLeave={() => setHoveredText('')}
+                                        data-toggle="tooltip" title="Xem danh sách dịch vụ trực tuyến"
+                                        onClick={viewCates} style={{color: hoveredText}}>Các dịch vụ
+                                </button>
                             </h5>
-                                {alert && (
-                                    <MyAlert
-                                        message={alert.message}
-                                        color={alert.color}
-                                    />
-                                )}
+                            {alert && (
+                                <MyAlert
+                                    message={alert.message}
+                                    color={alert.color}
+                                />
+                            )}
                             {requests.length ? (
                                 <div className="row">
                                     <Table className="mt-3 table table-striped table-bordered">
@@ -211,26 +248,31 @@ const Home = () => {
                                                 <td>
                                                     {request.paymentId === 0 ?
                                                         <button className="btn-secondary btn" onClick={() => {
-                                                            createPayment(request)}}>Thanh toán ngay
+                                                            createPayment(request)
+                                                        }}>Thanh toán ngay
                                                         </button>
                                                         : <button className="btn-info btn" onClick={() => {
-                                                            viewPayment(request)}}>Thông tin thanh toán
+                                                            viewPayment(request)
+                                                        }}>Thông tin thanh toán
                                                         </button>
                                                     }
                                                 </td>
-                                                {request.status === 'PENDING' && (
+                                                {(request.status === 'PENDING' && request.paymentId === 0) && (
                                                     <td className="text-center">
-                                                        <button className="btn-success btn" onClick={() => updateRequest(request)}>
+                                                        <button className="btn-success btn"
+                                                                onClick={() => updateRequest(request)}>
                                                             Chỉnh sửa
                                                         </button>
-                                                        <button className="ms-2 btn-danger btn" onClick={() => cancelRequest(request)}>
+                                                        <button className="ms-2 btn-danger btn"
+                                                                onClick={() => cancelRequest(request)}>
                                                             Hủy
                                                         </button>
                                                     </td>
                                                 )}
-                                                {(request.status === 'ACCEPT' || request.status === 'CANCEL') && (
+                                                {(request.status === 'ACCEPT' || request.status === 'CANCEL' || request.paymentId !== 0) && (
                                                     <td className="text-center">
-                                                        <button className="btn-info btn" onClick={() => requestDetail(request)}>
+                                                        <button className="btn-info btn"
+                                                                onClick={() => requestDetail(request)}>
                                                             Thông tin
                                                         </button>
                                                     </td>
@@ -242,12 +284,13 @@ const Home = () => {
                                 </div>
                             ) : (
                                 <div className="App row">
-                                    <span className="bg-warning fw-bold text-black p-2">Chưa đăng ký dịch vụ nào</span>
+                                            <span
+                                                className="bg-warning fw-bold text-black p-2">Chưa đăng ký dịch vụ nào</span>
                                 </div>
                             )}
                             <button className="border-0 bg-white h5 my-3 pb-2 border-bottom"
-                                data-toggle="tooltip" title="Nhấn vào để xem chi tiết"
-                                onClick={viewInfo}>Thông tin sinh viên
+                                    data-toggle="tooltip" title="Nhấn vào để xem chi tiết"
+                                    onClick={viewInfo}>Thông tin sinh viên
                             </button>
                             <div>
                                 <span className="fw-bold ps-4">Khoa: </span>
@@ -257,17 +300,25 @@ const Home = () => {
                                 <span className="fw-bold ps-4">Ngành: </span>
                                 <span>{user.major_name}</span>
                             </div>
-                        </>
-                        ) : (<>
-                            <h2>Vui lòng đăng nhập!</h2>
-                            <Button className="my-3 bg-primary" onClick={signin}>Đăng nhập</Button>
-                        </>
-                        )}
-                    </div>
-                )}
-            </Container>
-        </div>
-    );
-};
+                        </div>
+                    )}
+                </Container>
+            </div>
+        );
+    } else {
+        return (<>
+            <div className="pb-5">
+                <Container fluid>
+                <h2>Vui lòng đăng nhập!</h2>
+                <ButtonGroup>
+                <Button className="my-3 bg-primary" onClick={signin}>Đăng nhập</Button>
+                </ButtonGroup></Container>
+            </div>
+            </>
+        )
+    }
+}
+
+
 
 export default Home;

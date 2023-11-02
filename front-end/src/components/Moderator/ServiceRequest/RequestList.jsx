@@ -21,13 +21,14 @@ function RequestList(){
         setAlert({ message, color });
     };
 
+
     useEffect(() => {
         OnlineService.getAllRequest().then((res) => {
             const allRequestsData = res.data;
             setAllRequests(allRequestsData);
             setRequests(allRequestsData);
         }).catch((error) => {
-            if (error.response && error.response.status === 403) {
+            if (error.response.status === 403) {
                 showAlert('Bạn không có quyền làm điều này', 'danger')
             } else {
                 showAlert('Có lỗi xảy ra', 'danger')
@@ -36,7 +37,7 @@ function RequestList(){
         ServiceCate.getAllServiceCate().then(res => {
             setCates(res.data);
         }).catch((error) => {
-            if (error.response && error.response.status === 403) {
+            if ( error.response.status === 403) {
                 showAlert('Bạn không có quyền làm điều này', 'danger')
             } else {
                 showAlert('Có lỗi xảy ra', 'danger')

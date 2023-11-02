@@ -68,8 +68,7 @@ public class UserController {
     @GetMapping("/my-semester")
     public ResponseEntity<?> getSemester(Authentication auth){
         UserPrincipal u = (UserPrincipal) auth.getPrincipal();
-        List<SemesterUserResponse> smt = this.semesterUserService.getSemestersByUserId(u.getId());
-        return new ResponseEntity<>(smt, HttpStatus.OK);
+        return new ResponseEntity<>(this.semesterUserService.getSemestersByUserId(u.getId()), HttpStatus.OK);
     }
 
     @Operation(

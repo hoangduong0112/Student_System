@@ -1,26 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import { Container, Table } from 'reactstrap';
 import UserService from "../../services/UserService";
 import { useNavigate } from "react-router-dom";
+import MyAlert from "../../layouts/MyAlert";
+import {UserContext} from "../../app/App";
 
-function UserInfoList() {
-    const [user, setUser] = useState({
-        id: 0,
-        email: '',
-        fullName: '',
-        avatar: '',
-        role: '',
-        major_name: '',
-        department_name: ''
-    });
+function UserInfo() {
+    const [user, setUser] = useContext(UserContext);
 
     const nav = useNavigate();
 
-    useEffect(() => {
-        UserService.getUser().then(res => {
-            setUser(res.data);
-        });
-    }, []);
 
     return (
         <div>
@@ -68,4 +57,4 @@ function UserInfoList() {
     );
 }
 
-export default UserInfoList;
+export default UserInfo;

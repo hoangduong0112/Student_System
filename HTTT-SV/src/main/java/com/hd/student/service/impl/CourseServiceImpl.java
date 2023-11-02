@@ -86,7 +86,7 @@ public class CourseServiceImpl implements CourseService {
         }catch (DataIntegrityViolationException ex){
             throw new ForeignKeyViolationException("Môn học đã được xếp giảng viên");
         }catch (Exception ex){
-            return new ApiResponse("Success", true);
+            return new ApiResponse("False", true);
         }
     }
 }

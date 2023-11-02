@@ -10,4 +10,6 @@ public interface SemesterDetailService {
     List<SemesterDetailsResponse> getDetails(int id);
 
     ApiResponse addNewCourseInSemesterDetails(SemesterDetailRequest rq);
+
+    ApiResponse addCourse(int id, int CourseId);
 }

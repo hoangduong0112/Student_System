@@ -1,9 +1,9 @@
-import React, {createContext, useEffect, useReducer} from 'react';
+import React, {createContext, useEffect, useReducer, useState} from 'react';
 import '../styles/App.css';
 import Home from './Home';
 import {Navigate, Route, Routes} from 'react-router-dom';
 import Signin from "./Signin";
-import Reducer from "./Reducer";
+import { requestForToken } from './firebase';
 import cookie from "react-cookies";
 import Header from "../layouts/Header";
 import Footer from "../layouts/Footer";
@@ -13,9 +13,16 @@ import MyUserReducer from "./Reducer";
 export const UserContext = createContext(null);
 
 const App = () => {
+
     const [user, setUser] = useReducer(MyUserReducer,cookie.load('user') || null);
-
-
+    function requestPermission() {
+        console.log('Requesting permission...');
+        Notification.requestPermission().then((permission) => {
+            if (permission === 'granted') {
+                console.log('Notification permission granted.');
+            }
+        })
+    }
     return (
         <UserContext.Provider value={[user, setUser]}>
             <Header/>
@@ -25,9 +32,10 @@ const App = () => {
                     <Route path="/guest/auth/signin" element={<Signin />} />
                     <Route path="/home" element={<Home />} />
 
-                    <Route path="/user/info" element={<Comp.UserInfoList />} />
+                    <Route path="/user/info" element={<Comp.UserInfo />} />
                     <Route path="/user/semester" element={<Comp.UserSemesterList />} />
                     <Route path="/user/semester/:id/course" element={<Comp.UserDetailsList />} />
+
                     <Route path="/user/payment/create" element={<Comp.CreatePayment />} />
                     <Route path="/user/payment/result/" element={<Comp.PaymentStatus />} />
                     <Route path="/user/payment/detail/:id" element={<Comp.PaymentDetails />} />
@@ -45,6 +53,7 @@ const App = () => {
                     <Route path="/service/diploma/:id" element={<Comp.DiplomaDetail />} />
                     <Route path="/service/stud-cert/:id" element={<Comp.StudCertificateDetail/>} />
                     <Route path="/service/transcript/:id" element={<Comp.TranscriptDetail/>} />
+                    <Route path="/service/unlock-stud/:id" element={<Comp.UnlockStudDetail/>} />
 
                     <Route path="/admin/course-data/all" element={<Comp.CourseDataList />} />
                     <Route path="/admin/course-data/add" element={<Comp.AddCourseData />} />
@@ -64,7 +73,9 @@ const App = () => {
                     <Route path="/admin/semester/update/:id" element={<Comp.UpdateSemester />} />
 
                     <Route path="/admin/student" element={<Comp.UserList />} />
+                    <Route path="/admin/department" element={<Comp.DepartmentList />} />
 
+                    <Route path="/service-cate" element={<Comp.CateList />} />
                     <Route path="/moderator/service-cate" element={<Comp.CateList />} />
                     <Route path="/moderator/service-cate/update/:id" element={<Comp.UpdateCate />} />
                     <Route path="/moderator/get-request" element={<Comp.RequestList />} />

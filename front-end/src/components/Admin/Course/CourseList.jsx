@@ -2,40 +2,60 @@ import React, {useEffect, useState} from 'react';
 import {Alert, Container, Table} from 'reactstrap';
 import CourseService from "../../../services/CourseService";
 import {useNavigate} from "react-router-dom";
+import MyAlert from "../../../layouts/MyAlert";
 
 function CourseList() {
     const [courses, setCourses] = useState([]);
     const nav = useNavigate();
-    const [success, setSuccess] = useState('');
+    const [alert, setAlert] = useState(null);
+    const showAlert = (message, color) => {
+        setAlert({ message, color });
+    };
 
     useEffect(() => {
-        CourseService.getAll().then((res) => {
-            setCourses(res.data);
-        });
+        const fetchData = async () => {
+            try {
+                const res = await CourseService.getAll();
+                setCourses(res.data);
+            } catch (error) {
+                showAlert('Có lỗi xảy ra', 'danger');
+            }
+        }
+        fetchData();
     }, []);
+
 
     const addCourse = () => { nav('/admin/course/add'); }
 
-    const deleteCourse = (course) => {
-        CourseService.deleteCourse(course.id).then(() => {
-            setCourses(courses.filter(c => c.id !== course.id));
-        })
-        setSuccess(`Xóa ${course.courseName} thành công.`)
-    }
-
-    const updateCourse = (course) => {
-        nav(`/admin/course/update/${course.id}`, {
-            state: {
-                courseName: course.courseName,
-                creditsNum: course.creditsNum,
-                note: course.note,
+    const deleteCourse = async (course) => {
+        try {
+            const res = await CourseService.deleteCourse(course.id);
+            if(res.data.success) {
+                setCourses(courses.filter(c => c.id !== course.id));
+                showAlert(`Xóa ${course.courseName} thành công.`);
             }
-        });
+        } catch (error) {
+            if(error.response.status === 404)
+                showAlert(`Không tìm thấy môn học.`, 'danger');
+            else if(error.response.status === 409)
+                showAlert(`Xóa thất bại vì môn học đã có lớp.`, 'danger');
+            else
+                showAlert(`Lỗi khi xóa ${course.courseName}`, 'danger');
+        }
+    }
+    const updateCourse = (course) => {
+        nav(`/admin/course/update/${course.id}`);
     }
 
     return (
         <div className='mb-5'>
             <Container fluid>
+                {alert && (
+                    <MyAlert
+                        message={alert.message}
+                        color={alert.color}
+                    />
+                )}
                 <h3 className ="App">Danh sách môn học</h3>
                 <div className="row">
                     <Table className="mt-3 table table-striped table-bordered">
@@ -69,9 +89,6 @@ function CourseList() {
                             onClick={addCourse}>Thêm
                     </button>
                 </div>
-                {success && <Alert color="success" className="fixed-bottom"
-                   style={{marginBottom:'100px', marginLeft:'200px', marginRight:'200px'}}
-                   onMouseEnter={() => setSuccess('')}>{success}</Alert>}
             </Container>
         </div>
     );

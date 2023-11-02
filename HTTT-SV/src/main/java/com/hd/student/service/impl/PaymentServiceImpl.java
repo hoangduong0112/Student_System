@@ -147,9 +147,9 @@ public class PaymentServiceImpl implements PaymentService {
 //    }
     @Override
     public PaymentResponse verifyPayment(int id) {
-        Payment payment = paymentRepository.findById(id).orElseThrow(()
+        Payment payment = paymentRepository.findByServiceOnline_Id(id).orElseThrow(()
                 -> new ResourceNotFoundException("Không tìm thấy thanh toán của yêu cầu này, mã yêu cầu"+ id));
-        if (payment.getPaymentStatus() != PaymentStatus.PENDING)
+        if (!payment.getPaymentStatus().equals(PaymentStatus.PENDING))
             return modelMapper.map(payment, PaymentResponse.class);
         else {
             try {

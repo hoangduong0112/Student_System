@@ -1,11 +1,13 @@
-export { default as UserInfoList } from './User/UserInfoList';
+export { default as UserInfo } from './User/UserInfo';
 export { default as UserSemesterList } from './User/UserSemesterList';
 export { default as UserDetailsList } from './User/UserDetailsList';
 export { default as CreatePayment } from './Payment/CreatePayment';
 export { default as PaymentStatus } from './Payment/PaymentStatus';
 export { default as PaymentDetails} from './Payment/PaymentDetails';
+
 export { default as AddUnlockStud } from './UnlockStud/AddUnlockStud';
 export { default as UpdateUnlockStud } from './UnlockStud/UpdateUnlockStud';
+export { default as UnlockStudDetail } from './UnlockStud/UnlockStudDetail';
 
 export { default as AddTranscript } from './Transcript/AddTranscript';
 export { default as UpdateTranscript } from './Transcript/UpdateTranscript';
@@ -36,6 +38,7 @@ export { default as UpdateSemester } from './Admin/Semester/UpdateSemester';
 export { default as SemesterList } from './Admin/Semester/SemesterList';
 
 export { default as UserList } from './Admin/Student/UserList';
+export { default as DepartmentList } from './Admin/Student/DepartmentList';
 
 export { default as CateList } from './Moderator/ServiceCate/CateList';
 export { default as UpdateCate } from './Moderator/ServiceCate/UpdateCate';

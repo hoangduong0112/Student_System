@@ -21,41 +21,45 @@ function UpdateTranscript() {
 
     const { success } = loc.state || false;
 
-    const {language, contactPhone, fromSemester, toSemester, quantity, isSealed} = {};
     const [transcriptId, setTranscriptId] = useState(0);
     const [semesters, setSemesters] = useState([]);
-    const [languageInput, setLanguageInput] = useState(language || '');
-    const [contactPhoneInput, setContactPhoneInput] = useState(contactPhone || '');
-    const [fromSemesterInput, setFromSemesterInput] = useState(fromSemester || 0);
-    const [toSemesterInput, setToSemesterInput] = useState(toSemester || 0);
-    const [quantityInput, setQuantityInput] = useState(quantity || '');
-    const [isSealedInput, setIsSealedInput] = useState(isSealed || false);
+    const [languageInput, setLanguageInput] = useState( '');
+    const [contactPhoneInput, setContactPhoneInput] = useState('');
+    const [fromSemesterInput, setFromSemesterInput] = useState(0);
+    const [toSemesterInput, setToSemesterInput] = useState( 0);
+    const [quantityInput, setQuantityInput] = useState('');
+    const [isSealedInput, setIsSealedInput] = useState(false);
 
     useEffect(() => {
-        TranscriptService.getTranscript(id).then(res => {
-            let transcript = res.data;
-            setTranscriptId(transcript.id);
-            setLanguageInput(transcript.language);
-            setContactPhoneInput(transcript.contactPhone);
-            setFromSemesterInput(transcript.fromSemester.id);
-            setToSemesterInput(transcript.toSemester.id);
-            setQuantityInput(transcript.quantity);
-            setIsSealedInput(transcript.isSealed);
-        })
+        const getTranscriptById = async () => {
+            try {
+                let transcript = await TranscriptService.getTranscript(id);
+                setTranscriptId(transcript.data.id);
+                setLanguageInput(transcript.data.language);
+                setContactPhoneInput(transcript.data.contactPhone);
+                setFromSemesterInput(transcript.data.fromSemester.id);
+                setToSemesterInput(transcript.data.toSemester.id);
+                setQuantityInput(transcript.data.quantity);
+                setIsSealedInput(transcript.data.isSealed);
+            }catch (error){
+                showAlert('Lỗi khi lấy dữ liệu', 'danger');
+            }
+        }
 
         const getSemesters = async () => {
             try {
                 const res = await SemesterService.getAllSemester();
                 setSemesters(res.data);
             } catch (error) {
-                console.error('Lỗi khi lấy danh sách học kỳ:', error);
+                showAlert('Lỗi khi lấy danh sách học kỳ', 'danger');
             }
         };
 
+        getTranscriptById().then()
         getSemesters().then();
     }, [id]);
 
-    const saveTranscript = (e) => {
+    const saveTranscript = async (e) => {
         e.preventDefault();
         if (contactPhoneInput === undefined || fromSemesterInput === undefined || languageInput === undefined
             || toSemesterInput === undefined || quantityInput === undefined)
@@ -73,18 +77,28 @@ function UpdateTranscript() {
                 contactPhone: contactPhoneInput,
                 isSealed: isSealedInput,
             };
-
-            TranscriptService.updateTranscript(transcript, transcriptId).then(() => {
+            try{
+                const res = await TranscriptService.updateTranscript(transcript, transcriptId)
                 setLever(!lever)
-                showAlert('Chỉnh sửa thành công');
-            })
+                showAlert('Chỉnh sửa thành công')
+            }catch (error) {
+                if(error.response.status === 404)
+                    showAlert('Không tìm thấy yêu cầu', 'danger')
+                else if(error.response.status === 403)
+                    showAlert('Bạn không có quyền làm điều này', 'danger')
+                else if(error.response.status === 409)
+                    showAlert('Yêu cầu đã được xử lý hoặc hủy', 'danger')
+                else
+                    showAlert('Lỗi hệ thống', 'danger')
+            }
+
         }
     };
     useEffect(() => {
         if (success) {
             showAlert('Gửi yêu cầu thành công');
         }
-    }, [success]);
+    }, []);
     useEffect(() => {
 
         const getOnlineService = async () => {

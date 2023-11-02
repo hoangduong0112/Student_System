@@ -38,7 +38,6 @@ public class SemesterDetailServiceImpl implements SemesterDetailService {
                 -> modelMapper.map(element, SemesterDetailsResponse.class)).collect(Collectors.toList());
     }
 
-    //chua the khai trien thanh chuc nang dang ky mon hoc
     @Override
     public ApiResponse addNewCourseInSemesterDetails(SemesterDetailRequest rq){
         SemesterUser semesterUser = this.semesterUserRepository.findById(rq.getSemesterUserId()).orElseThrow(
@@ -55,6 +54,27 @@ public class SemesterDetailServiceImpl implements SemesterDetailService {
                 sd.setScore(null);
                 this.semesterDetailRepository.save(sd);
             }
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Lỗi không xác định");
+        }
+        return new ApiResponse("Thêm thành công ", true);
+    }
+
+    @Override
+    public ApiResponse addCourse(int id, int CourseId){
+        SemesterUser semesterUser = this.semesterUserRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Không tìm thấy dữ liệu sinh viên với học kỳ này")
+        );
+        try {
+
+            CourseData courseData = courseDataRepository.findById(id).orElse(null);
+            SemesterDetail sd = new SemesterDetail();
+
+            sd.setCourseData(courseData);
+            sd.setSemesterUser(semesterUser);
+            sd.setIsPassed(true);
+            sd.setScore(null);
+            this.semesterDetailRepository.save(sd);
         } catch (RuntimeException e) {
             throw new RuntimeException("Lỗi không xác định");
         }

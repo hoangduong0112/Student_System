@@ -4,6 +4,7 @@ import {useNavigate} from "react-router-dom";
 import {Container} from "reactstrap";
 import SemesterService from "../../services/SemesterService";
 import MyAlert from "../../layouts/MyAlert";
+import DiplomaService from "../../services/DiplomaService";
 
 function AddTranscript() {
     const [language, setLanguage] = useState('');
@@ -20,7 +21,7 @@ function AddTranscript() {
     };
 
 
-    const saveTranscript = (e) => {
+    const saveTranscript = async (e) => {
         e.preventDefault();
         if (contactPhone === undefined || fromSemester === undefined || language === undefined
             || toSemester === undefined || quantity === undefined)
@@ -38,14 +39,17 @@ function AddTranscript() {
                 contactPhone,
                 isSealed,
             };
-
-            TranscriptService.addTranscript(transcript).then(res => {
+            try {
+                const res = await TranscriptService.addTranscript(transcript);
                 const onlineServiceId = res.data.onlineServiceId;
+
                 nav(`/service/transcript/update/${onlineServiceId}`, {
                     state: {
                         'success': "true"
                     }});
-            });
+            } catch (error) {
+                showAlert('Lỗi không xác định', 'danger');
+            }
         }
     };
 
