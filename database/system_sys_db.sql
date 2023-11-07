@@ -15,10 +15,6 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
--- DROP DATABASE IF EXISTS `student_sys_db`;
--- CREATE DATABASE `student_sys_db`;
--- USE `student_sys_db`;
-
 --
 -- Table structure for table `course`
 --
@@ -32,7 +28,7 @@ CREATE TABLE `course` (
   `credits_num` int DEFAULT NULL,
   `note` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`course_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=61 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -89,7 +85,7 @@ CREATE TABLE `department` (
   `department_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`department_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='	';
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='	';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -98,7 +94,7 @@ CREATE TABLE `department` (
 
 LOCK TABLES `department` WRITE;
 /*!40000 ALTER TABLE `department` DISABLE KEYS */;
-INSERT INTO `department` VALUES (1,'Công nghệ thông tin',NULL), (2,'Ngoại ngữ',NULL), (3,'Kinh tế - Quản lý công',NULL), (4,'Đào tạo sau đại học','Chương trình cao học thạc sĩ, tiến sĩ, nghiên cứu sinh'), (5,'Tài chính - ngân hàng',NULL), (6,'Khoa học cơ bản',NULL),(7,'Đào tạo đặc biệt','Chương trình chất lượng cao, liên kết quốc tế'), (8,'Kế toán kiểm toán',NULL), (9,'Ngoại ngữ',NULL), (13,'Quản trị kinh doanh',NULL), (14,'Xã - Công - Đông - Tâm','Gồm Xã hội học, Công tác xã hội, Đông Nam Á học, Tâm lý học');
+INSERT INTO `department` VALUES (1,'Công nghệ thông tin',NULL),(2,'Ngoại ngữ',NULL),(3,'Kinh tế - Quản lý công',NULL),(4,'Đào tạo sau đại học','Chương trình cao học thạc sĩ, tiến sĩ, nghiên cứu sinh'),(5,'Tài chính - ngân hàng',NULL),(6,'Khoa học cơ bản',NULL),(7,'Đào tạo đặc biệt','Chương trình chất lượng cao, liên kết quốc tế'),(8,'Kế toán kiểm toán',NULL),(9,'Ngoại ngữ',NULL),(13,'Quản trị kinh doanh',NULL),(14,'Xã - Công - Đông - Tâm','Gồm Xã hội học, Công tác xã hội, Đông Nam Á học, Tâm lý học');
 /*!40000 ALTER TABLE `department` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -143,10 +139,10 @@ DROP TABLE IF EXISTS `lecture`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `lecture` (
   `lecture_id` int NOT NULL AUTO_INCREMENT,
-  `lecture_name` varchar(45) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `lecture_phone` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `lecture_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `lecture_phone` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`lecture_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -174,7 +170,7 @@ CREATE TABLE `major` (
   PRIMARY KEY (`major_id`),
   KEY `KF_depart_major_idx` (`department_id`),
   CONSTRAINT `KF_depart_major` FOREIGN KEY (`department_id`) REFERENCES `department` (`department_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -183,7 +179,7 @@ CREATE TABLE `major` (
 
 LOCK TABLES `major` WRITE;
 /*!40000 ALTER TABLE `major` DISABLE KEYS */;
-INSERT INTO `major` VALUES (1,1,'645455','Công nghệ thông tin'),(2,1,'645456','Khoa học máy tính'),(3,1,'645457','Hệ thống thông tin quản lý'), (4,4,'645458','Quản trị kinh doanh'),(5,4,'645459','Kinh tế học'), (6,4,'645460','Tài chính - ngân hàng'), (7,4,'645461','Kỹ thuật xây dựng'), (8,4,'645462','Lý luận và phương pháp dạy học bộ môn tiếng Anh'),(9,4,'645463','Kế toán'), (10,4,'645464','Luật kinh tế'),(11,4,'645465','Quản lý xây dựng'), (12,4,'645466','Xã hội học'),(13,4,'645467','Công nghệ sinh học'), (14,4,'645468','Khoa học máy tính'),(15,4,'645469','Ngôn ngữ Trung Quốc'),(16,2,'645470','Ngôn ngữ Anh'),(17,2,'645471','Ngôn ngữ Trung Quốc'), (18,2,'645472','Ngôn ngữ Hàn Quốc'),(19,2,'645473','Ngôn ngữ Nhật'),(20,3,'645474','Kinh tế'),(21,3,'645475','Quản lý công'), (22,5,'645476','Tài chính - ngân hàng'),(23,6,'645477','Khoa học dữ liệu');
+INSERT INTO `major` VALUES (1,1,'645455','Công nghệ thông tin'),(2,1,'645456','Khoa học máy tính'),(3,1,'645457','Hệ thống thông tin quản lý'),(4,4,'645458','Quản trị kinh doanh'),(5,4,'645459','Kinh tế học'),(6,4,'645460','Tài chính - ngân hàng'),(7,4,'645461','Kỹ thuật xây dựng'),(8,4,'645462','Lý luận và phương pháp dạy học bộ môn tiếng A'),(9,4,'645463','Kế toán'),(10,4,'645464','Luật kinh tế'),(11,4,'645465','Quản lý xây dựng'),(12,4,'645466','Xã hội học'),(13,4,'645467','Công nghệ sinh học'),(14,4,'645468','Khoa học máy tính'),(15,4,'645469','Ngôn ngữ Trung Quốc'),(16,2,'645470','Ngôn ngữ Anh'),(17,2,'645471','Ngôn ngữ Trung Quốc'),(18,2,'645472','Ngôn ngữ Hàn Quốc'),(19,2,'645473','Ngôn ngữ Nhật'),(20,3,'645474','Kinh tế'),(21,3,'645475','Quản lý công'),(22,5,'645476','Tài chính - ngân hàng'),(23,6,'645477','Khoa học dữ liệu');
 /*!40000 ALTER TABLE `major` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -207,7 +203,7 @@ CREATE TABLE `online_service` (
   KEY `FK_type_idx` (`service_cate_id`),
   CONSTRAINT `FK_type` FOREIGN KEY (`service_cate_id`) REFERENCES `service_cate` (`service_cate_id`),
   CONSTRAINT `FK_user_service` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -216,7 +212,7 @@ CREATE TABLE `online_service` (
 
 LOCK TABLES `online_service` WRITE;
 /*!40000 ALTER TABLE `online_service` DISABLE KEYS */;
-INSERT INTO `online_service` VALUES (27,3,'2023-10-10','ACCEPT',0,60000,1),(28,3,'2023-10-10','PENDING',0,50000,5),(29,3,'2023-10-10','PENDING',0,200000,1),(30,3,'2023-10-10','PENDING',0,50000,5),(31,3,'2023-10-10','PENDING',0,300000,3),(32,3,'2023-10-10','PENDING',0,250000,2),(33,2,'2023-10-11','PENDING',0,60000,1),(34,3,'2023-10-16','PENDING',0,60000,1);
+INSERT INTO `online_service` VALUES (27,3,'2023-10-10','ACCEPT',0,60000,1),(28,3,'2023-10-10','PENDING',0,50000,5),(29,3,'2023-10-10','PENDING',0,200000,1),(30,3,'2023-10-10','PENDING',0,50000,5),(31,3,'2023-10-10','PENDING',0,300000,3),(32,3,'2023-10-10','PENDING',0,250000,2),(33,2,'2023-10-11','PENDING',0,60000,1),(34,3,'2023-10-16','PENDING',0,60000,1),(35,3,'2023-11-07','PENDING',0,50000,5);
 /*!40000 ALTER TABLE `online_service` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -231,9 +227,9 @@ CREATE TABLE `payment` (
   `payment_id` int NOT NULL AUTO_INCREMENT,
   `service_online_id` int DEFAULT NULL,
   `created_date` datetime DEFAULT NULL,
-  `payment_status` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `payment_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `price` double DEFAULT NULL,
-  `vnpay_txnref` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `vnpay_txnref` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`payment_id`),
   UNIQUE KEY `service_online_id_UNIQUE` (`service_online_id`),
   KEY `FK_payment_idx` (`service_online_id`),
@@ -319,7 +315,7 @@ CREATE TABLE `semester_user` (
   `semester_user_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int DEFAULT NULL,
   `semester_id` int DEFAULT NULL,
-  `status` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`semester_user_id`),
   KEY `FK_user_seme_idx` (`semester_id`),
   KEY `FK_user_seme1_idx` (`user_id`),
@@ -334,7 +330,7 @@ CREATE TABLE `semester_user` (
 
 LOCK TABLES `semester_user` WRITE;
 /*!40000 ALTER TABLE `semester_user` DISABLE KEYS */;
-INSERT INTO `semester_user` VALUES (1,1,2,NULL),(2,1,3,NULL),(3,1,4,NULL),(4,1,5,NULL),(5,1,6,NULL),(6,2,2,NULL),(7,2,3,NULL),(8,2,4,NULL),(9,2,5,NULL),(10,2,6,NULL),(26,2,9,NULL),(27,2,10,NULL),(28,2,11,NULL),(29,1,9,NULL),(30,1,10,NULL),(32,1,11,NULL);
+INSERT INTO `semester_user` VALUES (1,3,2,NULL),(2,3,3,NULL),(3,3,4,NULL),(4,3,5,NULL),(5,3,6,NULL),(6,4,2,NULL),(7,4,3,NULL),(8,4,4,NULL),(9,4,5,NULL),(10,4,6,NULL),(26,4,9,NULL),(27,4,10,NULL),(28,4,11,NULL),(29,3,9,NULL),(30,3,10,NULL),(32,3,11,NULL);
 /*!40000 ALTER TABLE `semester_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -350,7 +346,7 @@ CREATE TABLE `service_cate` (
   `service_cate_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `price` double DEFAULT NULL,
   `is_available` tinyint(1) DEFAULT NULL,
-  `description` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `num_of_date` int DEFAULT NULL,
   PRIMARY KEY (`service_cate_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -441,14 +437,14 @@ DROP TABLE IF EXISTS `unlock_student`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `unlock_student` (
   `unlock_student_id` int NOT NULL AUTO_INCREMENT,
-  `content` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Lý do mở khóa',
-  `image` varchar(300) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `content` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Lý do mở khóa',
+  `image` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `online_service_id` int DEFAULT NULL,
   PRIMARY KEY (`unlock_student_id`),
   UNIQUE KEY `online_service_id_UNIQUE` (`online_service_id`),
   KEY `FK_online_service_4_idx` (`online_service_id`),
   CONSTRAINT `FK_online_service_4` FOREIGN KEY (`online_service_id`) REFERENCES `online_service` (`online_service_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='mở khóa mã số sv';
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='mở khóa mã số sv';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -457,7 +453,7 @@ CREATE TABLE `unlock_student` (
 
 LOCK TABLES `unlock_student` WRITE;
 /*!40000 ALTER TABLE `unlock_student` DISABLE KEYS */;
-INSERT INTO `unlock_student` VALUES (3,'Đóng tiền học trễ hạn','test',28);
+INSERT INTO `unlock_student` VALUES (3,'Đóng tiền học trễ hạn','test',28),(5,'sadasd','http://res.cloudinary.com/dmfr3gngl/image/upload/v1699328578/kgxat1rmapkkajfjspm6.png',35);
 /*!40000 ALTER TABLE `unlock_student` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -475,14 +471,14 @@ CREATE TABLE `user` (
   `password` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `user_role` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `avatar` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `day_of_birth` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `gender` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `phone` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `day_of_birth` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `gender` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `phone` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `major_id` int DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   KEY `FK_major_idx` (`major_id`),
   CONSTRAINT `FK_major` FOREIGN KEY (`major_id`) REFERENCES `major` (`major_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -491,7 +487,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'ADMIN','ADMIN@gmail.com','$2a$10$qKveXpAB3RVXDqGIcGY4vOMw8ojqWUO2WBC1v9WHXYCQiETyoFWdK','ADMIN','','2001-12-01','Nam','090',NULL),(2,'MODERATOR','MODERATOR@gmail.com','$2a$10$qKveXpAB3RVXDqGIcGY4vOMw8ojqWUO2WBC1v9WHXYCQiETyoFWdK','MODERATOR','','2001-12-21','Nam','090',NULL),(3,'Hoang Duong','nhoxduong356@gmail.com','$2a$10$qKveXpAB3RVXDqGIcGY4vOMw8ojqWUO2WBC1v9WHXYCQiETyoFWdK','USER',NULL,'2001-12-21','Nam','090',NULL),(4,'Lê Đông Anh Kiệt','anhkiet@gmail.com','$2a$10$qKveXpAB3RVXDqGIcGY4vOMw8ojqWUO2WBC1v9WHXYCQiETyoFWdK','USER','','2002-09-19','Nam','093',1);
+INSERT INTO `user` VALUES (1,'ADMIN','ADMIN@gmail.com','$2a$10$qKveXpAB3RVXDqGIcGY4vOMw8ojqWUO2WBC1v9WHXYCQiETyoFWdK','ADMIN','','2001-12-01','Nam','090',1),(2,'MODERATOR','MODERATOR@gmail.com','$2a$10$qKveXpAB3RVXDqGIcGY4vOMw8ojqWUO2WBC1v9WHXYCQiETyoFWdK','MODERATOR','','2001-12-21','Nam','090',1),(3,'Hoang Duong','USER1@gmail.com','$2a$10$qKveXpAB3RVXDqGIcGY4vOMw8ojqWUO2WBC1v9WHXYCQiETyoFWdK','USER',NULL,'2001-12-21','Nam','090',1),(4,'Lê Đông Anh Kiệt','USER2@gmail.com','$2a$10$qKveXpAB3RVXDqGIcGY4vOMw8ojqWUO2WBC1v9WHXYCQiETyoFWdK','USER','','2002-09-19','Nam','093',1);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -504,4 +500,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-10-20 9:15:10WW
+-- Dump completed on 2023-11-07 10:52:42
