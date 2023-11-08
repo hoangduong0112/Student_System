@@ -99,7 +99,7 @@ function StudCertificateDetail() {
                                 <td>
                                 {user.role === "MODERATOR" && <>
                                         <button className="btn btn-success rounded-pill"
-                                                onClick={handleConfirmRequest}>Quản lý dịch vụ</button>
+                                                onClick={handleConfirmRequest}>Xác nhận yêu cầu</button>
                                 </>}
                                 {(user.role === "USER") &&<>
                                         <td><button className="mx-5 btn-primary btn">

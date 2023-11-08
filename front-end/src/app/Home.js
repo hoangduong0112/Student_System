@@ -79,8 +79,8 @@ const Home = () => {
         nav(`/user/payment/create?service=${request.id}`);
     }
 
-    const viewPayment = (request) => {
-        nav(`/user/payment/detail/${request.paymentId}`);
+    const viewPayment = (service) => {
+        nav(`/user/payment/detail/${service.id}`);
     }
     const requestDetail = (request) => {
         if ((request.serviceCateName).includes('bảng điểm'))

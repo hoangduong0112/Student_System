@@ -8,7 +8,7 @@
 
 ## Authors
 
-- [@hoangduong0112](https://github.com/hoangduong0112)
+- [@hoangduong0112](https://github.com/hoangduong0112/Student_System)
 
 ## Công Việc Cần Làm
 
