@@ -58,14 +58,15 @@ function UpdateUnlockStud() {
     useEffect(() => {
         const getUnlockById = async () => {
             try{
-                let unlockStud = UnlockStudService.getUnlockStud(id)
+                let unlockStud = await UnlockStudService.getUnlockStud(id)
                 setUnlockId(unlockStud.data.id)
                 setPreview(unlockStud.data.image);
                 setContent(unlockStud.data.content);
             }catch(e){
-                showAlert('Có lổi xảy ra', 'danger');
+                showAlert('Có lỗi xảy ra', 'danger');
             }
         }
+        getUnlockById()
 
     }, [id]);
 

@@ -123,7 +123,6 @@ function UpdateCate() {
                             </div>
                         </Form>
                     </CardBody>
-                    {alert()}
                 </Card>
             </Row>
         </Container>

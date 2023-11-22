@@ -143,13 +143,13 @@ function UpdateStudCertificate() {
                 </div>
                 <div className="row">
                     <div className = "card col-md-6 offset-md-4">
-                        <h3 className="text-center mt-2">Chỉnh sửa chứng nhận sinh viên</h3>
                         {alert && (
                             <MyAlert
                                 message={alert.message}
                                 color={alert.color}
                             />
                         )}
+                        <h3 className="text-center mt-2">Chỉnh sửa chứng nhận sinh viên</h3>
                         <div className = "card-body">
                             <form>
                                 <div className = "form-group">

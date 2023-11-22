@@ -28,6 +28,8 @@ function AddUnlockStud() {
             "upload_preset",
             'asrj3wth'
         );
+
+        //api gửi ảnh tới cloudinary -> cloudinary trả về url ảnh
         data.append("cloud_name", 'dmfr3gngl');
         try {
             const response = await fetch(
@@ -44,6 +46,8 @@ function AddUnlockStud() {
             setLoading(false);
         }
     }
+
+
     const saveUnlockStud = async (e) => {
         e.preventDefault();
         if (content === '')

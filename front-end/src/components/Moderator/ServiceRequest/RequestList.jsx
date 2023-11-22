@@ -62,6 +62,7 @@ function RequestList(){
             nav(`/service/diploma/${request.id}`);
         else if ((request.serviceCateName).includes('Mở khóa'))
             nav(`/service/unlock-stud/${request.id}`);
+
     }
     const deleteRequest = (request) => {
         OnlineService.deleteRequest(request.id).then(() => {
