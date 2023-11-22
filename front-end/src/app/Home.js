@@ -81,6 +81,7 @@ const Home = () => {
 
     const viewPayment = (request) => {
         nav(`/user/payment/detail/${request.id}`);
+
     }
     const requestDetail = (request) => {
         if ((request.serviceCateName).includes('bảng điểm'))

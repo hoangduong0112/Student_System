@@ -67,7 +67,6 @@ function UpdateUnlockStud() {
             }
         }
         getUnlockById()
-
     }, [id]);
 
     const saveUnlockStud = async (e) => {

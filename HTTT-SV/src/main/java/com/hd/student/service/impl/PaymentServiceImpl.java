@@ -102,10 +102,10 @@ public class PaymentServiceImpl implements PaymentService {
         rp.setTitle(title);
         rp.setAmount(Double.parseDouble(amount) / 100);
 
-        String paymentMessage = "Bạn đã thanh toán " + rp.getStatus() + "\n" +
-                "Ngày thực hiện thanh toán: " + rp.getDate() + "\n" + "Số tiền: " +
-                rp.getAmount();
-        this.twilioUtils.sendSMS(paymentMessage);
+//        String paymentMessage = "Bạn đã thanh toán " + rp.getStatus() + "\n" +
+//                "Ngày thực hiện thanh toán: " + rp.getDate() + "\n" + "Số tiền: " +
+//                rp.getAmount();
+//        this.twilioUtils.sendSMS(paymentMessage);
         return rp;
 
     }
